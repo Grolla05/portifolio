@@ -9,7 +9,6 @@ import {
   Mail,
   Github,
   Linkedin,
-  Twitter,
   MapPin,
   Phone,
   Calendar,
@@ -24,30 +23,32 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between">
-          <div className="font-semibold">John Doe</div>
-          <nav className="hidden md:flex gap-6">
+        <div className="container flex h-14 items-center justify-center">
+          <div className="font-semibold">Felipe Grolla</div>
+          <nav className="hidden md:flex gap-6 mx-auto">
             <Link href="#about" className="text-sm font-medium hover:text-primary">
-              About
+              Sobre
             </Link>
             <Link href="#experience" className="text-sm font-medium hover:text-primary">
-              Experience
+              Experiência
             </Link>
             <Link href="#education" className="text-sm font-medium hover:text-primary">
-              Education
+              Educação
             </Link>
             <Link href="#skills" className="text-sm font-medium hover:text-primary">
-              Skills
+              Habilidades
             </Link>
             <Link href="#projects" className="text-sm font-medium hover:text-primary">
-              Projects
+              Projetos
             </Link>
           </nav>
-          <Button size="sm" className="hidden md:flex">
-            <Download className="mr-2 h-4 w-4" />
-            Download CV
+          <Button asChild size="sm" className="hidden md:flex">
+            <a href="/felipe-grolla-cv.png" download>
+              <Download className="mr-2 h-4 w-4" />
+              Baixar Imagem CV
+            </a>
           </Button>
-          <Button variant="outline" size="icon" className="md:hidden">
+          <Button variant="outline" size="icon" className="md:hidden absolute right-4">
             <span className="sr-only">Toggle menu</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -71,141 +72,99 @@ export default function ProfilePage() {
 
       <main className="container py-10">
         {/* Hero Section */}
-        <section id="about" className="mb-12 grid gap-6 md:grid-cols-2 md:gap-10">
-          <div className="flex flex-col justify-center space-y-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">John Doe</h1>
-              <h2 className="text-xl text-muted-foreground">Senior Software Engineer</h2>
+        <section id="about" className="mb-12 flex flex-col items-center text-center">
+          <div className="mb-8">
+            <div className="relative h-60 w-60 overflow-hidden rounded-full border-4 border-background bg-muted mb-6">
+              <Image src="/images/profile-photo-new.png" alt="Felipe Grolla" fill className="object-cover" priority />
             </div>
-            <p className="text-muted-foreground">
-              Passionate software engineer with 5+ years of experience building web applications. Specialized in React,
-              Node.js, and cloud infrastructure.
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <div className="mb-4">
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Felipe Grolla</h1>
+              <h2 className="text-xl text-muted-foreground">Engenharia de Controle e Automação</h2>
+            </div>
+            <p className="text-muted-foreground mb-4">
+              Estudante de Engenharia de Controle e Automação com foco em sistemas embarcados, automação industrial e
+              programação. Apaixonado por tecnologia e inovação.
             </p>
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 text-muted-foreground mb-4">
               <MapPin className="h-4 w-4" />
-              <span>San Francisco, CA</span>
+              <span>Campinas, BR</span>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 justify-center">
               <Button asChild variant="outline" size="sm">
-                <Link href="mailto:john.doe@example.com">
+                <Link href="mailto:fegrolla0210@gmail.com">
                   <Mail className="mr-2 h-4 w-4" />
                   Email
                 </Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link href="https://github.com" target="_blank">
+                <Link href="https://github.com/Grolla05" target="_blank">
                   <Github className="mr-2 h-4 w-4" />
                   GitHub
                 </Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link href="https://linkedin.com" target="_blank">
+                <Link href="https://www.linkedin.com/in/felipegrolla/" target="_blank">
                   <Linkedin className="mr-2 h-4 w-4" />
                   LinkedIn
                 </Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link href="https://twitter.com" target="_blank">
-                  <Twitter className="mr-2 h-4 w-4" />
-                  Twitter
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="sm">
                 <Link href="tel:+11234567890">
                   <Phone className="mr-2 h-4 w-4" />
-                  (123) 456-7890
+                  (11) 99770-5370
                 </Link>
               </Button>
-            </div>
-          </div>
-          <div className="flex justify-center md:justify-end">
-            <div className="relative h-60 w-60 overflow-hidden rounded-full border-4 border-background bg-muted md:h-80 md:w-80">
-              <Image src="/placeholder.svg?height=320&width=320" alt="Profile" fill className="object-cover" priority />
             </div>
           </div>
         </section>
 
         {/* Tabs for Resume Sections */}
         <Tabs defaultValue="experience" className="mb-12">
-          <TabsList className="w-full justify-start mb-8 overflow-x-auto">
+          <TabsList className="flex justify-center mb-8 overflow-x-auto">
             <TabsTrigger value="experience" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
-              Experience
+              Experiência
             </TabsTrigger>
             <TabsTrigger value="education" className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4" />
-              Education
+              Educação
             </TabsTrigger>
             <TabsTrigger value="skills" className="flex items-center gap-2">
               <Code className="h-4 w-4" />
-              Skills
+              Habilidades
             </TabsTrigger>
             <TabsTrigger value="projects" className="flex items-center gap-2">
               <Building className="h-4 w-4" />
-              Projects
+              Projetos
             </TabsTrigger>
           </TabsList>
 
           {/* Experience Tab */}
           <TabsContent value="experience" id="experience" className="space-y-8">
-            <h2 className="text-2xl font-bold tracking-tight">Work Experience</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-center">Experiência Profissional</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-6 max-w-3xl mx-auto">
               {/* Experience Item 1 */}
-              <div className="rounded-lg border p-6">
-                <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
+              <div className="rounded-lg border p-6 text-center">
+                <div className="flex flex-col justify-center gap-2 items-center">
                   <div>
-                    <h3 className="font-semibold">Senior Software Engineer</h3>
-                    <p className="text-muted-foreground">Tech Solutions Inc.</p>
+                    <h3 className="font-semibold">(Cargo no trabalho)</h3>
+                    <p className="text-muted-foreground">(Empresa)</p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>Jan 2020 - Present</span>
+                    <span>(Deste quando até quando)</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
-                    <li>Led a team of 5 engineers to develop a cloud-based SaaS platform</li>
-                    <li>Implemented CI/CD pipelines reducing deployment time by 40%</li>
-                    <li>Architected microservices infrastructure using Docker and Kubernetes</li>
-                    <li>Mentored junior developers and conducted code reviews</li>
+                  <ul className="list-disc pl-5 space-y-2 text-muted-foreground text-left">
+                    <li>(Competências e funções do cargo)</li>
                   </ul>
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Badge>React</Badge>
-                  <Badge>Node.js</Badge>
-                  <Badge>TypeScript</Badge>
-                  <Badge>AWS</Badge>
-                  <Badge>Docker</Badge>
-                </div>
-              </div>
-
-              {/* Experience Item 2 */}
-              <div className="rounded-lg border p-6">
-                <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
-                  <div>
-                    <h3 className="font-semibold">Software Engineer</h3>
-                    <p className="text-muted-foreground">Innovative Apps LLC</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>Jun 2017 - Dec 2019</span>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
-                    <li>Developed responsive web applications using React and Redux</li>
-                    <li>Built RESTful APIs with Express.js and MongoDB</li>
-                    <li>Improved application performance by 30% through code optimization</li>
-                    <li>Collaborated with UX designers to implement user-friendly interfaces</li>
-                  </ul>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Badge>React</Badge>
-                  <Badge>Redux</Badge>
-                  <Badge>Express.js</Badge>
-                  <Badge>MongoDB</Badge>
-                  <Badge>JavaScript</Badge>
+                <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                  <Badge>Tecnologias utilizadas</Badge>
                 </div>
               </div>
             </div>
@@ -213,52 +172,69 @@ export default function ProfilePage() {
 
           {/* Education Tab */}
           <TabsContent value="education" id="education" className="space-y-8">
-            <h2 className="text-2xl font-bold tracking-tight">Education</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-center">Educação</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-6 max-w-3xl mx-auto">
               {/* Education Item 1 */}
-              <div className="rounded-lg border p-6">
-                <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
+              <div className="rounded-lg border p-6 text-center">
+                <div className="flex flex-col justify-center gap-2 items-center">
                   <div>
-                    <h3 className="font-semibold">Master of Science in Computer Science</h3>
-                    <p className="text-muted-foreground">Stanford University</p>
+                    <h3 className="font-semibold">Engenharia de Controle e Automação</h3>
+                    <p className="text-muted-foreground">Pontificia Universidade Catolica de Campinas</p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>2015 - 2017</span>
+                    <span>2025 - Today</span>
                   </div>
                 </div>
                 <div className="mt-4 text-muted-foreground">
-                  <p>GPA: 3.8/4.0</p>
-                  <p className="mt-2">Thesis: "Optimizing Neural Networks for Mobile Applications"</p>
+                  <p>GPA: 7.0/10.0</p>
+                  <p className="mt-2">Engenharia de Controle e Automação de máquinas elétricas"</p>
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-4 flex flex-wrap gap-2 justify-center">
                   <Badge>Machine Learning</Badge>
                   <Badge>Algorithms</Badge>
-                  <Badge>Distributed Systems</Badge>
+                  <Badge>Eletrônica Embarcada</Badge>
+                  <Badge>Eletrônica Digital</Badge>
+                  <Badge>Sistemas Aplicados</Badge>
+                  <Badge>Arduino</Badge>
+                  <Badge>IoT</Badge>
                 </div>
               </div>
 
               {/* Education Item 2 */}
-              <div className="rounded-lg border p-6">
-                <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
+              <div className="rounded-lg border p-6 text-center">
+                <div className="flex flex-col justify-center gap-2 items-center">
                   <div>
-                    <h3 className="font-semibold">Bachelor of Science in Computer Engineering</h3>
-                    <p className="text-muted-foreground">University of California, Berkeley</p>
+                    <h3 className="font-semibold">Instituto Educacional Parque Ecologico</h3>
+                    <p className="text-muted-foreground">Colégio Objetivo, Indaiatuba - SP</p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>2011 - 2015</span>
+                    <span>2018 - 2023</span>
                   </div>
                 </div>
                 <div className="mt-4 text-muted-foreground">
-                  <p>GPA: 3.7/4.0</p>
-                  <p className="mt-2">Minor in Business Administration</p>
+                  <p>GPA: 2.5/4.0</p>
+                  <p className="mt-2">Ensino Médio</p>
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Badge>Software Engineering</Badge>
-                  <Badge>Data Structures</Badge>
-                  <Badge>Computer Architecture</Badge>
+              </div>
+
+              {/* Education Item 3 */}
+              <div className="rounded-lg border p-6 text-center">
+                <div className="flex flex-col justify-center gap-2 items-center">
+                  <div>
+                    <h3 className="font-semibold">Colégio Jean Piaget</h3>
+                    <p className="text-muted-foreground">Colégio Jean Piaget, São Bernardo do Campo - SP</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>2007 - 2017</span>
+                  </div>
+                </div>
+                <div className="mt-4 text-muted-foreground">
+                  <p>GPA: 2.5/4.0</p>
+                  <p className="mt-2">Ensino Fundamental</p>
                 </div>
               </div>
             </div>
@@ -266,48 +242,39 @@ export default function ProfilePage() {
 
           {/* Skills Tab */}
           <TabsContent value="skills" id="skills" className="space-y-8">
-            <h2 className="text-2xl font-bold tracking-tight">Skills & Expertise</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-center">Habilidades & Competências</h2>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
               {/* Skill Category 1 */}
-              <Card>
+              <Card className="text-center">
                 <CardContent className="p-6">
                   <h3 className="font-semibold mb-4">Frontend Development</h3>
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">React</span>
-                        <span className="text-sm text-muted-foreground">Expert</span>
+                        <span className="text-sm">CSS</span>
+                        <span className="text-sm text-muted-foreground">Advanced</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "95%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "70%" }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm">Figma</span>
+                        <span className="text-sm text-muted-foreground">Advanced</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full" style={{ width: "60%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
                         <span className="text-sm">TypeScript</span>
-                        <span className="text-sm text-muted-foreground">Expert</span>
+                        <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "90%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm">Next.js</span>
-                        <span className="text-sm text-muted-foreground">Advanced</span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "85%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm">CSS/Tailwind</span>
-                        <span className="text-sm text-muted-foreground">Advanced</span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "80%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "50%" }}></div>
                       </div>
                     </div>
                   </div>
@@ -315,44 +282,53 @@ export default function ProfilePage() {
               </Card>
 
               {/* Skill Category 2 */}
-              <Card>
+              <Card className="text-center">
                 <CardContent className="p-6">
                   <h3 className="font-semibold mb-4">Backend Development</h3>
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">Node.js</span>
-                        <span className="text-sm text-muted-foreground">Expert</span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "90%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm">Express.js</span>
-                        <span className="text-sm text-muted-foreground">Expert</span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "90%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm">MongoDB</span>
+                        <span className="text-sm">Python</span>
                         <span className="text-sm text-muted-foreground">Advanced</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "80%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "75%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">PostgreSQL</span>
+                        <span className="text-sm">C / C++</span>
                         <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "70%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "55%" }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm">JavaScript</span>
+                        <span className="text-sm text-muted-foreground">Intermediate</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full" style={{ width: "55%" }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm">Node.js</span>
+                        <span className="text-sm text-muted-foreground">Beginner</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full" style={{ width: "35%" }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm">SQLite</span>
+                        <span className="text-sm text-muted-foreground">Beginner</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full" style={{ width: "20%" }}></div>
                       </div>
                     </div>
                   </div>
@@ -360,44 +336,53 @@ export default function ProfilePage() {
               </Card>
 
               {/* Skill Category 3 */}
-              <Card>
+              <Card className="text-center">
                 <CardContent className="p-6">
-                  <h3 className="font-semibold mb-4">DevOps & Cloud</h3>
+                  <h3 className="font-semibold mb-4">Eletro / Eletrônica</h3>
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">AWS</span>
+                        <span className="text-sm">Eletrônica Embarcada</span>
                         <span className="text-sm text-muted-foreground">Advanced</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "85%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "75%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">Docker</span>
+                        <span className="text-sm">Eletrônica Digital</span>
                         <span className="text-sm text-muted-foreground">Advanced</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "80%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "75%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">Kubernetes</span>
+                        <span className="text-sm">Sistemas Aplicados</span>
                         <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "70%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "55%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">CI/CD</span>
-                        <span className="text-sm text-muted-foreground">Advanced</span>
+                        <span className="text-sm">Arduino</span>
+                        <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "85%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "50%" }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm">IoT</span>
+                        <span className="text-sm text-muted-foreground">Beginner</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full" style={{ width: "20%" }}></div>
                       </div>
                     </div>
                   </div>
@@ -408,101 +393,226 @@ export default function ProfilePage() {
 
           {/* Projects Tab */}
           <TabsContent value="projects" id="projects" className="space-y-8">
-            <h2 className="text-2xl font-bold tracking-tight">Projects</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-center">Projetos</h2>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Project 1 */}
-              <Card className="overflow-hidden">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+              {/* Project 1 - Solar Points */}
+              <Card className="overflow-hidden text-center">
                 <div className="aspect-video relative">
-                  <Image src="/placeholder.svg?height=200&width=400" alt="Project 1" fill className="object-cover" />
+                  <Image src="/placeholder.svg?height=200&width=400" alt="Solar Points" fill className="object-cover" />
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2">E-commerce Platform</h3>
+                  <h3 className="font-semibold mb-2">Solar Points</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    A full-stack e-commerce platform with payment processing, inventory management, and analytics
-                    dashboard.
+                    Sistema de iluminação inteligente para áreas sem infraestrutura elétrica. Projeto sustentável com
+                    energia solar.
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <Badge variant="outline">React</Badge>
-                    <Badge variant="outline">Node.js</Badge>
-                    <Badge variant="outline">MongoDB</Badge>
-                    <Badge variant="outline">Stripe</Badge>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                    <Badge variant="outline">Eletrônica</Badge>
+                    <Badge variant="outline">Energia Solar</Badge>
+                    <Badge variant="outline">IoT</Badge>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-center">
                     <Button asChild size="sm" variant="outline">
-                      <Link href="#" target="_blank">
+                      <Link href="https://github.com/Grolla05/Project_SolarPoints" target="_blank">
                         <Github className="mr-2 h-4 w-4" />
-                        Code
-                      </Link>
-                    </Button>
-                    <Button asChild size="sm">
-                      <Link href="#" target="_blank">
-                        Demo
+                        Código
                       </Link>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Project 2 */}
-              <Card className="overflow-hidden">
+              {/* Project 2 - Clock LED */}
+              <Card className="overflow-hidden text-center">
                 <div className="aspect-video relative">
-                  <Image src="/placeholder.svg?height=200&width=400" alt="Project 2" fill className="object-cover" />
+                  <Image src="/placeholder.svg?height=200&width=400" alt="Clock LED" fill className="object-cover" />
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2">Task Management App</h3>
+                  <h3 className="font-semibold mb-2">Clock LED</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    A collaborative task management application with real-time updates and team collaboration features.
+                    Relógio digital com display LED e funcionalidades programáveis. Interface intuitiva e design
+                    moderno.
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <Badge variant="outline">Next.js</Badge>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                    <Badge variant="outline">Eletrônica</Badge>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="https://github.com/Grolla05/Project-Clock-LED" target="_blank">
+                        <Github className="mr-2 h-4 w-4" />
+                        Código
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Project 3 - Simula Vest */}
+              <Card className="overflow-hidden text-center">
+                <div className="aspect-video relative">
+                  <Image src="/placeholder.svg?height=200&width=400" alt="Simula Vest" fill className="object-cover" />
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-2">Simula Vest</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Plataforma de simulação de vestibulares com questões e estatísticas de desempenho para estudantes.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
                     <Badge variant="outline">TypeScript</Badge>
-                    <Badge variant="outline">Prisma</Badge>
-                    <Badge variant="outline">Socket.io</Badge>
+                    <Badge variant="outline">Node.js</Badge>
+                    <Badge variant="outline">JavaScript</Badge>
+                    <Badge variant="outline">MongoDB</Badge>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-center">
                     <Button asChild size="sm" variant="outline">
-                      <Link href="#" target="_blank">
+                      <Link href="https://github.com/Grolla05/SimulaVest" target="_blank">
                         <Github className="mr-2 h-4 w-4" />
-                        Code
-                      </Link>
-                    </Button>
-                    <Button asChild size="sm">
-                      <Link href="#" target="_blank">
-                        Demo
+                        Código
                       </Link>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Project 3 */}
-              <Card className="overflow-hidden">
+              {/* Project 4 - Template Web */}
+              <Card className="overflow-hidden text-center">
                 <div className="aspect-video relative">
-                  <Image src="/placeholder.svg?height=200&width=400" alt="Project 3" fill className="object-cover" />
+                  <Image src="/placeholder.svg?height=200&width=400" alt="Template Web" fill className="object-cover" />
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2">AI Content Generator</h3>
+                  <h3 className="font-semibold mb-2">Template Web</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    An AI-powered content generation tool for creating marketing copy, blog posts, and social media
-                    content.
+                    Template responsivo para desenvolvimento web com componentes reutilizáveis e design moderno.
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <Badge variant="outline">React</Badge>
-                    <Badge variant="outline">Python</Badge>
-                    <Badge variant="outline">TensorFlow</Badge>
-                    <Badge variant="outline">AWS</Badge>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                    <Badge variant="outline">HTML</Badge>
+                    <Badge variant="outline">CSS</Badge>
+                    <Badge variant="outline">JavaScript</Badge>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-center">
                     <Button asChild size="sm" variant="outline">
-                      <Link href="#" target="_blank">
+                      <Link href="https://github.com/Grolla05/Project-Template-Web" target="_blank">
                         <Github className="mr-2 h-4 w-4" />
-                        Code
+                        Código
                       </Link>
                     </Button>
-                    <Button asChild size="sm">
-                      <Link href="#" target="_blank">
-                        Demo
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Project 5 - Puc Bet */}
+              <Card className="overflow-hidden text-center">
+                <div className="aspect-video relative">
+                  <Image src="/placeholder.svg?height=200&width=400" alt="Puc Bet" fill className="object-cover" />
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-2">Puc Bet</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Projeto integrador de plataforma de apostas esportivas com sistema de usuários e estatísticas em
+                    tempo real.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                    <Badge variant="outline">HTML</Badge>
+                    <Badge variant="outline">CSS</Badge>
+                    <Badge variant="outline">JavaScript</Badge>
+                    <Badge variant="outline">Node.js</Badge>
+                    <Badge variant="outline">SQLite</Badge>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="https://github.com/Grolla05/Projeto-integrador-PUCBET" target="_blank">
+                        <Github className="mr-2 h-4 w-4" />
+                        Código
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Project 6 - Extensão 2024 */}
+              <Card className="overflow-hidden text-center">
+                <div className="aspect-video relative">
+                  <Image
+                    src="/placeholder.svg?height=200&width=400"
+                    alt="Extensão 2024"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-2">Extensão 2024</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Projeto de extensão universitária desenvolvido em 2024 com foco em impacto social e tecnológico.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                    <Badge variant="outline">Metodologia Aplicada</Badge>
+                    <Badge variant="outline">Material Didático</Badge>
+                    <Badge variant="outline">Análise de dados</Badge>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="https://github.com/Grolla05/PROJETO-EXT24" target="_blank">
+                        <Github className="mr-2 h-4 w-4" />
+                        Código
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Project 7 - Flight Management Software */}
+              <Card className="overflow-hidden text-center">
+                <div className="aspect-video relative">
+                  <Image
+                    src="/placeholder.svg?height=200&width=400"
+                    alt="Flight Management Software"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-2">Flight Management</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Software de gerenciamento de voos com interface para controle de rotas, passageiros e tripulação.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                    <Badge variant="outline">C</Badge>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="https://github.com/Grolla05/Flight-Management-Software" target="_blank">
+                        <Github className="mr-2 h-4 w-4" />
+                        Código
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Project 8 - Cofre Digital */}
+              <Card className="overflow-hidden text-center">
+                <div className="aspect-video relative">
+                  <Image
+                    src="/placeholder.svg?height=200&width=400"
+                    alt="Cofre Digital"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-2">Cofre Digital</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Sistema de cofre digital com autenticação segura.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                    <Badge variant="outline">C</Badge>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="https://github.com/Grolla05/Projeto-Cofre-Digital" target="_blank">
+                        <Github className="mr-2 h-4 w-4" />
+                        Código
                       </Link>
                     </Button>
                   </div>
@@ -513,25 +623,27 @@ export default function ProfilePage() {
         </Tabs>
 
         {/* Download Resume Button (Mobile) */}
-        <div className="mt-8 flex justify-center md:hidden">
-          <Button>
-            <Download className="mr-2 h-4 w-4" />
-            Download CV
+        <div className="mt-8 flex justify-center">
+          <Button asChild>
+            <a href="/felipe-grolla-cv.png" download>
+              <Download className="mr-2 h-4 w-4" />
+              Baixar Imagem CV
+            </a>
           </Button>
         </div>
       </main>
 
       <footer className="border-t py-6">
-        <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="container flex flex-col items-center justify-center gap-4 text-center">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} John Doe. All rights reserved.
+            &copy; {new Date().getFullYear()} Felipe Grolla. Todos os direitos reservados.
           </p>
           <div className="flex gap-4">
             <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
-              Privacy Policy
+              Política de Privacidade
             </Link>
             <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
-              Terms of Service
+              Termos de Serviço
             </Link>
           </div>
         </div>
