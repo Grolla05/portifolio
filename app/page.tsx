@@ -45,7 +45,7 @@ export default function ProfilePage() {
           <Button asChild size="sm" className="hidden md:flex">
             <a href="/felipe-grolla-cv.png" download>
               <Download className="mr-2 h-4 w-4" />
-              Baixar Imagem CV
+              Baixar Curriculo
             </a>
           </Button>
           <Button variant="outline" size="icon" className="md:hidden absolute right-4">
@@ -215,26 +215,8 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="mt-4 text-muted-foreground">
-                  <p>GPA: 2.5/4.0</p>
+                  <p>GPA: 5.0/10.0</p>
                   <p className="mt-2">Ensino Médio</p>
-                </div>
-              </div>
-
-              {/* Education Item 3 */}
-              <div className="rounded-lg border p-6 text-center">
-                <div className="flex flex-col justify-center gap-2 items-center">
-                  <div>
-                    <h3 className="font-semibold">Colégio Jean Piaget</h3>
-                    <p className="text-muted-foreground">Colégio Jean Piaget, São Bernardo do Campo - SP</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>2007 - 2017</span>
-                  </div>
-                </div>
-                <div className="mt-4 text-muted-foreground">
-                  <p>GPA: 2.5/4.0</p>
-                  <p className="mt-2">Ensino Fundamental</p>
                 </div>
               </div>
             </div>
@@ -253,24 +235,24 @@ export default function ProfilePage() {
                     <div>
                       <div className="flex justify-between mb-1">
                         <span className="text-sm">CSS</span>
-                        <span className="text-sm text-muted-foreground">Advanced</span>
+                        <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "70%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "55%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
                         <span className="text-sm">Figma</span>
-                        <span className="text-sm text-muted-foreground">Advanced</span>
+                        <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "60%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "55%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-sm">TypeScript</span>
+                        <span className="text-sm">Next.js e TypeScript</span>
                         <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -289,10 +271,10 @@ export default function ProfilePage() {
                     <div>
                       <div className="flex justify-between mb-1">
                         <span className="text-sm">Python</span>
-                        <span className="text-sm text-muted-foreground">Advanced</span>
+                        <span className="text-sm text-muted-foreground">Intermediate</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "75%" }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: "55%" }}></div>
                       </div>
                     </div>
                     <div>
@@ -394,7 +376,6 @@ export default function ProfilePage() {
           {/* Projects Tab */}
           <TabsContent value="projects" id="projects" className="space-y-8">
             <h2 className="text-2xl font-bold tracking-tight text-center">Projetos</h2>
-
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
               {/* Project 1 - Solar Points */}
               <Card className="overflow-hidden text-center">
@@ -501,36 +482,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              {/* Project 5 - Puc Bet */}
-              <Card className="overflow-hidden text-center">
-                <div className="aspect-video relative">
-                  <Image src="/placeholder.svg?height=200&width=400" alt="Puc Bet" fill className="object-cover" />
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2">Puc Bet</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Projeto integrador de plataforma de apostas esportivas com sistema de usuários e estatísticas em
-                    tempo real.
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-4 justify-center">
-                    <Badge variant="outline">HTML</Badge>
-                    <Badge variant="outline">CSS</Badge>
-                    <Badge variant="outline">JavaScript</Badge>
-                    <Badge variant="outline">Node.js</Badge>
-                    <Badge variant="outline">SQLite</Badge>
-                  </div>
-                  <div className="flex gap-2 justify-center">
-                    <Button asChild size="sm" variant="outline">
-                      <Link href="https://github.com/Grolla05/Projeto-integrador-PUCBET" target="_blank">
-                        <Github className="mr-2 h-4 w-4" />
-                        Código
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Project 6 - Extensão 2024 */}
+              {/* Project 5 - Extensão 2024 */}
               <Card className="overflow-hidden text-center">
                 <div className="aspect-video relative">
                   <Image
@@ -561,7 +513,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              {/* Project 7 - Flight Management Software */}
+              {/* Project 6 - Flight Management Software */}
               <Card className="overflow-hidden text-center">
                 <div className="aspect-video relative">
                   <Image
@@ -590,7 +542,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              {/* Project 8 - Cofre Digital */}
+              {/* Project 7 - Cofre Digital */}
               <Card className="overflow-hidden text-center">
                 <div className="aspect-video relative">
                   <Image
@@ -627,7 +579,7 @@ export default function ProfilePage() {
           <Button asChild>
             <a href="/felipe-grolla-cv.png" download>
               <Download className="mr-2 h-4 w-4" />
-              Baixar Imagem CV
+              Baixar Curriculo
             </a>
           </Button>
         </div>
