@@ -29,7 +29,7 @@ const projects = [
         title: 'Solar Points',
         slug: 'Project_SolarPoints',
         description: 'O Solar Points é um sistema de iluminação pública autônomo e inteligente pensado para locais com pouca ou nenhuma infraestrutura elétrica',
-        tags: ['Arduino', 'C++', 'SQL', 'Python', 'Flask', 'HTML5', 'Tailwind CSS'],
+        tags: ['Arduino', 'C++', 'Hardware', 'SQL', 'Python', 'Flask', 'HTML5', 'Tailwind CSS'],
         image: '',
         link: 'https://github.com/Grolla05/Project_SolarPoints',
         date: '2025-11-26'
@@ -46,16 +46,6 @@ const projects = [
     },
     {
         id: 4,
-        title: 'Arduino Projects',
-        slug: 'Arduino-Projects',
-        description: 'Este repositório serve como uma coleção abrangente dos meus projetos de automação e eletrônica baseados em Arduino. Cada projeto demonstra diferentes aspectos de programação embarcada, integração de sensores, controle de hardware e resolução de problemas do mundo real usando microcontroladores Arduino, ESP32, ESP8266 e Raspberry Pi.',
-        tags: ['Arduino', 'C++', 'C', 'Python'],
-        image: '',
-        link: 'https://github.com/Grolla05/Arduino-Projects',
-        date: '2025-08-08'
-    },
-    {
-        id: 5,
         title: 'MIT 6.002.1x',
         slug: 'MIT_6.002.1x',
         description: 'Este repositório documenta toda a minha jornada no curso MIT 6.002.1x – Circuitos e Eletrônica, oferecido pelo Instituto de Tecnologia de Massachusetts (MIT) na plataforma edX.',
@@ -65,7 +55,7 @@ const projects = [
         date: '2025-07-08'
     },
     {
-        id: 6,
+        id: 5,
         title: 'CS50',
         slug: 'CS50_2025',
         description: 'Este repositório documenta toda a minha jornada no curso CS50 – Introdução à Ciência da Computação, oferecido por Harvard University na plataforma edX.',
@@ -75,7 +65,7 @@ const projects = [
         date: '2025-06-24'
     },
     {
-        id: 7,
+        id: 6,
         title: 'Projeto Relógio de LED',
         slug: 'Project-Clock-LED',
         description: 'O DigitalClock é um projeto desenvolvido com o objetivo de criar um relógio digital completo, capaz de contar com precisão horas, minutos e segundos, utilizando apenas componentes eletrônicos discretos e circuitos lógicos digitais, sem linguagens de programação ou microcontroladores.',
@@ -83,6 +73,36 @@ const projects = [
         image: '',
         link: 'https://github.com/Grolla05/Project-Clock-LED',
         date: '2025-06-09'
+    },
+    {
+        id: 7,
+        title: 'Player de Música',
+        slug: 'Player_de_Musica',
+        description: 'Este projeto cria uma jukebox funcional que permite aos usuários navegar e reproduzir músicas usando um sistema de menus exibido em uma tela OLED. Ela apresenta reprodução de áudio sem interrupções, permitindo animações visuais em tempo real enquanto a música toca.',
+        tags: ['C++', 'Arduino', 'Hardware'],
+        image: '',
+        link: 'https://github.com/Grolla05/Arduino-Projects/tree/main/Player%20de%20música',
+        date: '2025-12-17'
+    },
+    {
+        id: 8,
+        title: 'Jukebox',
+        slug: 'Jukebox',
+        description: 'O projeto Jukebox utiliza um Arduino, um buzzer piezoelétrico e 9 botões físicos. Cada botão, ao ser pressionado, toca uma música clássica diferente. As músicas são armazenadas como matrizes de notas e durações, e a seleção é feita por hardware, tornando a experiência interativa e divertida.',
+        tags: ['C++', 'Arduino', 'Hardware'],
+        image: '',
+        link: 'https://github.com/Grolla05/Arduino-Projects/tree/main/Jukebox',
+        date: '2025-08-03'
+    },
+    {
+        id: 9,
+        title: 'Medidor de Presença Luz',
+        slug: 'light_meter',
+        description: 'Este projeto utiliza um resistor dependente de luz (LDR) para medir a intensidade da luz ambiente. Com base nas leituras do sensor, diferentes LEDs acendem para indicar o nível de brilho detectado.',
+        tags: ['C++', 'Arduino', 'Hardware'],
+        image: '',
+        link: 'https://github.com/Grolla05/Arduino-Projects/tree/main/Light%20Meter',
+        date: '2025-08-03'
     },
 ];
 

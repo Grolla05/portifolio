@@ -145,11 +145,10 @@ export default function AboutPage() {
                     </div>
                 </div>
             </aside>
-
-            {activeTab === 'personal-info' ? <Bio /> :
-                activeTab === 'hobbies' ? <Hobbie /> :
-                    activeTab === 'education' ? <Education /> :
-                        <Bio />}
+                {activeTab === 'personal-info' ? <Bio /> :
+                    activeTab === 'hobbies' ? <Hobbie /> :
+                        activeTab === 'education' ? <Education /> :
+                            <Bio />}
         </div>
     );
 }
