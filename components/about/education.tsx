@@ -1,259 +1,229 @@
+'use client';
+
 import React from 'react';
-import {
-    X,
-    GraduationCap,
-    BookOpen,
-    Calendar,
-    School
-} from 'lucide-react';
+import { X, GraduationCap, BookOpen, Calendar, School } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { fadeUp, staggerContainer } from '@/lib/animations/variants';
 
 export default function Education() {
+    const prefersReduced = useReducedMotion();
+
     return (
         <>
             {/* CENTER - CODE EDITOR */}
-            <main className="flex-1 flex flex-col border-r border-slate-200 dark:border-[#1E2D3D] min-h-[500px] transition-colors duration-300">
-
-                {/* Tabs */}
-                <div className="h-10 flex border-b border-slate-200 dark:border-[#1E2D3D] transition-colors duration-300">
-                    <div className="px-6 flex items-center border-r border-slate-200 dark:border-[#1E2D3D] bg-slate-100 dark:bg-[#011627] border-t-2 border-t-[#FEA55F] text-slate-700 dark:text-white font-mono text-sm transition-colors duration-300 italic">
+            <main
+                className="flex-1 flex flex-col border-r min-h-[500px] transition-colors duration-300"
+                style={{ borderColor: 'var(--border-default)' }}
+            >
+                <div
+                    className="h-10 flex border-b transition-colors duration-300"
+                    style={{ borderColor: 'var(--border-default)' }}
+                >
+                    <div
+                        className="px-6 flex items-center border-r border-t-2 font-mono text-sm italic transition-colors duration-300"
+                        style={{
+                            backgroundColor: 'var(--bg-secondary)',
+                            borderColor: 'var(--border-default)',
+                            borderTopColor: '#FFA657',
+                            color: 'var(--text-primary)',
+                        }}
+                    >
                         <span>Educação.tsx</span>
-                        <X className="w-3 h-3 ml-3 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer" />
+                        <X className="w-3 h-3 ml-3 cursor-pointer" style={{ color: 'var(--text-muted)' }} />
                     </div>
                 </div>
 
-                {/* Code View */}
-                <div className="flex-1 p-6 overflow-y-auto bg-slate-50 dark:bg-[#011627] transition-colors duration-300">
+                <div
+                    className="flex-1 p-6 overflow-y-auto transition-colors duration-300"
+                    style={{ backgroundColor: 'var(--bg-primary)' }}
+                >
                     <div className="flex font-mono text-sm leading-relaxed">
-                        {/* Line Numbers */}
-                        <div className="flex flex-col text-slate-300 dark:text-[#607B96] text-right pr-6 select-none transition-colors duration-300">
+                        <div
+                            className="flex flex-col text-right pr-6 select-none transition-colors duration-300 flex-shrink-0"
+                            style={{ color: 'var(--syntax-comment)' }}
+                        >
                             {Array.from({ length: 45 }, (_, i) => (
                                 <span key={i + 1}>{i + 1}</span>
                             ))}
                         </div>
 
-                        {/* Content */}
                         <div className="flex flex-col">
-                            <span className="text-slate-400 dark:text-[#607B96] transition-colors">/**</span>
-                            <span className="text-slate-400 dark:text-[#607B96] transition-colors"><span className="mr-8">*</span>Academic background component</span>
-                            <span className="text-slate-400 dark:text-[#607B96] transition-colors">*/</span>
+                            <span style={{ color: 'var(--syntax-comment)' }}>/**</span>
+                            <span style={{ color: 'var(--syntax-comment)' }}><span className="mr-8">*</span>Academic background component</span>
+                            <span style={{ color: 'var(--syntax-comment)' }}>*/</span>
 
                             <div className="mt-2">
-                                <span className="text-purple-600 dark:text-[#C98BDF] transition-colors">import</span>{' '}
-                                <span className="text-slate-800 dark:text-white transition-colors">React</span>{' '}
-                                <span className="text-purple-600 dark:text-[#C98BDF] transition-colors">from</span>{' '}
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">'react'</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">;</span>
+                                <span style={{ color: 'var(--ide-accent-purple)' }}>import</span>{' '}
+                                <span style={{ color: 'var(--text-primary)' }}>React</span>{' '}
+                                <span style={{ color: 'var(--ide-accent-purple)' }}>from</span>{' '}
+                                <span style={{ color: 'var(--syntax-string)' }}>&apos;react&apos;</span>
+                                <span style={{ color: 'var(--text-muted)' }}>;</span>
                             </div>
 
                             <div className="mt-4">
-                                <span className="text-purple-600 dark:text-[#C98BDF] transition-colors">export default function</span>{' '}
-                                <span className="text-blue-600 dark:text-[#61AFEF] transition-colors">Education</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">()</span>{' '}
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'{'}</span>
+                                <span style={{ color: 'var(--ide-accent-purple)' }}>export default function</span>{' '}
+                                <span style={{ color: 'var(--ide-accent)' }}>Education</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{'() {'}</span>
                             </div>
 
                             <div className="pl-4 mt-1">
-                                <span className="text-purple-600 dark:text-[#C98BDF] transition-colors">return</span>{' '}
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">(</span>
+                                <span style={{ color: 'var(--ide-accent-purple)' }}>return</span>{' '}
+                                <span style={{ color: 'var(--text-muted)' }}>(</span>
                             </div>
 
                             <div className="pl-8">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'<'}</span>
-                                <span className="text-rose-500 dark:text-[#E06C75] transition-colors">Timeline</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'>'}</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{'<'}</span>
+                                <span style={{ color: 'var(--syntax-keyword)' }}>Timeline</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{'>'}</span>
                             </div>
 
-                            {/* Degree 1 - Controle e Automação */}
-                            <div className="pl-12">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'<'}</span>
-                                <span className="text-rose-500 dark:text-[#E06C75] transition-colors">Academic</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">level</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"Bacharelado"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">course</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"Engenharia de Controle e Automação"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">institution</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"PUC Campinas"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">period</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"Desde 2025"</span>
-                            </div>
-                            <div className="pl-12">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'/>'}</span>
-                            </div>
-
-                            {/* Degree 2 - Computação */}
-                            <div className="pl-12 mt-2">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'<'}</span>
-                                <span className="text-rose-500 dark:text-[#E06C75] transition-colors">Academic</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">level</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"Bacharelado"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">course</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"Engenharia de Computação"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">institution</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"PUC Campinas"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">period</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"2024 - 2024"</span>
-                            </div>
-                            <div className="pl-12">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'/>'}</span>
-                            </div>
-
-                            {/* Degree 3 - High School */}
-                            <div className="pl-12 mt-2">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'<'}</span>
-                                <span className="text-rose-500 dark:text-[#E06C75] transition-colors">Academic</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">level</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"Ensino Médio"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">institution</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"Colégio Objetivo"</span>
-                            </div>
-                            <div className="pl-16">
-                                <span className="text-yellow-600 dark:text-[#D19A66] transition-colors">period</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">=</span>
-                                <span className="text-yellow-600 dark:text-[#98C379] transition-colors">"2021 - 2023"</span>
-                            </div>
-                            <div className="pl-12">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'/>'}</span>
-                            </div>
+                            {[
+                                { level: 'Bacharelado', course: 'Engenharia de Controle e Automação', institution: 'PUC Campinas', period: 'Desde 2025' },
+                                { level: 'Bacharelado', course: 'Engenharia de Computação', institution: 'PUC Campinas', period: '2024 - 2024' },
+                                { level: 'Ensino Médio', institution: 'Colégio Objetivo', period: '2021 - 2023' },
+                            ].map((item, i) => (
+                                <React.Fragment key={i}>
+                                    <div className={`pl-12 ${i > 0 ? 'mt-2' : ''}`}>
+                                        <span style={{ color: 'var(--text-muted)' }}>{'<'}</span>
+                                        <span style={{ color: 'var(--syntax-keyword)' }}>Academic</span>
+                                    </div>
+                                    {item.course && (
+                                        <div className="pl-16">
+                                            <span style={{ color: 'var(--syntax-type)' }}>course</span>
+                                            <span style={{ color: 'var(--text-muted)' }}>=</span>
+                                            <span style={{ color: 'var(--syntax-string)' }}>&quot;{item.course}&quot;</span>
+                                        </div>
+                                    )}
+                                    <div className="pl-16">
+                                        <span style={{ color: 'var(--syntax-type)' }}>level</span>
+                                        <span style={{ color: 'var(--text-muted)' }}>=</span>
+                                        <span style={{ color: 'var(--syntax-string)' }}>&quot;{item.level}&quot;</span>
+                                    </div>
+                                    <div className="pl-16">
+                                        <span style={{ color: 'var(--syntax-type)' }}>institution</span>
+                                        <span style={{ color: 'var(--text-muted)' }}>=</span>
+                                        <span style={{ color: 'var(--syntax-string)' }}>&quot;{item.institution}&quot;</span>
+                                    </div>
+                                    <div className="pl-16">
+                                        <span style={{ color: 'var(--syntax-type)' }}>period</span>
+                                        <span style={{ color: 'var(--text-muted)' }}>=</span>
+                                        <span style={{ color: 'var(--syntax-string)' }}>&quot;{item.period}&quot;</span>
+                                    </div>
+                                    <div className="pl-12">
+                                        <span style={{ color: 'var(--text-muted)' }}>{'/>'}</span>
+                                    </div>
+                                </React.Fragment>
+                            ))}
 
                             <div className="pl-8">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'</'}</span>
-                                <span className="text-rose-500 dark:text-[#E06C75] transition-colors">Timeline</span>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'>'}</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{'</'}</span>
+                                <span style={{ color: 'var(--syntax-keyword)' }}>Timeline</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{'>'}</span>
                             </div>
-
-                            <div className="pl-4">
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">);</span>
-                            </div>
-
-                            <div>
-                                <span className="text-slate-500 dark:text-gray-400 transition-colors">{'}'}</span>
-                            </div>
+                            <div className="pl-4"><span style={{ color: 'var(--text-muted)' }}>);</span></div>
+                            <div><span style={{ color: 'var(--text-muted)' }}>{'}'}</span></div>
                         </div>
                     </div>
                 </div>
             </main>
 
             {/* RIGHT SIDEBAR - PREVIEW */}
-            <aside className="hidden xl:flex w-[500px] flex-col border-l border-slate-200 dark:border-[#1E2D3D] transition-colors duration-300">
-
-                {/* Header */}
-                <div className="h-10 flex items-center px-4 border-b border-slate-200 dark:border-[#1E2D3D] transition-colors duration-300">
-                    <span className="text-sm text-slate-600 dark:text-gray-400 font-mono">// UI Preview</span>
+            <aside
+                className="hidden xl:flex w-[500px] flex-col border-l transition-colors duration-300"
+                style={{ borderColor: 'var(--border-default)' }}
+            >
+                <div
+                    className="h-10 flex items-center px-4 border-b transition-colors duration-300"
+                    style={{ borderColor: 'var(--border-default)' }}
+                >
+                    <span className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>// UI Preview</span>
                 </div>
 
-                {/* Content */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-6">
-
-                    {/* Card 1 - Controle e Automação */}
-                    <div className="relative bg-white dark:bg-[#011627] border border-slate-200 dark:border-[#1E2D3D] rounded-xl shadow-lg p-6 group transition-all duration-300 hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-purple-500/10 dark:hover:shadow-purple-900/20">
-                        {/* Decorative ribbon */}
-                        <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden rounded-tr-xl">
-                            <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rotate-45 w-20 h-2 bg-purple-500"></div>
-                        </div>
-
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                                <GraduationCap className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-lg font-bold text-slate-800 dark:text-white">Engenharia de Controle e Automação</h3>
-                                <div className="flex items-center gap-2 mt-1 text-slate-600 dark:text-gray-300">
-                                    <School className="w-4 h-4 text-slate-400 dark:text-gray-500" />
-                                    <span>PUC Campinas</span>
+                <motion.div
+                    className="flex-1 overflow-y-auto p-4 space-y-6"
+                    variants={prefersReduced ? {} : staggerContainer}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    {[
+                        {
+                            icon: GraduationCap,
+                            title: 'Engenharia de Controle e Automação',
+                            institution: 'PUC Campinas',
+                            period: 'Desde 2025',
+                            tags: ['Automação', 'Robótica'],
+                            accent: 'var(--ide-accent-purple)',
+                        },
+                        {
+                            icon: GraduationCap,
+                            title: 'Engenharia de Computação',
+                            institution: 'PUC Campinas',
+                            period: '2024 - 2024',
+                            tags: ['Programação', 'Eletrônica Básica'],
+                            accent: 'var(--ide-accent)',
+                        },
+                        {
+                            icon: BookOpen,
+                            title: 'Ensino Médio',
+                            institution: 'Colégio Objetivo',
+                            period: '2021 - 2023',
+                            tags: [],
+                            accent: 'var(--syntax-type)',
+                        },
+                    ].map((item, i) => (
+                        <motion.div
+                            key={i}
+                            className="border rounded-xl shadow-sm p-6 group transition-all duration-300"
+                            style={{
+                                backgroundColor: 'var(--bg-secondary)',
+                                borderColor: 'var(--border-default)',
+                            }}
+                            variants={prefersReduced ? {} : fadeUp}
+                            whileHover={prefersReduced ? {} : { y: -2 }}
+                        >
+                            <div className="flex items-start gap-4">
+                                <div
+                                    className="flex-shrink-0 p-3 rounded-lg"
+                                    style={{ backgroundColor: 'var(--bg-tertiary)' }}
+                                >
+                                    <item.icon className="w-8 h-8" style={{ color: item.accent }} />
                                 </div>
-                                <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 dark:text-gray-400">
-                                    <Calendar className="w-3.5 h-3.5" />
-                                    <span>Desde 2025</span>
-                                </div>
-
-                                <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                                    <div className="flex flex-wrap gap-2">
-                                        <span className="px-2 py-1 text-xs rounded-full bg-slate-100 dark:bg-[#1E2D3D] text-slate-600 dark:text-gray-400">Automação</span>
-                                        <span className="px-2 py-1 text-xs rounded-full bg-slate-100 dark:bg-[#1E2D3D] text-slate-600 dark:text-gray-400">Robótica</span>
+                                <div className="flex-1">
+                                    <h3 className="text-base font-medium" style={{ color: 'var(--text-primary)' }}>
+                                        {item.title}
+                                    </h3>
+                                    <div className="flex items-center gap-2 mt-1" style={{ color: 'var(--text-secondary)' }}>
+                                        <School className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+                                        <span className="text-sm">{item.institution}</span>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Card 2 - Computação */}
-                    <div className="relative bg-white dark:bg-[#011627] border border-slate-200 dark:border-[#1E2D3D] rounded-xl shadow-lg p-6 group transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20">
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                <GraduationCap className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-lg font-bold text-slate-800 dark:text-white">Engenharia de Computação</h3>
-                                <div className="flex items-center gap-2 mt-1 text-slate-600 dark:text-gray-300">
-                                    <School className="w-4 h-4 text-slate-400 dark:text-gray-500" />
-                                    <span>PUC Campinas</span>
-                                </div>
-                                <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 dark:text-gray-400">
-                                    <Calendar className="w-3.5 h-3.5" />
-                                    <span>2024 - 2024</span>
-                                </div>
-                                <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                                    <div className="flex flex-wrap gap-2">
-                                        <span className="px-2 py-1 text-xs rounded-full bg-slate-100 dark:bg-[#1E2D3D] text-slate-600 dark:text-gray-400">Programação</span>
-                                        <span className="px-2 py-1 text-xs rounded-full bg-slate-100 dark:bg-[#1E2D3D] text-slate-600 dark:text-gray-400">Eletrônica Básica</span>
+                                    <div className="flex items-center gap-2 mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>
+                                        <Calendar className="w-3.5 h-3.5" />
+                                        <span>{item.period}</span>
                                     </div>
+                                    {item.tags.length > 0 && (
+                                        <div
+                                            className="mt-4 pt-4 border-t flex flex-wrap gap-2"
+                                            style={{ borderColor: 'var(--border-subtle)' }}
+                                        >
+                                            {item.tags.map((tag) => (
+                                                <span
+                                                    key={tag}
+                                                    className="px-2 py-1 text-xs rounded"
+                                                    style={{
+                                                        backgroundColor: 'var(--bg-tertiary)',
+                                                        color: 'var(--text-secondary)',
+                                                    }}
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Card 3 - High School (Preserved) */}
-                    <div className="relative bg-white dark:bg-[#011627] border border-slate-200 dark:border-[#1E2D3D] rounded-xl shadow-lg p-6 group transition-all duration-300 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-emerald-500/10 dark:hover:shadow-emerald-900/20">
-
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
-                                <BookOpen className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-lg font-bold text-slate-800 dark:text-white">Ensino Médio</h3>
-                                <div className="flex items-center gap-2 mt-1 text-slate-600 dark:text-gray-300">
-                                    <School className="w-4 h-4 text-slate-400 dark:text-gray-500" />
-                                    <span>Colégio Objetivo</span>
-                                </div>
-                                <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 dark:text-gray-400">
-                                    <Calendar className="w-3.5 h-3.5" />
-                                    <span>2021 - 2023</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                        </motion.div>
+                    ))}
+                </motion.div>
             </aside>
         </>
     );

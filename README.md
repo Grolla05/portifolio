@@ -135,7 +135,7 @@ Portfolio profissional moderno com design inspirado em aplicações nativas do m
 
 - **Sidebar de Contatos**:
   - Email: felipegrolla@gmail.com
-  - Telefone: +55 (19) 99999-9999
+  - Telefone: +55 (11) 99770-5370
   - Links para YouTube, LinkedIn, Instagram
 
 ### 🎯 Componentes Compartilhados

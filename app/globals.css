@@ -2,15 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
+/* IDE Design Tokens — light */
+:root {
+  --bg-primary:     #f6f8fa;
+  --bg-secondary:   #eaeef2;
+  --bg-tertiary:    #d0d7de;
+  --bg-glass:       rgba(246,248,250,0.85);
+  --border-subtle:  rgba(1,22,39,0.06);
+  --border-default: rgba(1,22,39,0.12);
+  --ide-accent:         #0969da;
+  --ide-accent-purple:  #8250df;
+  --text-primary:   #1f2328;
+  --text-secondary: #57606a;
+  --text-muted:     #8c959f;
+  --syntax-keyword: #d1242f;
+  --syntax-string:  #0550ae;
+  --syntax-type:    #953800;
+  --syntax-comment: #57606a;
+  --font-ui:   'Inter', 'SF Pro Text', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+}
+
+/* IDE Design Tokens — dark */
+.dark {
+  --bg-primary:     #0D1117;
+  --bg-secondary:   #161B22;
+  --bg-tertiary:    #1C2128;
+  --bg-glass:       rgba(22,27,34,0.85);
+  --border-subtle:  rgba(240,246,252,0.10);
+  --border-default: rgba(240,246,252,0.15);
+  --ide-accent:         #388BFD;
+  --ide-accent-purple:  #BC8CFF;
+  --text-primary:   #E6EDF3;
+  --text-secondary: #8B949E;
+  --text-muted:     #484F58;
+  --syntax-keyword: #FF7B72;
+  --syntax-string:  #A5D6FF;
+  --syntax-type:    #FFA657;
+  --syntax-comment: #8B949E;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", "Helvetica Neue", sans-serif;
+  font-family: var(--font-ui);
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Accessibility overrides */
+.a11y-text-large  { font-size: 112.5%; }
+.a11y-text-xlarge { font-size: 125%; }
+
+.a11y-high-contrast {
+  --text-primary:   #ffffff;
+  --text-secondary: #d0d7de;
+  --text-muted:     #9ea7b3;
+  --bg-primary:     #000000;
+  --bg-secondary:   #0a0f14;
+  --bg-tertiary:    #111820;
+  --border-default: rgba(240,246,252,0.30);
+  --border-subtle:  rgba(240,246,252,0.18);
+}
+
+.a11y-reduce-motion *,
+.a11y-reduce-motion *::before,
+.a11y-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 @layer base {
