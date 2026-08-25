@@ -16,24 +16,6 @@ export default function Education() {
                 style={{ borderColor: 'var(--border-default)' }}
             >
                 <div
-                    className="h-10 flex border-b transition-colors duration-300"
-                    style={{ borderColor: 'var(--border-default)' }}
-                >
-                    <div
-                        className="px-6 flex items-center border-r border-t-2 font-mono text-sm italic transition-colors duration-300"
-                        style={{
-                            backgroundColor: 'var(--bg-secondary)',
-                            borderColor: 'var(--border-default)',
-                            borderTopColor: '#FFA657',
-                            color: 'var(--text-primary)',
-                        }}
-                    >
-                        <span>Educação.tsx</span>
-                        <X className="w-3 h-3 ml-3 cursor-pointer" style={{ color: 'var(--text-muted)' }} />
-                    </div>
-                </div>
-
-                <div
                     className="flex-1 p-6 overflow-y-auto transition-colors duration-300"
                     style={{ backgroundColor: 'var(--bg-primary)' }}
                 >
@@ -136,7 +118,7 @@ export default function Education() {
                     className="h-10 flex items-center px-4 border-b transition-colors duration-300"
                     style={{ borderColor: 'var(--border-default)' }}
                 >
-                    <span className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>// UI Preview</span>
+                    <span className="text-xs font-semibold tracking-tight uppercase" style={{ color: 'var(--text-secondary)' }}>Education preview</span>
                 </div>
 
                 <motion.div
@@ -173,42 +155,43 @@ export default function Education() {
                     ].map((item, i) => (
                         <motion.div
                             key={i}
-                            className="border rounded-xl shadow-sm p-6 group transition-all duration-300"
+                            className="border rounded-2xl shadow-sm p-6 group transition-all duration-300 hover:shadow-md"
                             style={{
                                 backgroundColor: 'var(--bg-secondary)',
                                 borderColor: 'var(--border-default)',
                             }}
                             variants={prefersReduced ? {} : fadeUp}
                             whileHover={prefersReduced ? {} : { y: -2 }}
+                            whileTap={prefersReduced ? {} : { scale: 0.98 }}
                         >
                             <div className="flex items-start gap-4">
                                 <div
-                                    className="flex-shrink-0 p-3 rounded-lg"
+                                    className="flex-shrink-0 p-3 rounded-xl"
                                     style={{ backgroundColor: 'var(--bg-tertiary)' }}
                                 >
                                     <item.icon className="w-8 h-8" style={{ color: item.accent }} />
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="text-base font-medium" style={{ color: 'var(--text-primary)' }}>
+                                    <h3 className="text-base font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
                                         {item.title}
                                     </h3>
                                     <div className="flex items-center gap-2 mt-1" style={{ color: 'var(--text-secondary)' }}>
                                         <School className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
-                                        <span className="text-sm">{item.institution}</span>
+                                        <span className="text-sm font-medium">{item.institution}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>
+                                    <div className="flex items-center gap-2 mt-1 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
                                         <Calendar className="w-3.5 h-3.5" />
                                         <span>{item.period}</span>
                                     </div>
                                     {item.tags.length > 0 && (
                                         <div
-                                            className="mt-4 pt-4 border-t flex flex-wrap gap-2"
+                                            className="mt-4 pt-4 border-t flex flex-wrap gap-1.5"
                                             style={{ borderColor: 'var(--border-subtle)' }}
                                         >
                                             {item.tags.map((tag) => (
                                                 <span
                                                     key={tag}
-                                                    className="px-2 py-1 text-xs rounded"
+                                                    className="px-2.5 py-0.5 text-xs font-medium rounded-full"
                                                     style={{
                                                         backgroundColor: 'var(--bg-tertiary)',
                                                         color: 'var(--text-secondary)',

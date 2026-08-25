@@ -1,6 +1,7 @@
 # CLAUDE.md — Portfólio IDE UI Redesign
 
 ## CONTEXTO DO PROJETO
+
 Este é um site de portfólio pessoal com estética de IDE/editor de código
 (inspirado em VS Code e Antigravity IDE). A stack utiliza [PREENCHA: React/Next.js/Vue/etc].
 O objetivo desta sessão é refatorar TODA a interface gráfica para que seja
@@ -9,13 +10,13 @@ mantendo o conceito visual de IDE. Framer Motion deve ser usado
 como biblioteca principal de animações.
 
 ## ANÁLISE PRÉVIA — EXECUTE ANTES DE QUALQUER ALTERAÇÃO
+
 1. Mapeie todos os arquivos de estilo (CSS, SCSS, Tailwind, styled-components)
 2. Liste todos os componentes de UI e sua hierarquia
-3. Identifique as rotas/páginas: _hello, _about-me, _projects, _contact-me
+3. Identifique as rotas/páginas: hello, about-me, projects, contact-me
 4. Verifique se framer-motion já está instalado; se não, instale:
    npm install framer-motion
 5. Documente o que deve ser PRESERVADO (lógica, rotas, dados)
-
 
 ## SISTEMA DE DESIGN — TOKENS
 
@@ -43,7 +44,6 @@ Pesos: apenas 400 e 500. Nunca 700.
 
 Espaçamento base 4px:
 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48px
-
 
 ## FRAMER MOTION — PADRÕES DE ANIMAÇÃO OBRIGATÓRIOS
 
@@ -82,47 +82,54 @@ export const scaleIn = {
 2. Onde aplicar cada variante
 
 Sidebar (tree de arquivos):
+
 - Container: motion.aside com slideInLeft
 - Cada item de arquivo/pasta: motion.li com fadeUp + stagger via pai
 - Expand/collapse de pasta: AnimatePresence + fadeUp nos filhos
 - Ícone de seta: motion.span com rotate: isOpen ? 90 : 0
 
 Tab bar:
+
 - Nova aba entrando: AnimatePresence mode="popLayout" + scaleIn
 - Indicador de aba ativa (underline): motion.div com layoutId="activeTab"
   (isso cria o efeito de sliding automático entre abas)
 
 Conteúdo do editor (troca de página/rota):
+
 - Usar AnimatePresence mode="wait" no router
 - Cada página: motion.main com fadeUp no mount, fadeIn invertido no unmount
 - Linhas de texto: staggerContainer + cada linha com fadeUp
 
 Cards de código (painel direito):
+
 - Container: staggerContainer
 - Cada card: motion.article com fadeUp
 - Hover: whileHover={{ y: -2 }} diretamente na motion tag
 - Tokens de sintaxe: animar entrada com stagger de 0.02s por token
 
 Topbar / nav links:
+
 - Links: motion.a com whileHover={{ opacity: 0.75 }}
 - Indicador de rota ativa: motion.span com layoutId="navUnderline"
 
 Theme toggle (dark/light):
+
 - Ícone: motion.svg com animate={{ rotate: isDark ? 0 : 180 }}
   transition={{ duration: 0.4, ease: "anticipate" }}
 
 Cursor piscante (simulação de editor):
+
 - motion.span com animate={{ opacity: [1, 0, 1] }}
   transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" }}
 
 3. Regras de performance obrigatórias
+
 - Usar will-change: transform apenas em elementos que realmente animam
 - Preferir animações em transform e opacity (GPU-accelerated)
 - NUNCA animar width, height, top, left diretamente
 - Usar useReducedMotion() do framer-motion e desativar animações se true:
   const prefersReduced = useReducedMotion()
   const variants = prefersReduced ? {} : fadeUp
-
 
 ## COMPONENTES A REFATORAR (ordem de execução)
 
@@ -137,8 +144,8 @@ Cursor piscante (simulação de editor):
 [ ] 9. Tema dark/light com toggle animado
 [ ] 10. Responsividade (mobile drawer, tablet)
 
-
 ## REGRAS INVIOLÁVEIS
+
 ✗ NÃO usar gradientes decorativos ou efeitos neon
 ✗ NÃO usar border-radius acima de 12px em containers principais
 ✗ NÃO quebrar nenhuma funcionalidade ou rota existente
@@ -151,6 +158,7 @@ Cursor piscante (simulação de editor):
 ✓ Executar de forma incremental, componente por componente
 
 ## ENTREGÁVEIS
+
 1. Relatório de análise do projeto (antes de alterar qualquer coisa)
 2. Arquivo design-tokens.css ou equivalente
 3. Arquivo src/animations/variants.ts com todas as variantes

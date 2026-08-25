@@ -4,7 +4,14 @@
       "Bash(Get-ChildItem -Path \"d:\\\\GitHub\\\\portifolio\" -Recurse -Force)",
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(npx tsc *)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\GitHub\\\\portifolio\" -Recurse -Depth 2)",
+      "Bash(Select-Object FullName)",
+      "Bash(npm install *)",
+      "Bash(not exist *)",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"d:\\\\GitHub\\\\portifolio\\\\app\\\\api\\\\readme\")",
+      "PowerShell(\"done\")",
+      "Bash(awk '{print $NF}')"
     ]
   }
 }

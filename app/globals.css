@@ -2,57 +2,213 @@
 @tailwind components;
 @tailwind utilities;
 
-/* IDE Design Tokens — light */
+/* ==========================================================================
+   Design System Tokens — Apple HIG & Liquid Glass
+   ========================================================================== */
+
 :root {
-  --bg-primary:     #f6f8fa;
-  --bg-secondary:   #eaeef2;
-  --bg-tertiary:    #d0d7de;
-  --bg-glass:       rgba(246,248,250,0.85);
-  --border-subtle:  rgba(1,22,39,0.06);
-  --border-default: rgba(1,22,39,0.12);
-  --ide-accent:         #0969da;
-  --ide-accent-purple:  #8250df;
-  --text-primary:   #1f2328;
+  /* Surface & Base */
+  --bg-primary: #f6f8fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #eaeef2;
+  --bg-glass: rgba(255, 255, 255, 0.70);
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.12);
+  --border-glass: rgba(255, 255, 255, 0.50);
+
+  /* Typography */
+  --text-primary: #111827;
   --text-secondary: #57606a;
-  --text-muted:     #8c959f;
+  --text-muted: #8c959f;
+
+  /* Apple HIG System Accents */
+  --ide-accent: #007aff;
+  --ide-accent-blue: #007aff;
+  --ide-accent-purple: #8250df;
+  --ide-accent-green: #34c759;
+  --ide-accent-yellow: #ffcc00;
+  --ide-accent-red: #ff3b30;
+
+  /* Estados derivados do acento — usados por controles selecionados
+     (toggles, segmented controls). Existem para que componentes não
+     precisem hardcodar rgba() do acento. */
+  --accent-soft: rgba(0, 122, 255, 0.12);
+  --accent-ring: rgba(0, 122, 255, 0.32);
+
+  /* Superfície neutra para linhas/campos dentro de painéis */
+  --surface-subtle: rgba(1, 22, 39, 0.03);
+  --switch-track: rgba(1, 22, 39, 0.20);
+
+  /* Syntax Highlighting */
   --syntax-keyword: #d1242f;
-  --syntax-string:  #0550ae;
-  --syntax-type:    #953800;
+  --syntax-string: #0550ae;
+  --syntax-type: #953800;
   --syntax-comment: #57606a;
-  --font-ui:   'Inter', 'SF Pro Text', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Font Stacks */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
+
+  /* Tailwind / Shadcn semantic variables */
+  --background: 210 20% 98%;
+  --foreground: 220 15% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 15% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 15% 10%;
+  --primary: 211 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 220 15% 10%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 210 10% 95%;
+  --accent-foreground: 220 15% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 90%;
+  --input: 220 13% 90%;
+  --ring: 211 100% 50%;
+  --radius: 1rem;
 }
 
-/* IDE Design Tokens — dark */
 .dark {
-  --bg-primary:     #0D1117;
-  --bg-secondary:   #161B22;
-  --bg-tertiary:    #1C2128;
-  --bg-glass:       rgba(22,27,34,0.85);
-  --border-subtle:  rgba(240,246,252,0.10);
-  --border-default: rgba(240,246,252,0.15);
-  --ide-accent:         #388BFD;
-  --ide-accent-purple:  #BC8CFF;
-  --text-primary:   #E6EDF3;
-  --text-secondary: #8B949E;
-  --text-muted:     #484F58;
-  --syntax-keyword: #FF7B72;
-  --syntax-string:  #A5D6FF;
-  --syntax-type:    #FFA657;
-  --syntax-comment: #8B949E;
+  /* Surface & Base — macOS Native Dark Slate Materials */
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #323234;
+  --bg-glass: rgba(30, 30, 30, 0.75);
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-glass: rgba(255, 255, 255, 0.14);
+
+  /* Typography — Apple HIG Labels */
+  --text-primary: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-muted: #6e6e73;
+
+  /* Apple HIG macOS Dark System Accents */
+  --ide-accent: #0a84ff;
+  --ide-accent-blue: #0a84ff;
+  --ide-accent-purple: #bf5af2;
+  --ide-accent-green: #30d158;
+  --ide-accent-yellow: #ffd60a;
+  --ide-accent-red: #ff453a;
+
+  --accent-soft: rgba(10, 132, 255, 0.18);
+  --accent-ring: rgba(10, 132, 255, 0.38);
+
+  --surface-subtle: rgba(255, 255, 255, 0.04);
+  --switch-track: rgba(255, 255, 255, 0.20);
+
+  /* Xcode Syntax Highlighting */
+  --syntax-keyword: #ff7b72;
+  --syntax-string: #a5d6ff;
+  --syntax-type: #ffa657;
+  --syntax-comment: #8b949e;
+
+  /* Tailwind / Shadcn semantic variables */
+  --background: 0 0% 12%;
+  --foreground: 0 0% 96%;
+  --card: 0 0% 15%;
+  --card-foreground: 0 0% 96%;
+  --popover: 0 0% 15%;
+  --popover-foreground: 0 0% 96%;
+  --primary: 212 100% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 20%;
+  --secondary-foreground: 0 0% 96%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 240 3% 65%;
+  --accent: 0 0% 20%;
+  --accent-foreground: 0 0% 96%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 22%;
+  --input: 0 0% 22%;
+  --ring: 212 100% 52%;
 }
 
 body {
   font-family: var(--font-ui);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+  }
+}
+
+/* ==========================================================================
+   Liquid Glass & Elevation Utilities
+   ========================================================================== */
+
 @layer utilities {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .glass-panel {
+    background: rgba(30, 30, 30, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.45), 0 1px 3px 0 rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-pill {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+
+  .dark .glass-pill {
+    background: rgba(36, 36, 36, 0.70);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .elevation-1 {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .elevation-1 {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+  }
+
+  .elevation-2 {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .elevation-2 {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.40), 0 2px 8px rgba(0, 0, 0, 0.20);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
 }
 
-/* Accessibility overrides */
+/* ==========================================================================
+   Accessibility Overrides
+   ========================================================================== */
+
 .a11y-text-large  { font-size: 112.5%; }
 .a11y-text-xlarge { font-size: 125%; }
 
@@ -63,8 +219,8 @@ body {
   --bg-primary:     #000000;
   --bg-secondary:   #0a0f14;
   --bg-tertiary:    #111820;
-  --border-default: rgba(240,246,252,0.30);
-  --border-subtle:  rgba(240,246,252,0.18);
+  --border-default: rgba(240, 246, 252, 0.35);
+  --border-subtle:  rgba(240, 246, 252, 0.22);
 }
 
 .a11y-reduce-motion *,
@@ -74,151 +230,4 @@ body {
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
-}
-
-@layer base {
-  :root {
-    /* macOS Light Mode - Soft whites and grays */
-    --background: 0 0% 98%;
-    --foreground: 220 9% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 9% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 9% 11%;
-    /* macOS Blue #007AFF */
-    --primary: 211 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    /* Soft gray backgrounds */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 220 9% 11%;
-    --muted: 210 10% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 210 10% 95%;
-    --accent-foreground: 220 9% 11%;
-    /* macOS Red for destructive actions */
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 0 0% 100%;
-    /* Subtle borders with transparency */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 211 100% 50%;
-    --chart-1: 211 100% 50%;
-    --chart-2: 142 71% 45%;
-    --chart-3: 262 83% 58%;
-    --chart-4: 291 64% 42%;
-    --chart-5: 24 100% 50%;
-    --radius: 0.75rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 220 9% 11%;
-    --sidebar-primary: 211 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 10% 95%;
-    --sidebar-accent-foreground: 220 9% 11%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 211 100% 50%;
-  }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
-}
-
-@layer utilities {
-  .animate-macos-fade-in {
-    animation: macos-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .animate-macos-slide-up {
-    animation: macos-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .animate-macos-scale-in {
-    animation: macos-scale-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .animate-delay-100 {
-    animation-delay: 100ms;
-  }
-  .animate-delay-200 {
-    animation-delay: 200ms;
-  }
-  .animate-delay-300 {
-    animation-delay: 300ms;
-  }
-  .animate-delay-400 {
-    animation-delay: 400ms;
-  }
-  .animate-delay-500 {
-    animation-delay: 500ms;
-  }
-  .animate-delay-700 {
-    animation-delay: 700ms;
-  }
-}
-
-@keyframes macos-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes macos-slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes macos-scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }

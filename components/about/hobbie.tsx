@@ -37,24 +37,6 @@ export default function Hobbie() {
                 style={{ borderColor: 'var(--border-default)' }}
             >
                 <div
-                    className="h-10 flex border-b transition-colors duration-300"
-                    style={{ borderColor: 'var(--border-default)' }}
-                >
-                    <div
-                        className="px-6 flex items-center border-r border-t-2 font-mono text-sm italic transition-colors duration-300"
-                        style={{
-                            backgroundColor: 'var(--bg-secondary)',
-                            borderColor: 'var(--border-default)',
-                            borderTopColor: '#FFA657',
-                            color: 'var(--text-primary)',
-                        }}
-                    >
-                        <span>hobbies.ts</span>
-                        <X className="w-3 h-3 ml-3 cursor-pointer" style={{ color: 'var(--text-muted)' }} />
-                    </div>
-                </div>
-
-                <div
                     className="flex-1 p-6 overflow-y-auto transition-colors duration-300"
                     style={{ backgroundColor: 'var(--bg-primary)' }}
                 >
@@ -159,7 +141,7 @@ export default function Hobbie() {
                     className="h-10 flex items-center px-4 border-b transition-colors duration-300"
                     style={{ borderColor: 'var(--border-default)' }}
                 >
-                    <span className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>// Hobbies preview</span>
+                    <span className="text-xs font-semibold tracking-tight uppercase" style={{ color: 'var(--text-secondary)' }}>Hobbies preview</span>
                 </div>
 
                 <motion.div
@@ -171,29 +153,30 @@ export default function Hobbie() {
                     {hobbies.map((hobby) => (
                         <motion.div
                             key={hobby.name}
-                            className="rounded-lg p-4 border transition-colors duration-300"
+                            className="rounded-2xl p-4 border transition-all duration-300 shadow-sm"
                             style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
                             variants={prefersReduced ? {} : fadeUp}
                             whileHover={prefersReduced ? {} : { y: -2 }}
+                            whileTap={prefersReduced ? {} : { scale: 0.98 }}
                             transition={{ duration: 0.2 }}
                         >
                             <div className="flex items-center gap-3 mb-2">
                                 <div
-                                    className="p-2 rounded-lg"
+                                    className="p-2 rounded-xl"
                                     style={{ backgroundColor: 'var(--bg-tertiary)' }}
                                 >
                                     <hobby.icon className="w-5 h-5" style={{ color: 'var(--ide-accent)' }} />
                                 </div>
-                                <h3 className="font-medium" style={{ color: 'var(--text-primary)' }}>{hobby.name}</h3>
+                                <h3 className="text-sm font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>{hobby.name}</h3>
                             </div>
-                            <p className="text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
+                            <p className="text-xs leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
                                 {hobby.description}
                             </p>
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1.5">
                                 {hobby.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="px-2 py-0.5 rounded text-[10px]"
+                                        className="px-2.5 py-0.5 rounded-full text-[11px] font-medium"
                                         style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
                                     >
                                         {tag}

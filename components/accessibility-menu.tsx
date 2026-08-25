@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion, type Variants } from 'framer-motion';
 import { Accessibility, X, Type, Contrast, Zap, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { appleSpring } from '@/lib/animations/variants';
 
 interface A11ySettings {
     fontSize: 'normal' | 'large' | 'xlarge';
@@ -66,21 +67,22 @@ export default function AccessibilityMenu() {
 
     if (!mounted) return null;
 
-    const glassPanel = isDark
-        ? {
-              background: 'rgba(22, 27, 34, 0.82)',
-              border: '1px solid rgba(240, 246, 252, 0.10)',
-              boxShadow: '0 24px 64px rgba(0,0,0,0.50), 0 4px 16px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.07)',
-          }
-        : {
-              background: 'rgba(246, 248, 250, 0.90)',
-              border: '1px solid rgba(1, 22, 39, 0.09)',
-              boxShadow: '0 24px 64px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.70)',
-          };
+    /*
+        Superfície do painel via TOKENS, não rgba hardcoded.
+        Antes usava `rgba(22,27,34,.82)` / `rgba(246,248,250,.90)` — a paleta GitHub antiga
+        (#161B22), que não bate com a slate macOS atual do site (--bg-secondary = #252526).
+        Era essa a origem da cor destoante.
 
-    const rowBorder = isDark ? 'rgba(240,246,252,0.05)' : 'rgba(1,22,39,0.06)';
-    const rowBg    = isDark ? 'rgba(240,246,252,0.02)' : 'rgba(1,22,39,0.02)';
-    const rowEdge  = isDark ? 'rgba(240,246,252,0.06)' : 'rgba(1,22,39,0.07)';
+        Também caiu o `backdrop-filter`: este painel é filho de <header>, que já tem
+        `backdrop-blur-xl`. Um ancestral com backdrop-filter vira o backdrop root, então o
+        blur daqui não amostrava a página — só deixava o conteúdo atravessar sem borrar
+        (era o código do editor aparecendo através do menu). Superfície opaca resolve e
+        garante contraste do texto.
+    */
+    const panelSurface = {
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-default)',
+    };
 
     const toggleRows: { key: 'highContrast' | 'reduceMotion'; label: string; desc: string; icon: React.ElementType }[] = [
         { key: 'highContrast', label: 'High Contrast', desc: 'Increase color contrast', icon: Contrast },
@@ -89,18 +91,40 @@ export default function AccessibilityMenu() {
 
     return (
         <div ref={containerRef} className="relative h-full flex items-center">
-            {/* Header trigger button */}
-            <motion.button
-                onClick={() => setOpen(v => !v)}
-                whileHover={animOff ? {} : { opacity: 0.75 }}
-                aria-label="Accessibility options"
-                aria-expanded={open}
-                aria-haspopup="dialog"
-                className="p-2 rounded-lg transition-colors"
-                style={{ color: open ? 'var(--text-primary)' : 'var(--text-secondary)' }}
-            >
-                <Accessibility className="w-4 h-4" />
-            </motion.button>
+            {/*
+                Trigger com a MESMA estilização dos itens do navbar (components/header.tsx):
+                container `glass-panel rounded-full p-1`, item `rounded-full` com as mesmas
+                métricas (py-1.5, ícone w-3.5) e pill de estado ativo por cima.
+                O pill NÃO usa `layoutId="headerNavPill"` de propósito — compartilhar o id faria
+                o indicador voar da nav até aqui ao abrir o menu.
+            */}
+            <div className="flex items-center p-1 rounded-full glass-panel">
+                <motion.button
+                    onClick={() => setOpen(v => !v)}
+                    whileTap={animOff ? {} : { scale: 0.96 }}
+                    transition={appleSpring}
+                    aria-label="Accessibility options"
+                    aria-expanded={open}
+                    aria-haspopup="dialog"
+                    title="Opções de acessibilidade"
+                    className="relative flex items-center px-3 py-1.5 rounded-full transition-colors duration-200 select-none cursor-pointer"
+                    style={{ color: open ? 'var(--text-primary)' : 'var(--text-secondary)' }}
+                >
+                    <AnimatePresence>
+                        {open && (
+                            <motion.span
+                                key="a11yPill"
+                                initial={animOff ? {} : { opacity: 0, scale: 0.9 }}
+                                animate={animOff ? {} : { opacity: 1, scale: 1 }}
+                                exit={animOff ? {} : { opacity: 0, scale: 0.9 }}
+                                transition={appleSpring}
+                                className="absolute inset-0 rounded-full bg-white/70 dark:bg-white/10 shadow-sm border border-white/30 dark:border-white/15"
+                            />
+                        )}
+                    </AnimatePresence>
+                    <Accessibility className="w-3.5 h-3.5 relative z-10 text-primary" />
+                </motion.button>
+            </div>
 
             {/* Dropdown panel */}
             <AnimatePresence>
@@ -114,18 +138,14 @@ export default function AccessibilityMenu() {
                         role="dialog"
                         aria-modal="true"
                         aria-label="Accessibility settings"
-                        className="absolute top-full right-0 mt-2 w-72 rounded-2xl p-5 z-50 origin-top-right"
-                        style={{
-                            backdropFilter: 'blur(48px) saturate(180%)',
-                            WebkitBackdropFilter: 'blur(48px) saturate(180%)',
-                            ...glassPanel,
-                        }}
+                        className="absolute top-full right-0 mt-2 w-72 rounded-2xl p-5 z-50 origin-top-right elevation-2"
+                        style={panelSurface}
                     >
                         {/* Panel header */}
                         <div className="flex items-center justify-between mb-5">
                             <div className="flex items-center gap-2">
                                 <Accessibility className="w-4 h-4" style={{ color: 'var(--ide-accent)' }} />
-                                <span className="text-sm font-medium font-mono" style={{ color: 'var(--text-primary)' }}>
+                                <span className="text-sm font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
                                     Accessibility
                                 </span>
                             </div>
@@ -140,7 +160,7 @@ export default function AccessibilityMenu() {
                                 {isDark
                                     ? <Moon className="w-3.5 h-3.5" style={{ color: 'var(--text-secondary)' }} />
                                     : <Sun className="w-3.5 h-3.5" style={{ color: 'var(--text-secondary)' }} />}
-                                <span className="text-xs font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                                <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                                     Theme
                                 </span>
                             </div>
@@ -157,20 +177,16 @@ export default function AccessibilityMenu() {
                                             whileHover={animOff ? {} : { scale: 1.03 }}
                                             whileTap={animOff ? {} : { scale: 0.97 }}
                                             aria-pressed={active}
-                                            className="flex items-center justify-center gap-2 py-2.5 rounded-xl transition-colors"
+                                            className="flex items-center justify-center gap-2 py-2.5 rounded-xl transition-colors font-medium text-xs tracking-tight"
                                             style={{
-                                                background: active
-                                                    ? 'rgba(56, 139, 253, 0.16)'
-                                                    : isDark ? 'rgba(240,246,252,0.04)' : 'rgba(1,22,39,0.04)',
+                                                background: active ? 'var(--accent-soft)' : 'var(--surface-subtle)',
                                                 border: '1px solid',
-                                                borderColor: active
-                                                    ? 'rgba(56, 139, 253, 0.35)'
-                                                    : rowEdge,
+                                                borderColor: active ? 'var(--accent-ring)' : 'var(--border-subtle)',
                                                 color: active ? 'var(--ide-accent)' : 'var(--text-secondary)',
                                             }}
                                         >
                                             <Icon className="w-3.5 h-3.5" />
-                                            <span className="text-xs">{label}</span>
+                                            <span>{label}</span>
                                         </motion.button>
                                     );
                                 })}
@@ -181,7 +197,7 @@ export default function AccessibilityMenu() {
                         <div className="mb-5">
                             <div className="flex items-center gap-1.5 mb-2.5">
                                 <Type className="w-3.5 h-3.5" style={{ color: 'var(--text-secondary)' }} />
-                                <span className="text-xs font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                                <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                                     Font Size
                                 </span>
                             </div>
@@ -201,11 +217,9 @@ export default function AccessibilityMenu() {
                                             aria-pressed={active}
                                             className="flex flex-col items-center py-2.5 rounded-xl transition-colors"
                                             style={{
-                                                background: active
-                                                    ? 'rgba(56, 139, 253, 0.16)'
-                                                    : isDark ? 'rgba(240,246,252,0.04)' : 'rgba(1,22,39,0.04)',
+                                                background: active ? 'var(--accent-soft)' : 'var(--surface-subtle)',
                                                 border: '1px solid',
-                                                borderColor: active ? 'rgba(56, 139, 253, 0.35)' : rowEdge,
+                                                borderColor: active ? 'var(--accent-ring)' : 'var(--border-subtle)',
                                                 color: active ? 'var(--ide-accent)' : 'var(--text-secondary)',
                                             }}
                                         >
@@ -229,7 +243,7 @@ export default function AccessibilityMenu() {
                         {/* Toggle rows */}
                         <div
                             className="rounded-xl overflow-hidden"
-                            style={{ border: `1px solid ${rowEdge}`, background: rowBg }}
+                            style={{ border: '1px solid var(--border-subtle)', background: 'var(--surface-subtle)' }}
                         >
                             {toggleRows.map(({ key, label, desc, icon: Icon }, idx) => {
                                 const active = settings[key];
@@ -237,7 +251,7 @@ export default function AccessibilityMenu() {
                                     <div
                                         key={key}
                                         className="flex items-center justify-between px-4 py-3"
-                                        style={{ borderTop: idx > 0 ? `1px solid ${rowBorder}` : undefined }}
+                                        style={{ borderTop: idx > 0 ? '1px solid var(--border-subtle)' : undefined }}
                                     >
                                         <div className="flex items-center gap-2.5">
                                             <Icon
@@ -259,7 +273,7 @@ export default function AccessibilityMenu() {
                                             aria-label={label}
                                             onClick={() => update(key, !active)}
                                             className="relative w-9 h-5 rounded-full flex-shrink-0 transition-colors"
-                                            style={{ background: active ? 'var(--ide-accent)' : 'rgba(140,149,159,0.3)' }}
+                                            style={{ background: active ? 'var(--ide-accent)' : 'var(--switch-track)' }}
                                         >
                                             <motion.span
                                                 layout
@@ -285,11 +299,12 @@ export default function AccessibilityMenu() {
                         <motion.button
                             onClick={() => setSettings(defaults)}
                             whileHover={animOff ? {} : { opacity: 0.8 }}
-                            className="w-full mt-3 py-2 rounded-xl text-xs font-mono"
+                            whileTap={animOff ? {} : { scale: 0.98 }}
+                            className="w-full mt-3 py-2 rounded-xl text-xs font-medium transition-colors"
                             style={{
-                                background: isDark ? 'rgba(240,246,252,0.03)' : 'rgba(1,22,39,0.03)',
-                                color: 'var(--text-muted)',
-                                border: `1px solid ${rowEdge}`,
+                                background: 'var(--surface-subtle)',
+                                color: 'var(--text-secondary)',
+                                border: '1px solid var(--border-subtle)',
                             }}
                         >
                             Reset to defaults

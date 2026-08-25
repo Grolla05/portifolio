@@ -3,324 +3,182 @@
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/felipe-grolla-freitas-projects/v0-professional-resume-page)
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2015-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Apple HIG Inspired](https://img.shields.io/badge/UI%2FUX-Apple%20HIG-0071e3?style=for-the-badge&logo=apple)](https://developer.apple.com/design/human-interface-guidelines/)
 
 ## 📋 Visão Geral
 
-Portfolio profissional moderno com design inspirado em aplicações nativas do macOS, desenvolvido com Next.js 15, React 19 e Tailwind CSS. A interface apresenta um sistema de design sofisticado com tema claro/escuro, efeitos glassmorphism e animações suaves.
+Portfolio profissional de alta fidelidade visual e interativa com design inspirado no macOS e nos princípios do **Apple Human Interface Guidelines (HIG)**, desenvolvido com Next.js 15, React 19, TypeScript e Tailwind CSS. A interface integra estética **Liquid Glass**, física de mola com **Framer Motion**, tipografia **San Francisco (SF Pro)** para elementos de UI e **SF Mono** estritamente para blocos de código.
 
-## ✨ Características Principais
+---
 
-### 🎨 Design System
+## ✨ Características Principais & Design System
 
-- **Tema Dual**: Modo claro e escuro com transições suaves
-- **Paleta de Cores**:
-  - Light Mode: Gradientes de slate (50-900)
-  - Dark Mode: Tons de azul profundo (#011627, #01243e)
-  - Accent Colors:
-    - Azul (#4D5BCE)
-    - Verde (#43D9AD)
-    - Coral (#E99287)
-- **Efeitos Visuais**:
-  - Glassmorphism com backdrop-blur
-  - Sombras sutis e elevações
-  - Gradientes radiais para profundidade
-  - Bordas arredondadas consistentes
+### 🎨 1. Apple Human Interface Guidelines (HIG) & Liquid Glass
+- **Tokens Autênticos Dark Mode macOS**: Paleta slate nativa (`#1e1e1e` base, `#252526` sidebar, `#323234` cards, `#0a84ff` Apple Blue accent e `#f5f5f7` Apple White) eliminando paletas genéricas.
+- **Glassmorphism & Materiais macOS**:
+  - Superfícies translúcidas com `backdrop-filter: blur(20px) saturate(180%)`.
+  - Bordas semi-transparentes com gradientes alfa sutis (`border-white/30` / `border-white/10`).
+  - Elevação e profundidade em camadas (`elevation-1`, `elevation-2`, `elevation-3`) com realce de luz especular (`box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08)`).
+  - Squircles contínuos com cantos generosos (`rounded-2xl`, `rounded-3xl`, `rounded-full`).
+- **Física de Mola (Spring Physics)**:
+  - Microinterações elásticas em todos os elementos táteis (`whileTap={{ scale: 0.96 }}` a `0.98}`).
+  - Variantes de mola Apple HIG (`appleSpring`: `{ type: 'spring', stiffness: 400, damping: 30, mass: 0.8 }`).
+  - Semáforos macOS interativos com glifos revelados no hover (`×`, `−`, `+`).
 
-### 🏠 Página Inicial (Home)
+### 🪟 2. Estrutura Desktop Unificada & Split Views Redimensionáveis
+- **Split Views macOS (`react-resizable-panels`)**:
+  - Divisores de painel finos (`w-[1px]`) com realce de foco/hover para `var(--ide-accent)` e alça central `GripVertical`.
+  - Redimensionamento suave com limites inteligentes (`minSize` e `maxSize`) nas páginas `/about`, `/projects` e `/contact`.
+  - Fallback fluido e responsivo para mobile e tablet.
 
-**Localização**: `app/page.tsx`
+### 🔍 3. Command Palette Global (`Cmd+K` Spotlight) & Atalhos Rápidos
+- **Spotlight Modal**: Acionamento por atalho de teclado `⌘K` / `Ctrl+K` ou pelo botão de busca no Header.
+- **Navegação Expressa por Teclado**:
+  - `⌘1`: Início / Home
+  - `⌘2`: Sobre / About
+  - `⌘3`: Projetos / Projects
+  - `⌘4`: Contato / Contact
+  - `⌘T`: Alternância dinâmica do tema Claro / Escuro
+- **Ações Rápidas & Busca**: Filtro de arquivos (`my-bio.md`, `hobbies.ts`, `Education.tsx`), cópia de e-mail e telefone, links para GitHub e LinkedIn.
 
-- **Hero Section**:
+### 👁️ 4. Quick Look (Espaço) e Navegação por Teclado em Projetos
+- **Barra de Espaço (`Space`)**: Focar um card de projeto e teclar Espaço abre a pré-visualização instantânea (Quick Look) do projeto.
+- **Escape (`Esc`)**: Fechamento rápido do modal de detalhes.
+- **Acessibilidade e Foco**: Suporte total a navegação sequencial por teclado (`Tab`, `Space`, `Enter`).
 
-  - Layout em duas colunas (conteúdo + snippets de código)
-  - Apresentação pessoal com tipografia hierárquica
-  - Link para GitHub com estilo de código
-  - Efeitos de gradiente de fundo animados
+### 🖱️ 5. Menus de Contexto Nativos & Tooltips Refinados
+- **Liquid Glass Context Menu**: Menus acionados com botão direito em blocos de código, abas e cards de projetos com atalhos de teclado macOS (`⌘C`, `⌘W`, `⌘↵`, `⌘⌫`).
+- **Tooltips macOS**: Cápsulas translúcidas com cantos suaves (`rounded-xl`), animações de entrada sutis e explicações de contexto em botões de ação e redes sociais.
 
-- **Code Snippets** (Lado Direito):
+### 🗂️ 6. Abas Concorrentes Reais & Eliminação de Elementos Inertes
+- **Remoção de Trilhos Inertes**: Removido o rail estático de 48px, proporcionando uma Source List macOS contínua e espaçosa.
+- **Gerenciador Multi-Aba**: Suporte para manter múltiplas abas abertas simultaneamente (`openTabs`), fechamento individual (`X`), indicador animado via Framer Motion e Empty State vítreo para quando não houver arquivos abertos.
 
-  - 3 janelas de código estilo macOS com traffic lights funcionais
-  - **SQL Query**: Demonstração de consulta com JOIN
-  - **Python Function**: Função de processamento de dados
-  - **JavaScript Function**: Função assíncrona com fetch
-  - Syntax highlighting customizado para cada linguagem
-  - Hover effects e transições suaves
+### 🔤 7. Tipografia Proporcional San Francisco (SF Pro)
+- **UI Chrome & Textos**: Tipografia padrão do macOS (`-apple-system`, `SF Pro Text`, `SF Pro Display`, `Inter`).
+- **Hierarquia de Pesos**:
+  - Títulos: Bold / Semibold com tracking levemente negativo (`tracking-tight`).
+  - Subtítulos e Labels: Medium (`font-medium`).
+  - Corpo de texto: Regular com altura de linha espaçada (`leading-relaxed`).
+- **Código**: A fonte `SF Mono` / `JetBrains Mono` é reservada com exclusividade para blocos `<pre>`, `<code>` e sintaxe.
 
-- **Social Links**:
-  - GitHub e LinkedIn no rodapé
-  - Ícones com hover states
-  - Username display (@Grolla05)
+### 🔔 8. Notificações & Feedback com Sonner
+- Substituição de caixas de diálogo nativas por toasts modernos (`sonner`).
+- Toasts visuais para envio de mensagens no formulário de contato e cópia de snippets de código.
 
-### 👤 Página Sobre (About)
+---
 
-**Localização**: `app/about/page.tsx`
+## 🧭 Páginas da Aplicação
 
-- **Sidebar Explorer**:
+### 🏠 1. Página Inicial (`app/page.tsx`)
+- **Hero Section**: Apresentação profissional com tipografia SF Pro e efeitos de gradiente sutis.
+- **Modais de Código Liquid Glass com Menu de Contexto**:
+  - 3 cards de demonstração (SQL Query, Python Function, JavaScript Function) com semáforos macOS, menu de contexto para cópia de código e tooltips.
 
-  - Estrutura de pastas colapsáveis
-  - 3 seções principais:
-    - **Bio** (`my-bio.md`): Informações pessoais
-    - **Hobbies** (`hobbies.ts`): Interesses e hobbies
-    - **Education** (`Education.tsx`): Formação acadêmica
-  - Seção de contatos com email e telefone
-  - Ícones específicos por tipo de arquivo (Markdown, TypeScript, React)
+### 👤 2. Página Sobre (`app/about/page.tsx`)
+- **Desktop Split View**: Divisor redimensionável entre a Source List e o editor multi-abas.
+- **File Explorer Sidebar**: Navegação em árvore de diretórios com menu de contexto em pastas e arquivos.
+- **Gerenciador de Abas Concorrentes**: Suporte para manter múltiplos arquivos abertos simultaneamente (`my-bio.md`, `hobbies.ts`, `Education.tsx`), fechar abas individuais e Empty State.
 
-- **Componentes**:
-  - `Bio`: Biografia pessoal
-  - `Hobbie`: Lista de hobbies e interesses
-  - `Education`: Timeline de educação
+### 💼 3. Página de Projetos (`app/projects/page.tsx`)
+- **Desktop Split View**: Divisor redimensionável entre a barra lateral de filtros e a grade de cards.
+- **Quick Look via Barra de Espaço (`Space`)**: Abertura rápida do modal de detalhes/README sem necessidade de clique do mouse.
+- **Cards de Projetos com ContextMenu**: Menu de contexto nativo com "Ver Detalhes", "Abrir no GitHub" (`⌘↵`) e "Copiar Link" (`⌘C`).
 
-### 💼 Página de Projetos (Projects)
+### 📧 4. Página de Contato (`app/contact/page.tsx`)
+- **Desktop 3-Pane Split View**: Divisores redimensionáveis entre Contatos, Formulário e Preview JavaScript.
+- **Formulário de Contato**: Inputs com foco refinado e integração com EmailJS.
+- **Live JavaScript Code Preview com ContextMenu**: Menu de contexto para cópia do snippet e limpeza de formulário.
 
-**Localização**: `app/projects/page.tsx`
+### ⚠️ 5. Página 404 (`app/not-found.tsx`)
+- **macOS Dialog / Alert Card**: Caixa de alerta inspirada no Finder com painel Liquid Glass (`glass-panel rounded-3xl elevation-3`), arte 404 em ASCII centralizada, semáforos interativos com status `404_NOT_FOUND` e botões de retorno rápido.
 
-- **Sistema de Filtros**:
+---
 
-  - Filtro por linguagens/tecnologias (14 opções)
-  - Ordenação por data (mais recentes/mais antigos)
-  - Checkboxes interativos com estados visuais
-  - Ícones de tecnologia com imagens customizadas
+## 🛠️ Stack Tecnológica
 
-- **Grid de Projetos**:
-  - Layout responsivo (1-3 colunas)
-  - 7 projetos destacados:
-    1. Simula Médias
-    2. Solar Points
-    3. Bot Discord V1
-    4. Arduino Projects
-    5. MIT 6.002.1x
-    6. CS50
-    7. Projeto Relógio de LED
-- **Cards de Projeto**:
+| Camada | Tecnologia |
+|---|---|
+| **Framework** | [Next.js 15 (App Router)](https://nextjs.org/) |
+| **Biblioteca UI** | [React 19](https://react.dev/) |
+| **Tipagem** | [TypeScript 5](https://www.typescriptlang.org/) |
+| **Estilização** | [Tailwind CSS](https://tailwindcss.com/) & Vanilla CSS Tokens |
+| **Animações** | [Framer Motion](https://www.framer.com/motion/) |
+| **Ícones** | [Lucide React](https://lucide.dev/) |
+| **Notificações** | [Sonner](https://sonner.emilkowal.ski/) |
+| **Testes** | [Vitest](https://vitest.dev/) & [Testing Library](https://testing-library.com/) |
 
-  - Header com número e slug
-  - Imagem placeholder com gradiente
-  - Ícone principal da tecnologia (center)
-  - Badges de tecnologias (top-right)
-  - Descrição completa
-  - Link para repositório GitHub
-  - Hover effects e transições
-
-- **Tecnologias Suportadas**:
-  - React, HTML5, Tailwind CSS
-  - JavaScript, Python, SQL
-  - C, C++, Arduino
-  - Next.js, Flask, Node.js, Vite
-  - Hardware
-
-### 📧 Página de Contato (Contact)
-
-**Localização**: `app/contact/page.tsx`
-
-- **Layout em 3 Colunas**:
-
-  1. **Sidebar**: Contatos e redes sociais
-  2. **Formulário Central**: Interface de envio de mensagens
-  3. **Code Preview**: Visualização do código em tempo real
-
-- **Formulário**:
-
-  - Campos: Nome, Email, Mensagem
-  - Integração com EmailJS
-  - Validação e feedback visual
-  - Botão de submit estilizado
-
-- **Code Preview**:
-
-  - Snippet JavaScript dinâmico
-  - Atualização em tempo real conforme digitação
-  - Numeração de linhas
-  - Syntax highlighting
-  - Botão de copiar código com feedback visual
-
-- **Sidebar de Contatos**:
-  - Email: felipegrolla@gmail.com
-  - Telefone: +55 (11) 99770-5370
-  - Links para YouTube, LinkedIn, Instagram
-
-### 🎯 Componentes Compartilhados
-
-**Sidebar de Ícones** (Todas as páginas):
-
-- Terminal icon
-- User icon (placeholder)
-- Gamepad icon
-- Posicionamento fixo à esquerda
-- Hover states
-
-**Header Tabs**:
-
-- Indicador de página/arquivo atual
-- Botões de fechar (decorativos)
-- Bordas consistentes
-
-## 🛠️ Stack Tecnológico
-
-### Core
-
-- **Next.js 15.2.4**: Framework React com App Router
-- **React 19**: Biblioteca UI
-- **TypeScript 5**: Tipagem estática
-- **Tailwind CSS 3.4**: Estilização utility-first
-
-### UI Components
-
-- **Radix UI**: Componentes acessíveis headless
-- **Lucide React**: Biblioteca de ícones
-- **next-themes**: Gerenciamento de temas
-
-### Funcionalidades
-
-- **EmailJS**: Envio de emails do formulário de contato
-- **React Hook Form**: Gerenciamento de formulários
-- **Zod**: Validação de schemas
-
-### Ferramentas
-
-- **class-variance-authority**: Variantes de componentes
-- **clsx & tailwind-merge**: Utilitários de className
-- **autoprefixer**: Prefixos CSS automáticos
+---
 
 ## 📁 Estrutura do Projeto
 
 ```
-v0-professional-resume-page/
+portifolio/
 ├── app/
-│   ├── about/
-│   │   └── page.tsx          # Página sobre
-│   ├── contact/
-│   │   └── page.tsx          # Página de contato
-│   ├── projects/
-│   │   └── page.tsx          # Página de projetos
-│   ├── layout.tsx            # Layout raiz
-│   ├── page.tsx              # Página inicial
-│   └── not-found.tsx         # Página 404
+│   ├── about/            # Página Sobre (Explorer + Bio + Hobbies + Education)
+│   ├── contact/          # Página de Contato (Formulário + Live Preview)
+│   ├── projects/         # Página de Projetos (Filtros + Grid + Modais)
+│   ├── globals.css       # Design System Tokens, Liquid Glass & Tipografia
+│   ├── layout.tsx        # Root Layout com Provedores e Menu de Acessibilidade
+│   ├── page.tsx          # Página Inicial com Code Snippets
+│   └── not-found.tsx     # Alerta 404 em estilo macOS Dialog
 ├── components/
-│   ├── about/
-│   │   ├── bio.tsx           # Componente de biografia
-│   │   ├── hobbie.tsx        # Componente de hobbies
-│   │   └── education.tsx     # Componente de educação
-│   └── ui/                   # Componentes UI reutilizáveis
-├── public/
-│   ├── language_icons/       # Ícones de tecnologias
-│   └── thumbnails/           # Imagens de projetos
-├── styles/
-│   └── globals.css           # Estilos globais
-└── tailwind.config.ts        # Configuração Tailwind
-
+│   ├── about/            # Componentes de Bio, Educação e Hobbies
+│   ├── projects/         # Modais de README e Repositório GitHub
+│   ├── accessibility-menu.tsx # Menu flutuante de acessibilidade e temas
+│   └── header.tsx        # Barra de navegação Liquid Glass
+├── lib/
+│   └── animations/       # Variantes de animação e constantes de mola
+├── refs/                 # Fonte da verdade para design tokens e regras
+├── tests/                # Suíte de testes automatizados (Vitest)
+├── CHANGES.md            # Histórico detalhado de alterações
+└── README.md             # Documentação do projeto
 ```
 
-## 🚀 Começando
+---
 
-### Pré-requisitos
+## 🚀 Como Executar Localmente
 
+### 1. Pré-requisitos
 - Node.js 18+
 - npm ou pnpm
 
-### Instalação
-
+### 2. Instalação e Execução
 ```bash
 # Clone o repositório
-git clone https://github.com/Grolla05/v0-professional-resume-page.git
+git clone https://github.com/Grolla05/portifolio.git
 
-# Entre no diretório
-cd v0-professional-resume-page
+# Acesse o diretório
+cd portifolio
 
 # Instale as dependências
 npm install
-# ou
-pnpm install
 
-# Execute o servidor de desenvolvimento
+# Inicie o servidor de desenvolvimento
 npm run dev
-# ou
-pnpm dev
 ```
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
-Abra [http://localhost:3000](http://localhost:3000) no navegador.
-
-### Build para Produção
-
+### 3. Execução de Testes
 ```bash
-npm run build
-npm start
+# Executar a suíte de testes unitários
+npx vitest run
+
+# Checagem estática de tipos
+npx tsc --noEmit
 ```
 
-## 🎨 Customização
-
-### Cores do Tema
-
-Edite `tailwind.config.ts` para customizar as cores:
-
-```typescript
-theme: {
-  extend: {
-    colors: {
-      // Suas cores customizadas
-    }
-  }
-}
-```
-
-### Conteúdo
-
-- **Projetos**: Edite o array `projects` em `app/projects/page.tsx`
-- **Bio**: Modifique `components/about/bio.tsx`
-- **Contato**: Atualize as informações em `app/contact/page.tsx`
-
-### EmailJS Setup
-
-1. Crie uma conta em [EmailJS](https://www.emailjs.com/)
-2. Configure um serviço de email
-3. Crie um template
-4. Atualize as credenciais em `app/contact/page.tsx`:
-
-```typescript
-emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", form.current, {
-  publicKey: "YOUR_PUBLIC_KEY",
-});
-```
-
-## 📱 Responsividade
-
-- **Mobile First**: Design otimizado para dispositivos móveis
-- **Breakpoints**:
-  - `sm`: 640px
-  - `md`: 768px
-  - `lg`: 1024px
-  - `xl`: 1280px
-  - `2xl`: 1536px
-
-## 🌐 Deploy
-
-### Vercel (Recomendado)
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Grolla05/v0-professional-resume-page)
-
-### Outras Plataformas
-
-O projeto pode ser deployado em qualquer plataforma que suporte Next.js:
-
-- Netlify
-- AWS Amplify
-- Railway
-- Render
+---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+Este projeto está sob a licença MIT.
+
+---
 
 ## 👤 Autor
 
 **Felipe Grolla**
-
 - GitHub: [@Grolla05](https://github.com/Grolla05)
 - LinkedIn: [felipegrolla](https://www.linkedin.com/in/felipegrolla/)
 - Email: fegrolla0210@gmail.com
-
-## 🙏 Agradecimentos
-
-- Design inspirado em aplicações nativas do macOS
-- Ícones por [Lucide](https://lucide.dev/)
-- UI Components por [Radix UI](https://www.radix-ui.com/)
-- Desenvolvido com [v0.dev](https://v0.dev/)

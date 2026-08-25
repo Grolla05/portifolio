@@ -1,190 +1,157 @@
-import React from 'react';
-import Link from 'next/link';
-import Header from '@/components/header';
+"use client";
 
-export default function NotFound() {
-    return (
-        <div className="min-h-screen bg-gradient-to-b from-[#011627] via-[#011221] to-[#01111d] flex items-center justify-center px-6 py-12">
-            <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+import React, { useState } from "react";
+import Link from "next/link";
+import { Home, FolderGit2 } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  scaleIn,
+  fadeUp,
+  staggerContainer,
+  appleSpring,
+} from "@/lib/animations/variants";
 
-                {/* Left side - 404 ASCII Art */}
-                <div className="flex justify-center lg:justify-end order-2 lg:order-1">
-                    <pre className="text-[#607B96] font-mono leading-tight" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
-                        {`██╗  ██╗ ██████╗ ██╗  ██╗
+const ascii404 = `██╗  ██╗ ██████╗ ██╗  ██╗
 ██║  ██║██╔═████╗██║  ██║
 ███████║██║██╔██║███████║
 ╚════██║████╔╝██║╚════██║
      ██║╚██████╔╝     ██║
-     ╚═╝ ╚═════╝      ╚═╝`}
-                    </pre>
-                </div>
+     ╚═╝ ╚═════╝      ╚═╝`;
 
-                {/* Right side - Code Block */}
-                <div className="space-y-6 order-1 lg:order-2">
-                    <div className="bg-[#011221] rounded-lg border border-[#1E2D3D] overflow-hidden">
-                        {/* Code content */}
-                        <div className="p-6 font-mono text-sm lg:text-base">
-                            <div className="space-y-1">
-                                {/* Line 1 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">1</span>
-                                    <div>
-                                        <span className="text-[#C792EA]">const</span>
-                                        <span className="text-white"> page = </span>
-                                        <span className="text-[#82AAFF]">findPage</span>
-                                        <span className="text-white">(</span>
-                                        <span className="text-[#C3E88D]">'you-were-looking-for'</span>
-                                        <span className="text-white">);</span>
-                                    </div>
-                                </div>
+function TrafficLights() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      className="flex items-center gap-1.5 cursor-pointer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm border border-black/10 flex items-center justify-center text-[8px] font-bold text-black/60 leading-none select-none">
+        <span className={hovered ? "opacity-100" : "opacity-0"}>×</span>
+      </div>
+      <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm border border-black/10 flex items-center justify-center text-[8px] font-bold text-black/60 leading-none select-none">
+        <span className={hovered ? "opacity-100" : "opacity-0"}>−</span>
+      </div>
+      <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm border border-black/10 flex items-center justify-center text-[7px] font-bold text-black/60 leading-none select-none">
+        <span className={hovered ? "opacity-100" : "opacity-0"}>+</span>
+      </div>
+    </div>
+  );
+}
 
-                                {/* Line 2 - empty */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">2</span>
-                                </div>
+export default function NotFound() {
+  const prefersReduced = useReducedMotion();
 
-                                {/* Line 3 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">3</span>
-                                    <div>
-                                        <span className="text-[#C792EA]">if</span>
-                                        <span className="text-white"> (!page) {'{'}</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 4 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">4</span>
-                                    <div className="pl-4">
-                                        <span className="text-white">console.</span>
-                                        <span className="text-[#82AAFF]">log</span>
-                                        <span className="text-white">(</span>
-                                        <span className="text-[#C3E88D]">"Oops! Looks like you took a wrong turn in the codebase."</span>
-                                        <span className="text-white">);</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 5 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">5</span>
-                                    <div className="pl-4">
-                                        <span className="text-white">console.</span>
-                                        <span className="text-[#82AAFF]">log</span>
-                                        <span className="text-white">(</span>
-                                        <span className="text-[#C3E88D]">"But hey, since you're here..."</span>
-                                        <span className="text-white">);</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 6 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">6</span>
-                                    <div className="pl-4">
-                                        <span className="text-white">console.</span>
-                                        <span className="text-[#82AAFF]">log</span>
-                                        <span className="text-white">(</span>
-                                        <span className="text-[#C3E88D]">"🔙 Go back to the homepage and explore more cool stuff!"</span>
-                                        <span className="text-white">);</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 7 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">7</span>
-                                    <div className="pl-4">
-                                        <span className="text-[#C792EA]">throw new</span>
-                                        <span className="text-white"> </span>
-                                        <span className="text-[#FFCB6B]">Error</span>
-                                        <span className="text-white">(</span>
-                                        <span className="text-[#C3E88D]">"404: PageNotFoundError 😢"</span>
-                                        <span className="text-white">);</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 8 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">8</span>
-                                    <div>
-                                        <span className="text-white">{'}'}</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 9 - empty */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">9</span>
-                                </div>
-
-                                {/* Line 10 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">10</span>
-                                    <div>
-                                        <span className="text-[#607B96]">/* Suggestions:</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 11 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">11</span>
-                                    <div>
-                                        <span className="text-[#607B96]"> * - Check the URL for typos</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 12 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">12</span>
-                                    <div>
-                                        <span className="text-[#607B96]"> * - Use the site navigation</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 13 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">13</span>
-                                    <div>
-                                        <span className="text-[#607B96]"> * - Or hit CMD+Z in real life 😊</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 14 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">14</span>
-                                    <div>
-                                        <span className="text-[#607B96]"> */</span>
-                                    </div>
-                                </div>
-
-                                {/* Line 15 - empty */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">15</span>
-                                </div>
-
-                                {/* Line 16 */}
-                                <div className="flex">
-                                    <span className="text-[#607B96] select-none w-12 text-right pr-4">16</span>
-                                    <div>
-                                        <span className="text-[#82AAFF]">redirect</span>
-                                        <span className="text-white">(</span>
-                                        <span className="text-[#C3E88D]">'home'</span>
-                                        <span className="text-white">);</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Back to Home Button */}
-                    <div className="flex justify-start">
-                        <Link
-                            href="/"
-                            className="px-6 py-3 bg-[#1C2B3A] hover:bg-[#263B4A] border border-[#1E2D3D] text-white rounded-lg font-mono text-sm transition-all duration-300 hover:border-[#607B96] inline-flex items-center gap-2"
-                        >
-                            <span>←</span>
-                            <span>Back to Homepage</span>
-                        </Link>
-                    </div>
-                </div>
+  return (
+    /*
+        Descontar a altura do header (h-16 = 4rem): `app/layout.tsx` já renderiza <Header />
+        acima de {children}, e ele ocupa espaço no fluxo. Com `min-h-screen` aqui o body ficava
+        100vh + 64px e a página nascia com barra de rolagem à toa.
+        O <Header /> local também foi removido — era um SEGUNDO header empilhado sob o do layout.
+    */
+    <div
+      className="min-h-[calc(100vh-4rem)] w-full flex flex-col transition-colors duration-300"
+      style={{
+        backgroundColor: "var(--bg-primary)",
+        color: "var(--text-primary)",
+      }}
+    >
+      <main className="flex-1 flex items-center justify-center p-6 md:p-12 relative overflow-hidden">
+        <motion.div
+          className="w-full max-w-2xl glass-panel rounded-3xl p-8 md:p-12 elevation-3 border border-white/30 dark:border-white/10 relative overflow-hidden text-center"
+          variants={prefersReduced ? {} : scaleIn}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Window Chrome Header */}
+          <div className="flex items-center justify-between pb-6 border-b border-black/5 dark:border-white/10">
+            <div className="flex items-center gap-3">
+              <TrafficLights />
+              <span className="text-xs font-semibold tracking-tight text-foreground/80 uppercase">
+                404
+              </span>
             </div>
-        </div>
-    );
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
+              <span>status: 404_NOT_FOUND</span>
+            </div>
+          </div>
+
+          <motion.div
+            className="mt-8 space-y-6 flex flex-col items-center"
+            variants={prefersReduced ? {} : staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* ASCII 404 Art Centered */}
+            <motion.div
+              className="py-4 px-6 rounded-2xl bg-black/5 dark:bg-black/30 border border-black/5 dark:border-white/10 flex items-center justify-center shadow-inner"
+              variants={prefersReduced ? {} : fadeUp}
+            >
+              {/* aria-hidden: leitores de tela leem o ASCII como ruído; o
+                  código 404 é anunciado pelo <h1> abaixo */}
+              <pre
+                aria-hidden="true"
+                className="font-mono font-bold leading-tight select-none text-primary"
+                style={{ fontSize: "clamp(1rem, 2.8vw, 1.75rem)" }}
+              >
+                {ascii404}
+              </pre>
+            </motion.div>
+
+            {/* Title & Description */}
+            <motion.div
+              className="space-y-2 max-w-md"
+              variants={prefersReduced ? {} : fadeUp}
+            >
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                {/* sr-only: nome acessível do heading inclui o código 404,
+                    já que a arte ASCII está oculta para leitores de tela */}
+                <span className="sr-only">404 — </span>
+                Página Não Encontrada
+              </h1>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                O arquivo ou rota que você tentou acessar não foi localizado no
+                diretório do sistema.
+              </p>
+            </motion.div>
+
+            {/* Actions */}
+            <motion.div
+              className="pt-2 flex flex-wrap items-center justify-center gap-3"
+              variants={prefersReduced ? {} : fadeUp}
+            >
+              <motion.div
+                whileHover={prefersReduced ? {} : { scale: 1.02 }}
+                whileTap={prefersReduced ? {} : { scale: 0.97 }}
+                transition={appleSpring}
+              >
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-semibold tracking-tight bg-primary text-primary-foreground shadow-sm hover:opacity-95 transition-opacity"
+                >
+                  <Home className="w-4 h-4" />
+                  <span>Voltar ao Início</span>
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={prefersReduced ? {} : { scale: 1.02 }}
+                whileTap={prefersReduced ? {} : { scale: 0.97 }}
+                transition={appleSpring}
+              >
+                <Link
+                  href="/projects"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold tracking-tight glass-pill transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  <FolderGit2 className="w-4 h-4 text-primary" />
+                  <span>Ver Projetos</span>
+                </Link>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </main>
+    </div>
+  );
 }
