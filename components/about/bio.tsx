@@ -1,5 +1,8 @@
 'use client';
 
+import { FolderGit2, FileDown, Mail } from 'lucide-react';
+import { CtaGroup } from '@/components/cta-group';
+
 /*
     CENTER - CODE EDITOR
     Painel direito "Code snippet showcase" removido: o editor agora ocupa toda a
@@ -39,6 +42,37 @@ export default function Bio() {
                         <span><span className="mr-8">*</span>officia deserunt mollit anim id est laborum.</span>
                         <span>*/</span>
                     </div>
+                </div>
+
+                {/*
+                    Fecho do arquivo de bio: quem termina de ler sobre mim precisa de um
+                    próximo passo. Antes o conteúdo acabava no fim do bloco de comentário,
+                    sem nenhuma saída.
+                */}
+                <div
+                    className="mt-10 pt-6 border-t"
+                    style={{ borderColor: 'var(--border-subtle)' }}
+                >
+                    <p
+                        className="font-mono text-xs mb-4"
+                        style={{ color: 'var(--syntax-comment)' }}
+                    >
+                        {'// próximos passos'}
+                    </p>
+                    <CtaGroup
+                        animateOnMount={false}
+                        actions={[
+                            { href: '/projects', label: 'Ver meus projetos', icon: FolderGit2, variant: 'primary' },
+                            {
+                                href: '/api/cv',
+                                label: 'Baixar CV',
+                                icon: FileDown,
+                                external: true,
+                                ariaLabel: 'Baixar currículo em PDF (abre em nova aba)',
+                            },
+                            { href: '/contact', label: 'Falar comigo', icon: Mail },
+                        ]}
+                    />
                 </div>
             </div>
         </main>
