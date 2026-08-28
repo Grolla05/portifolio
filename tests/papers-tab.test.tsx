@@ -127,7 +127,12 @@ describe('Página Sobre — pasta research', () => {
 
     fireEvent.click(screen.getAllByText(REGISTERED)[0]);
 
-    const viewer = await screen.findByTestId('pdf-viewer');
+    /*
+        Timeout acima do padrão (1s): o visualizador entra por `next/dynamic`, e resolver
+        o import sob carga paralela do vitest passa de um segundo com facilidade — o teste
+        falhava de forma intermitente só quando a suíte inteira rodava junto.
+    */
+    const viewer = await screen.findByTestId('pdf-viewer', {}, { timeout: 5000 });
     expect(viewer.getAttribute('data-url')).toBe(
       '/papers/Artigo%20Qualifica%C3%A7%C3%A3o%20Formal%20de%20PSR.pdf',
     );

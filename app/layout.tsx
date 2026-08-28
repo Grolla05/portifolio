@@ -4,8 +4,11 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import Header from '@/components/header';
 import { CommandPalette } from '@/components/command-palette';
+import { StatusBar } from '@/components/status-bar';
+import { TerminalPanel } from '@/components/terminal/terminal-panel';
 import { Toaster } from '@/components/ui/sonner';
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SOCIAL } from '@/lib/site';
+import { readPapers } from '@/lib/papers-server';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -96,6 +99,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  /*
+      A lista de artigos é varrida aqui, no layout (Server Component), e não dentro do
+      terminal: a varredura usa `fs`, e o terminal é client. Como o layout é estático,
+      isso acontece uma vez no build.
+  */
+  const papers = readPapers();
+
   return (
     /*
         lang="pt-BR": todo o conteúdo do site é português. Com lang="en" (valor anterior)
@@ -113,6 +123,8 @@ export default function RootLayout({
           <Header />
           {children}
           <CommandPalette />
+          <TerminalPanel papers={papers} />
+          <StatusBar />
           <Toaster />
         </ThemeProvider>
       </body>

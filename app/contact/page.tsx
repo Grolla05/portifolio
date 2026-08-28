@@ -40,6 +40,7 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { useIsBelow } from "@/hooks/use-mobile";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
 function LinkedinSVG({ className }: { className?: string }) {
   return (
@@ -135,6 +136,7 @@ export default function ContactPage() {
   const prefersReduced = useReducedMotion();
   // Breakpoint `lg` (1024px): abaixo disso o layout de 3 painéis vira pilha vertical.
   const isCompact = useIsBelow(1024);
+  const sidebarPanelRef = useSidebarToggle();
   const form = useRef<HTMLFormElement>(null);
 
   const toggleFolder = (folder: keyof typeof openFolders) => {
@@ -624,7 +626,7 @@ export default function ContactPage() {
             Abaixo de `lg` a pilha precisa crescer, então lá continua `min-h-`.
         */
         className={`w-full flex flex-col transition-colors duration-300 ${
-          isCompact ? "min-h-[calc(100vh-4rem)]" : "h-[calc(100vh-4rem)]"
+          isCompact ? "min-h-[calc(100vh-var(--chrome-height))]" : "h-[calc(100vh-var(--chrome-height))]"
         }`}
         style={{ backgroundColor: "var(--bg-primary)" }}
       >
@@ -647,12 +649,16 @@ export default function ContactPage() {
             <ResizablePanelGroup
               direction="horizontal"
               className="w-full h-full"
+              autoSaveId="contact-layout"
             >
               <ResizablePanel
+                ref={sidebarPanelRef}
                 defaultSize={18}
                 minSize={14}
                 maxSize={28}
-                className="min-w-[200px]"
+                collapsible
+                collapsedSize={0}
+                className="min-w-0"
               >
                 {renderSidebar()}
               </ResizablePanel>

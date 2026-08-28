@@ -17,6 +17,8 @@ import {
   Phone,
   Search,
   Sparkles,
+  TerminalSquare,
+  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -133,6 +135,25 @@ export function CommandPalette() {
 
         {/* Quick Actions */}
         <CommandGroup heading="Ações Rápidas">
+          <CommandItem
+            onSelect={() =>
+              runCommand(() =>
+                window.dispatchEvent(new CustomEvent("portfolio:toggle-terminal")),
+              )
+            }
+          >
+            <TerminalSquare className="mr-2 h-4 w-4 text-[var(--ide-accent)]" />
+            <span>Abrir Terminal Integrado</span>
+            <CommandShortcut>Ctrl+`</CommandShortcut>
+          </CommandItem>
+
+          <CommandItem
+            onSelect={() => runCommand(() => window.open("/api/cv", "_blank"))}
+          >
+            <FileDown className="mr-2 h-4 w-4 text-emerald-500" />
+            <span>Baixar Currículo (PDF)</span>
+          </CommandItem>
+
           <CommandItem
             onSelect={() =>
               runCommand(() => {

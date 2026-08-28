@@ -39,6 +39,7 @@ import Education from '@/components/about/education';
 import Papers from '@/components/about/papers';
 import { FileTreeFolder, type TreeFile } from '@/components/about/file-tree-folder';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSidebarToggle } from '@/hooks/use-sidebar-toggle';
 import { type Paper } from '@/lib/papers';
 
 interface FileInfo {
@@ -132,6 +133,7 @@ export default function AboutView({ papers }: AboutViewProps) {
     });
     const prefersReduced = useReducedMotion();
     const isMobile = useIsMobile();
+    const sidebarPanelRef = useSidebarToggle();
 
     const toggleFolder = (folder: string) => {
         setOpenFolders(prev => ({
@@ -447,7 +449,7 @@ export default function AboutView({ papers }: AboutViewProps) {
                     No mobile a pilha precisa crescer, então lá continua `min-h-`.
                 */
                 className={`w-full flex flex-col transition-colors duration-300 ${
-                    isMobile ? 'min-h-[calc(100vh-4rem)]' : 'h-[calc(100vh-4rem)]'
+                    isMobile ? 'min-h-[calc(100vh-var(--chrome-height))]' : 'h-[calc(100vh-var(--chrome-height))]'
                 }`}
                 style={{ backgroundColor: 'var(--bg-primary)' }}
             >
@@ -468,8 +470,25 @@ export default function AboutView({ papers }: AboutViewProps) {
                 ) : (
                     /* Desktop: split view redimensionável — `min-h-0` deixa o filho encolher dentro do flex */
                     <div className="flex flex-1 min-h-0 w-full">
-                        <ResizablePanelGroup direction="horizontal" className="w-full h-full">
-                            <ResizablePanel defaultSize={20} minSize={14} maxSize={35} className="min-w-[200px]">
+                        {/*
+                            `autoSaveId` guarda a largura no localStorage, então o layout
+                            ajustado pelo usuário sobrevive à próxima visita.
+                            `collapsible` + ref habilitam o ⌘B, como no VS Code.
+                        */}
+                        <ResizablePanelGroup
+                            direction="horizontal"
+                            className="w-full h-full"
+                            autoSaveId="about-layout"
+                        >
+                            <ResizablePanel
+                                ref={sidebarPanelRef}
+                                defaultSize={20}
+                                minSize={14}
+                                maxSize={35}
+                                collapsible
+                                collapsedSize={0}
+                                className="min-w-0 data-[panel-size='0.0']:min-w-0"
+                            >
                                 {renderSidebar()}
                             </ResizablePanel>
                             <ResizableHandle withHandle />

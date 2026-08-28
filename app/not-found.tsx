@@ -50,7 +50,7 @@ export default function NotFound() {
         O <Header /> local também foi removido — era um SEGUNDO header empilhado sob o do layout.
     */
     <div
-      className="min-h-[calc(100vh-4rem)] w-full flex flex-col transition-colors duration-300"
+      className="min-h-[calc(100vh-var(--chrome-height))] w-full flex flex-col transition-colors duration-300"
       style={{
         backgroundColor: "var(--bg-primary)",
         color: "var(--text-primary)",

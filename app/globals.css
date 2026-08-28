@@ -51,6 +51,18 @@
   --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
 
+  /*
+      Altura do "chrome" da janela — header + status bar — descontada do viewport
+      pelas páginas que ocupam a tela inteira.
+
+      Existe como variável porque o valor estava repetido como `calc(100vh-4rem)` em seis
+      lugares; ao adicionar a status bar, cada cópia esquecida viraria uma página com
+      barra de rolagem de 24px. Mexeu na altura do header ou da status bar, mexe aqui.
+  */
+  --header-height: 4rem;   /* components/header.tsx — h-16 */
+  --status-bar-height: 1.5rem; /* components/status-bar.tsx — h-6 */
+  --chrome-height: calc(var(--header-height) + var(--status-bar-height));
+
   /* Tailwind / Shadcn semantic variables */
   --background: 210 20% 98%;
   --foreground: 220 15% 10%;
