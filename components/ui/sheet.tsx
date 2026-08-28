@@ -51,14 +51,21 @@ const sheetVariants = cva(
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-    VariantProps<typeof sheetVariants> {}
+    VariantProps<typeof sheetVariants> {
+  /*
+      O overlay padrao (bg-black/80) e opaco demais para a estetica de vidro do site:
+      apagava o conteudo atras do drawer em vez de desfoca-lo. Como o overlay e
+      renderizado aqui dentro, sem esta prop nao ha como reestiliza-lo do ponto de uso.
+  */
+  overlayClassName?: string
+}
 
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
+>(({ side = "right", className, overlayClassName, children, ...props }, ref) => (
   <SheetPortal>
-    <SheetOverlay />
+    <SheetOverlay className={overlayClassName} />
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { GITHUB_USER } from '@/lib/site';
 import type { RepoProject } from '@/lib/projects';
 import { humanizeRepoName } from '@/lib/projects';
+import { githubHeaders } from '@/lib/github';
 
 /*
     Fonte única dos projetos exibidos em /projects.
@@ -46,17 +47,6 @@ interface GitHubRepo {
 }
 
 const REVALIDATE_SECONDS = 3600;
-
-function githubHeaders(): HeadersInit {
-  const headers: HeadersInit = {
-    Accept: 'application/vnd.github+json',
-    'User-Agent': 'portfolio-app',
-  };
-  if (process.env.GITHUB_TOKEN) {
-    headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
-  }
-  return headers;
-}
 
 /**
  * Busca o breakdown de linguagens de um repositório, em bytes.
