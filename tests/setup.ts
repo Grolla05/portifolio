@@ -15,3 +15,29 @@ if (typeof window !== 'undefined' && !window.matchMedia) {
     dispatchEvent: () => false,
   })) as unknown as typeof window.matchMedia;
 }
+
+// jsdom também não implementa IntersectionObserver. O `whileInView` do framer-motion
+// (usado no bloco de CTA no fim de /projects) o instancia no mount, então sem este stub
+// qualquer teste que renderize a página estoura com "IntersectionObserver is not defined".
+if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
+  class IntersectionObserverStub {
+    readonly root = null;
+    readonly rootMargin = '';
+    readonly thresholds: ReadonlyArray<number> = [];
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  }
+
+  /*
+      Atribuição via `Record<string, unknown>`: o operador `in` do guard acima estreita
+      `window` para `never`, então acessar a propriedade pelo tipo original não compila.
+  */
+  (window as unknown as Record<string, unknown>).IntersectionObserver =
+    IntersectionObserverStub;
+  (globalThis as unknown as Record<string, unknown>).IntersectionObserver =
+    IntersectionObserverStub;
+}

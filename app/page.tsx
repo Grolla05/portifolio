@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Github, Linkedin, Copy, ExternalLink, Code2 } from 'lucide-react';
+import { Github, Linkedin, Copy, ExternalLink, Code2, FolderGit2, FileDown, Mail } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { fadeUp, fadeIn, scaleIn, staggerContainer, appleSpring } from '@/lib/animations/variants';
 import { toast } from 'sonner';
+import { CtaGroup } from '@/components/cta-group';
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -107,6 +108,28 @@ export default function ProfilePage() {
                   <span style={{ color: 'var(--syntax-type)' }}>Desenvolvedor de Software</span>
                 </motion.h2>
               </div>
+
+              {/*
+                  CTA principal.
+                  A home não tinha nenhuma chamada para ação: quem chegava lia o nome e o
+                  cargo e ficava sem próximo passo — os únicos links eram os ícones sociais
+                  no rodapé da tela. Estes três cobrem as três intenções reais de quem
+                  visita um portfólio: ver o trabalho, levar o currículo, falar comigo.
+              */}
+              <CtaGroup
+                className="pt-2"
+                actions={[
+                  { href: '/projects', label: 'Ver meus projetos', icon: FolderGit2, variant: 'primary' },
+                  {
+                    href: '/api/cv',
+                    label: 'Baixar CV',
+                    icon: FileDown,
+                    external: true,
+                    ariaLabel: 'Baixar currículo em PDF (abre em nova aba)',
+                  },
+                  { href: '/contact', label: 'Falar comigo', icon: Mail },
+                ]}
+              />
 
               {/* Code-style comments */}
               <motion.div
