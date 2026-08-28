@@ -48,6 +48,7 @@ import { RepoModal } from "@/components/projects/repo-modal";
 import { LanguageIcon } from "@/components/projects/language-icon";
 import { CtaGroup } from "@/components/cta-group";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useProjects } from "@/hooks/use-projects";
 import {
   type RepoProject,
@@ -80,6 +81,7 @@ export default function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState<RepoProject | null>(null);
   const prefersReduced = useReducedMotion();
   const isMobile = useIsMobile();
+  const sidebarPanelRef = useSidebarToggle();
 
   const languages = useMemo(() => collectLanguages(projects), [projects]);
 
@@ -679,7 +681,7 @@ export default function ProjectsPage() {
             No mobile a pilha precisa crescer, então lá continua `min-h-`.
         */
         className={`w-full flex flex-col transition-colors duration-300 ${
-          isMobile ? "min-h-[calc(100vh-4rem)]" : "h-[calc(100vh-4rem)]"
+          isMobile ? "min-h-[calc(100vh-var(--chrome-height))]" : "h-[calc(100vh-var(--chrome-height))]"
         }`}
         style={{ backgroundColor: "var(--bg-primary)" }}
       >
@@ -701,7 +703,15 @@ export default function ProjectsPage() {
               className="w-full h-full"
               autoSaveId="projects-layout"
             >
-              <ResizablePanel defaultSize={20} minSize={14} maxSize={32} className="min-w-[200px]">
+              <ResizablePanel
+                ref={sidebarPanelRef}
+                defaultSize={20}
+                minSize={14}
+                maxSize={32}
+                collapsible
+                collapsedSize={0}
+                className="min-w-0"
+              >
                 {renderSidebar()}
               </ResizablePanel>
               <ResizableHandle withHandle />
