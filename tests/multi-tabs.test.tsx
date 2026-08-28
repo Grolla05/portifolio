@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import AboutPage from '@/app/about/page';
+import AboutView from '@/components/about/about-view';
 
 describe('About Page — Concurrent Tabs & Clean macOS Sidebar', () => {
   it('should not contain the static inerte 48px activity bar (terminal/gamepad dummy icons)', () => {
-    const { container } = render(<AboutPage />);
+    const { container } = render(<AboutView papers={[]} />);
     
     // Check that dummy 48px aside with static items is removed
     const w12Aside = container.querySelector('aside.w-12');
@@ -13,7 +13,7 @@ describe('About Page — Concurrent Tabs & Clean macOS Sidebar', () => {
   });
 
   it('should render the active tab in the editor tab bar and allow opening multiple tabs', () => {
-    render(<AboutPage />);
+    render(<AboutView papers={[]} />);
     
     // Initial tab is my-bio.md (in sidebar and tab bar)
     expect(screen.getAllByText('my-bio.md').length).toBeGreaterThanOrEqual(1);
@@ -27,7 +27,7 @@ describe('About Page — Concurrent Tabs & Clean macOS Sidebar', () => {
   });
 
   it('should allow closing a tab and show empty state when all tabs are closed', () => {
-    render(<AboutPage />);
+    render(<AboutView papers={[]} />);
 
     // Find the close button for the initial tab (my-bio.md)
     const closeBtn = screen.getAllByLabelText(/Fechar aba my-bio\.md/i)[0];
