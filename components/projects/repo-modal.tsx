@@ -8,16 +8,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import type { Project } from './project-modal';
-
-function parseGitHubUrl(url: string): { owner: string; repo: string; path?: string } | null {
-    const treeMatch = url.match(/github\.com\/([^/]+)\/([^/]+)\/tree\/[^/]+\/(.+)/);
-    if (treeMatch) {
-        return { owner: treeMatch[1], repo: treeMatch[2], path: decodeURIComponent(treeMatch[3]) };
-    }
-    const repoMatch = url.match(/github\.com\/([^/]+)\/([^/?#]+)/);
-    if (!repoMatch) return null;
-    return { owner: repoMatch[1], repo: repoMatch[2] };
-}
+import { parseGitHubUrl } from '@/lib/github-url';
 
 interface FileItem {
     name: string;
@@ -41,8 +32,8 @@ function getFileInfo(name: string): { lang: string; color: string } {
     const map: Record<string, { lang: string; color: string }> = {
         js:   { lang: 'JS',   color: 'var(--syntax-type)' },
         jsx:  { lang: 'JSX',  color: 'var(--syntax-type)' },
-        ts:   { lang: 'TS',   color: 'var(--ide-accent)' },
-        tsx:  { lang: 'TSX',  color: 'var(--ide-accent)' },
+        ts:   { lang: 'TS',   color: 'var(--ide-accent-text)' },
+        tsx:  { lang: 'TSX',  color: 'var(--ide-accent-text)' },
         py:   { lang: 'PY',   color: 'var(--syntax-string)' },
         c:    { lang: 'C',    color: 'var(--accent-purple)' },
         cpp:  { lang: 'C++',  color: 'var(--accent-purple)' },
@@ -58,7 +49,7 @@ function getFileInfo(name: string): { lang: string; color: string } {
         yaml: { lang: 'YAML', color: 'var(--syntax-type)' },
         txt:  { lang: 'TXT',  color: 'var(--text-muted)' },
         rs:   { lang: 'RS',   color: 'var(--syntax-keyword)' },
-        go:   { lang: 'GO',   color: 'var(--ide-accent)' },
+        go:   { lang: 'GO',   color: 'var(--ide-accent-text)' },
         sql:  { lang: 'SQL',  color: 'var(--syntax-string)' },
         env:  { lang: 'ENV',  color: 'var(--syntax-keyword)' },
         toml: { lang: 'TOML', color: 'var(--syntax-type)' },
@@ -138,7 +129,7 @@ function TreeView({
                         onClick={() => isDir ? onNavigate(item.path) : (!binary && onOpenFile(item))}
                         disabled={binary}
                         className="w-full flex items-center gap-3 px-6 py-2 text-left transition-colors hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={{ color: isDir ? 'var(--ide-accent)' : 'var(--text-secondary)' }}
+                        style={{ color: isDir ? 'var(--ide-accent-text)' : 'var(--text-secondary)' }}
                     >
                         {isDir ? (
                             <Folder className="w-4 h-4 flex-shrink-0" />
@@ -440,7 +431,7 @@ export function RepoModal({ project, onClose, technologies }: RepoModalProps) {
                                     rel="noopener noreferrer"
                                     whileTap={{ scale: 0.96 }}
                                     className="flex items-center gap-1.5 text-xs font-medium transition-opacity hover:opacity-70"
-                                    style={{ color: 'var(--ide-accent)' }}
+                                    style={{ color: 'var(--ide-accent-text)' }}
                                 >
                                     <ExternalLink className="w-3 h-3" />
                                     GitHub
@@ -498,7 +489,7 @@ export function RepoModal({ project, onClose, technologies }: RepoModalProps) {
                                     onClick={navigateBack}
                                     className="flex items-center gap-1 text-xs font-mono transition-opacity hover:opacity-70 flex-shrink-0 pr-2"
                                     style={{
-                                        color: 'var(--ide-accent)',
+                                        color: 'var(--ide-accent-text)',
                                         borderRight: '1px solid var(--border-subtle)',
                                     }}
                                 >

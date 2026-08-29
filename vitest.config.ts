@@ -9,18 +9,13 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./tests/setup.ts'],
     /*
-        Sem `exclude` o glob padrão do vitest varre `.claude/worktrees/`, onde o Claude Code
-        mantém cópias completas do projeto — com `node_modules` e `tests/` próprios. Os testes
-        de lá rodavam contra OUTRA instância de React, quebrando com
-        "Cannot read properties of null (reading 'useState')" e deixando `npx vitest run`
-        vermelho mesmo com a suíte real inteira passando.
+        Sem `exclude` explícito o vitest varre `.claude/worktrees/`, que contém uma
+        cópia completa do projeto COM seu próprio node_modules. Os testes de lá
+        carregavam um segundo React, e todo `useState` explodia com
+        "Cannot read properties of null". `npm test` saía vermelho com 11 arquivos
+        falhando por um motivo que não existe no código-fonte.
     */
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.next/**',
-      '**/.claude/**',
-    ],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.next/**', '**/.claude/**'],
   },
   resolve: {
     alias: {

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import Header from '@/components/header';
@@ -10,9 +10,22 @@ import { Toaster } from '@/components/ui/sonner';
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SOCIAL } from '@/lib/site';
 import { readPapers } from '@/lib/papers-server';
 
+/*
+    As duas famílias são auto-hospedadas pelo Next (sem request ao Google em runtime)
+    e expostas APENAS como CSS custom properties: `next/font` gera um nome de família
+    com hash (`__Inter_abc123`), então referenciar a string literal "Inter" no stack de
+    fontes não casa com nada — era exatamente esse o bug. Quem consome é
+    `--font-ui` / `--font-mono` em app/globals.css e o `fontFamily` do tailwind.config.
+*/
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
   display: 'swap',
 });
 
@@ -112,7 +125,11 @@ export default function RootLayout({
         leitores de tela aplicavam fonética inglesa a texto português, e o Google indexava
         o site como conteúdo em inglês.
     */
-    <html lang="pt-BR" suppressHydrationWarning className={inter.variable}>
+    <html
+      lang="pt-BR"
+      suppressHydrationWarning
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+    >
       <body>
         <ThemeProvider
           attribute="class"

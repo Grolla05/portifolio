@@ -21,11 +21,21 @@
   /* Typography */
   --text-primary: #111827;
   --text-secondary: #57606a;
-  --text-muted: #8c959f;
+  /* #8c959f dava 2.85:1 sobre --bg-primary — reprova WCAG AA (4.5:1) para texto normal,
+     e este token pinta datas, sublabels e números de linha em todo o site.
+     #616973 entrega no mínimo 4.77:1 contra as TRÊS superfícies (--bg-primary,
+     --bg-secondary, --bg-tertiary). O valor é apertado de propósito: #656d76 dava
+     exatamente 4.50:1 sobre --bg-tertiary, sem margem para arredondamento. */
+  --text-muted: #616973;
 
   /* Apple HIG System Accents */
   --ide-accent: #007aff;
   --ide-accent-blue: #007aff;
+  /* Variante do acento para TEXTO. #007aff dá 4.02:1 sobre branco: suficiente para
+     ícone e preenchimento (não-texto exige 3:1), insuficiente para rótulo ≤17px.
+     #0a5fd4 dá 5.48:1 sobre --bg-primary e 4.99:1 sobre --accent-soft.
+     Use --ide-accent em `background`/`stroke`; use este em `color`. */
+  --ide-accent-text: #0a5fd4;
   --ide-accent-purple: #8250df;
   --ide-accent-green: #34c759;
   --ide-accent-yellow: #ffcc00;
@@ -42,14 +52,26 @@
   --switch-track: rgba(1, 22, 39, 0.20);
 
   /* Syntax Highlighting */
-  --syntax-keyword: #d1242f;
+  /* #d1242f dava 4.50:1 sobre --bg-tertiary — em cima da linha, sem margem.
+     #cf222e (danger.fg do GitHub Primer) sobe para 4.59:1 e é visualmente idêntico. */
+  --syntax-keyword: #cf222e;
   --syntax-string: #0550ae;
   --syntax-type: #953800;
   --syntax-comment: #57606a;
 
-  /* Font Stacks */
-  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
-  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
+  /* Font Stacks
+
+     `var(--font-inter)` / `var(--font-jetbrains-mono)` vêm de next/font em app/layout.tsx
+     e precisam vir PRIMEIRO. Antes o stack citava as strings literais "Inter" e
+     "JetBrains Mono": next/font gera um nome de família com hash, então nenhuma das duas
+     casava e o site caía em system-ui / Consolas fora do macOS — a identidade tipográfica
+     simplesmente não existia no Windows e no Android.
+
+     Fonte web antes de -apple-system de propósito: um portfólio precisa renderizar igual
+     para quem abre no Mac e para quem abre no Windows. O stack de sistema fica como
+     fallback enquanto a webfont carrega (display: swap). */
+  --font-ui: var(--font-inter), -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "SF Mono", ui-monospace, Menlo, Consolas, monospace;
 
   /*
       Altura do "chrome" da janela — header + status bar — descontada do viewport
@@ -90,7 +112,12 @@
   /* Surface & Base — macOS Native Dark Slate Materials */
   --bg-primary: #1e1e1e;
   --bg-secondary: #252526;
-  --bg-tertiary: #323234;
+  /* #323234 era claro demais para o resto da paleta: virava o teto de contraste do tema
+     escuro e derrubava --text-muted (3.92:1), --syntax-comment (4.16:1) e o acento em
+     texto (3.51:1) — todos os chips, cabeçalhos de modal e badges que usam esta
+     superfície. #2a2a2c mantém a rampa de elevação (primary < secondary < tertiary)
+     e devolve margem de contraste a todos eles. */
+  --bg-tertiary: #2a2a2c;
   --bg-glass: rgba(30, 30, 30, 0.75);
 
   /* Borders & Dividers */
@@ -101,11 +128,23 @@
   /* Typography — Apple HIG Labels */
   --text-primary: #f5f5f7;
   --text-secondary: #a1a1a6;
-  --text-muted: #6e6e73;
+  /* #6e6e73 dava 3.29:1 sobre --bg-primary e 3.02:1 sobre --bg-secondary: reprova AA.
+     #939398 entrega no mínimo 4.68:1 contra as três superfícies.
+
+     Efeito colateral aceito: a distância visual para --text-secondary (#a1a1a6) encolhe.
+     A rampa escura é curta demais para sustentar três níveis de cinza legíveis; entre
+     "muted mais apagado" e "muted legível", legibilidade ganha. Quem precisar de mais
+     hierarquia usa peso ou tamanho, não mais cinza. */
+  --text-muted: #939398;
 
   /* Apple HIG macOS Dark System Accents */
   --ide-accent: #0a84ff;
   --ide-accent-blue: #0a84ff;
+  /* O próprio acento (#0a84ff) entrega 4.57:1 sobre --bg-primary mas só 3.93:1 sobre
+     --bg-tertiary. #4da3ff sobe para 5.46:1 no pior caso — e azul claro para
+     identificador é a convenção de qualquer tema escuro de editor (GitHub Dark usa
+     #79c0ff). Preenchimento e ícone continuam em --ide-accent. */
+  --ide-accent-text: #4da3ff;
   --ide-accent-purple: #bf5af2;
   --ide-accent-green: #30d158;
   --ide-accent-yellow: #ffd60a;
@@ -214,6 +253,23 @@ body {
 
   .text-balance {
     text-wrap: balance;
+  }
+
+  /*
+      Monoespaçada de SISTEMA, sem webfont — para arte ASCII com box-drawing.
+
+      O subset `latin` da JetBrains Mono carregado em app/layout.tsx não inclui
+      U+2500–U+259F (box-drawing e block elements). Cada um desses glifos cai num
+      fallback diferente, com outra largura de avanço, e a grade monoespaçada desmonta:
+      a arte do 404 media 666px dentro de um container de 434px e vazava por cima da
+      borda do card.
+
+      As fontes de sistema listadas aqui cobrem o bloco inteiro. Use `.font-mono-ascii`
+      só onde houver desenho por caractere; texto de código continua em `font-mono`.
+  */
+  .font-mono-ascii {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
   }
 }
 
