@@ -182,7 +182,7 @@ export default function AccessibilityMenu() {
                                                 background: active ? 'var(--accent-soft)' : 'var(--surface-subtle)',
                                                 border: '1px solid',
                                                 borderColor: active ? 'var(--accent-ring)' : 'var(--border-subtle)',
-                                                color: active ? 'var(--ide-accent)' : 'var(--text-secondary)',
+                                                color: active ? 'var(--ide-accent-text)' : 'var(--text-secondary)',
                                             }}
                                         >
                                             <Icon className="w-3.5 h-3.5" />
@@ -220,7 +220,7 @@ export default function AccessibilityMenu() {
                                                 background: active ? 'var(--accent-soft)' : 'var(--surface-subtle)',
                                                 border: '1px solid',
                                                 borderColor: active ? 'var(--accent-ring)' : 'var(--border-subtle)',
-                                                color: active ? 'var(--ide-accent)' : 'var(--text-secondary)',
+                                                color: active ? 'var(--ide-accent-text)' : 'var(--text-secondary)',
                                             }}
                                         >
                                             <span

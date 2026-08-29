@@ -367,7 +367,7 @@ export default function ProjectsPage() {
               */}
               <span
                 className="text-xs font-semibold tracking-tight truncate"
-                style={{ color: "var(--ide-accent)" }}
+                style={{ color: "var(--ide-accent-text)" }}
               >
                 {project.title}
               </span>
@@ -612,7 +612,7 @@ export default function ProjectsPage() {
             <button
               onClick={() => setDeselectedLanguages([])}
               className="text-xs font-medium underline underline-offset-4"
-              style={{ color: "var(--ide-accent)" }}
+              style={{ color: "var(--ide-accent-text)" }}
             >
               Limpar filtros
             </button>

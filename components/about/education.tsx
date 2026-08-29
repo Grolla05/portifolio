@@ -44,7 +44,7 @@ export default function Education() {
 
                             <div className="mt-4">
                                 <span style={{ color: 'var(--ide-accent-purple)' }}>export default function</span>{' '}
-                                <span style={{ color: 'var(--ide-accent)' }}>Education</span>
+                                <span style={{ color: 'var(--ide-accent-text)' }}>Education</span>
                                 <span style={{ color: 'var(--text-muted)' }}>{'() {'}</span>
                             </div>
 

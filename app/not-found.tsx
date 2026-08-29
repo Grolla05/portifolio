@@ -89,9 +89,12 @@ export default function NotFound() {
             >
               {/* aria-hidden: leitores de tela leem o ASCII como ruído; o
                   código 404 é anunciado pelo <h1> abaixo */}
+              {/* font-mono-ascii (e não font-mono): a JetBrains Mono não traz os
+                  caracteres de box-drawing deste desenho e o fallback por glifo
+                  destrói o alinhamento. Ver a definição em app/globals.css. */}
               <pre
                 aria-hidden="true"
-                className="font-mono font-bold leading-tight select-none text-primary"
+                className="font-mono-ascii font-bold leading-tight select-none text-primary"
                 style={{ fontSize: "clamp(1rem, 2.8vw, 1.75rem)" }}
               >
                 {ascii404}

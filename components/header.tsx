@@ -190,7 +190,7 @@ export default function Header() {
                       */
                       className="flex items-center gap-3 min-h-[44px] px-3 rounded-xl text-sm font-medium tracking-tight transition-colors"
                       style={{
-                        color: active ? "var(--ide-accent)" : "var(--text-secondary)",
+                        color: active ? "var(--ide-accent-text)" : "var(--text-secondary)",
                         backgroundColor: active ? "var(--accent-soft)" : "transparent",
                         border: "1px solid",
                         borderColor: active ? "var(--accent-ring)" : "transparent",

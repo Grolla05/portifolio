@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
 	darkMode: ["class"],
@@ -10,6 +11,17 @@ const config: Config = {
 	],
 	theme: {
 		extend: {
+			/*
+			    Sem este bloco, `font-mono` e `font-sans` do Tailwind usavam o stack PADRÃO
+			    da lib e ignoravam --font-mono / --font-ui inteiramente. Como praticamente
+			    todo texto de código do site usa a classe `font-mono` (e não a variável),
+			    o resultado era Consolas no Windows num portfólio com estética de IDE.
+			    Uma linha aqui conserta os ~20 pontos de uso de uma vez.
+			*/
+			fontFamily: {
+				sans: ['var(--font-inter)', ...defaultTheme.fontFamily.sans],
+				mono: ['var(--font-jetbrains-mono)', ...defaultTheme.fontFamily.mono],
+			},
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',

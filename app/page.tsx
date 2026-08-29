@@ -104,7 +104,7 @@ export default function ProfilePage() {
                   animate="visible"
                   custom={2}
                 >
-                  <span style={{ color: 'var(--ide-accent)' }}>&gt;</span>
+                  <span style={{ color: 'var(--ide-accent-text)' }}>&gt;</span>
                   <span style={{ color: 'var(--syntax-type)' }}>Desenvolvedor de Software</span>
                 </motion.h2>
               </div>
@@ -257,7 +257,7 @@ export default function ProfilePage() {
                       <pre className="font-mono text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                         <code>
                           <span style={{ color: 'var(--syntax-keyword)' }}>def</span>{' '}
-                          <span style={{ color: 'var(--ide-accent)' }}>get_active_projects</span>
+                          <span style={{ color: 'var(--ide-accent-text)' }}>get_active_projects</span>
                           <span style={{ color: 'var(--text-muted)' }}>(</span>
                           <span style={{ color: 'var(--text-primary)' }}>user_id: </span>
                           <span style={{ color: 'var(--syntax-type)' }}>int</span>
@@ -269,7 +269,7 @@ export default function ProfilePage() {
                           {'\n    '}
                           <span style={{ color: 'var(--text-primary)' }}>db </span>
                           <span style={{ color: 'var(--text-muted)' }}>= </span>
-                          <span style={{ color: 'var(--ide-accent)' }}>Database</span>
+                          <span style={{ color: 'var(--ide-accent-text)' }}>Database</span>
                           <span style={{ color: 'var(--text-muted)' }}>()</span>
                           {'\n    '}
                           <span style={{ color: 'var(--syntax-keyword)' }}>return </span>
@@ -321,7 +321,7 @@ export default function ProfilePage() {
                       <pre className="font-mono text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                         <code>
                           <span style={{ color: 'var(--syntax-keyword)' }}>async function</span>{' '}
-                          <span style={{ color: 'var(--ide-accent)' }}>loadUserData</span>
+                          <span style={{ color: 'var(--ide-accent-text)' }}>loadUserData</span>
                           <span style={{ color: 'var(--text-muted)' }}>(</span>
                           <span style={{ color: 'var(--text-primary)' }}>userId</span>
                           <span style={{ color: 'var(--text-muted)' }}>) {'{'}</span>

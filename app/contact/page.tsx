@@ -359,7 +359,7 @@ export default function ContactPage() {
               name="user_name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border text-sm font-normal transition-all outline-none focus:ring-2 focus:ring-[var(--ide-accent)] focus:border-transparent"
+              className="w-full px-4 py-2.5 rounded-xl border text-sm font-normal transition-all outline-none focus:ring-2 focus:ring-[var(--ide-accent-text)] focus:border-transparent"
               style={{
                 backgroundColor: "var(--bg-secondary)",
                 borderColor: "var(--border-default)",
@@ -388,7 +388,7 @@ export default function ContactPage() {
               name="user_email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border text-sm font-normal transition-all outline-none focus:ring-2 focus:ring-[var(--ide-accent)] focus:border-transparent"
+              className="w-full px-4 py-2.5 rounded-xl border text-sm font-normal transition-all outline-none focus:ring-2 focus:ring-[var(--ide-accent-text)] focus:border-transparent"
               style={{
                 backgroundColor: "var(--bg-secondary)",
                 borderColor: "var(--border-default)",
@@ -417,7 +417,7 @@ export default function ContactPage() {
               rows={5}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border text-sm font-normal transition-all outline-none focus:ring-2 focus:ring-[var(--ide-accent)] focus:border-transparent resize-none"
+              className="w-full px-4 py-2.5 rounded-xl border text-sm font-normal transition-all outline-none focus:ring-2 focus:ring-[var(--ide-accent-text)] focus:border-transparent resize-none"
               style={{
                 backgroundColor: "var(--bg-secondary)",
                 borderColor: "var(--border-default)",
@@ -510,11 +510,11 @@ export default function ContactPage() {
                   <span style={{ color: "var(--ide-accent-purple)" }}>
                     const
                   </span>{" "}
-                  <span style={{ color: "var(--ide-accent)" }}>button</span>{" "}
+                  <span style={{ color: "var(--ide-accent-text)" }}>button</span>{" "}
                   <span style={{ color: "var(--syntax-type)" }}>=</span>{" "}
-                  <span style={{ color: "var(--ide-accent)" }}>document</span>
+                  <span style={{ color: "var(--ide-accent-text)" }}>document</span>
                   <span style={{ color: "var(--text-muted)" }}>.</span>
-                  <span style={{ color: "var(--ide-accent)" }}>
+                  <span style={{ color: "var(--ide-accent-text)" }}>
                     querySelector
                   </span>
                   <span style={{ color: "var(--text-muted)" }}>(</span>
@@ -526,7 +526,7 @@ export default function ContactPage() {
                   <span style={{ color: "var(--ide-accent-purple)" }}>
                     const
                   </span>{" "}
-                  <span style={{ color: "var(--ide-accent)" }}>message</span>{" "}
+                  <span style={{ color: "var(--ide-accent-text)" }}>message</span>{" "}
                   <span style={{ color: "var(--syntax-type)" }}>=</span>{" "}
                   <span style={{ color: "var(--text-muted)" }}>{"{"}</span>
                   {"\n"}
@@ -564,9 +564,9 @@ export default function ContactPage() {
                   {"\n"}
                   <span style={{ color: "var(--text-muted)" }}>{"}"}</span>
                   {"\n\n"}
-                  <span style={{ color: "var(--ide-accent)" }}>button</span>
+                  <span style={{ color: "var(--ide-accent-text)" }}>button</span>
                   <span style={{ color: "var(--text-muted)" }}>.</span>
-                  <span style={{ color: "var(--ide-accent)" }}>
+                  <span style={{ color: "var(--ide-accent-text)" }}>
                     addEventListener
                   </span>
                   <span style={{ color: "var(--text-muted)" }}>(</span>
@@ -580,13 +580,13 @@ export default function ContactPage() {
                   </span>{" "}
                   <span style={{ color: "var(--text-muted)" }}>{"{"}</span>
                   {"\n"}
-                  <span style={{ color: "var(--ide-accent)" }} className="pl-4">
+                  <span style={{ color: "var(--ide-accent-text)" }} className="pl-4">
                     form
                   </span>
                   <span style={{ color: "var(--text-muted)" }}>.</span>
-                  <span style={{ color: "var(--ide-accent)" }}>send</span>
+                  <span style={{ color: "var(--ide-accent-text)" }}>send</span>
                   <span style={{ color: "var(--text-muted)" }}>(</span>
-                  <span style={{ color: "var(--ide-accent)" }}>message</span>
+                  <span style={{ color: "var(--ide-accent-text)" }}>message</span>
                   <span style={{ color: "var(--text-muted)" }}>);</span>
                   {"\n"}
                   <span style={{ color: "var(--text-muted)" }}>

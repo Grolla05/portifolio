@@ -83,7 +83,7 @@ export default function Hobbie() {
 
                             <div className="mt-4">
                                 <span style={{ color: 'var(--ide-accent-purple)' }}>const</span>{' '}
-                                <span style={{ color: 'var(--ide-accent)' }}>hobbies</span>
+                                <span style={{ color: 'var(--ide-accent-text)' }}>hobbies</span>
                                 <span style={{ color: 'var(--text-muted)' }}>:</span>{' '}
                                 <span style={{ color: 'var(--syntax-type)' }}>Hobby</span>
                                 <span style={{ color: 'var(--text-muted)' }}>[]</span>{' '}
