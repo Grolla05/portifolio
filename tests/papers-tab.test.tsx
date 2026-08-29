@@ -26,6 +26,18 @@ beforeEach(() => {
     unobserve() {}
     disconnect() {}
   });
+
+  /*
+      A aba de bio (components/about/bio.tsx) busca o README de perfil em /api/readme no
+      mount. Sem stub, o jsdom tenta resolver a URL relativa, falha, e a aba renderiza o
+      estado de erro — que é tratado, mas deixa o teste dependente de como o ambiente
+      trata fetch relativo. O corpo não importa aqui: o que estes testes cobrem é a
+      montagem das abas, não o conteúdo remoto.
+  */
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => new Response('# README de teste', { status: 200 })),
+  );
 });
 
 afterEach(() => {
@@ -141,7 +153,16 @@ describe('Página Sobre — pasta research', () => {
   it('troca de aba monta o componente correspondente', async () => {
     render(<AboutView papers={[]} />);
 
-    expect(screen.getByText(/About me/i)).toBeDefined();
+    /*
+        Antes esta linha era `getByText(/About me/i)`, casando com a bio escrita à mão
+        que vivia dentro de bio.tsx. O conteúdo agora vem do README de perfil do GitHub,
+        de forma assíncrona, então não há texto de bio no primeiro render.
+
+        O que este teste cobre é a MONTAGEM da aba, não o texto dela — daí a asserção
+        passar para o cabeçalho do arquivo, que a bio renderiza de forma síncrona
+        qualquer que seja o estado da busca.
+    */
+    expect(screen.getByText('Grolla05/Grolla05/README.md')).toBeDefined();
 
     fireEvent.click(screen.getAllByText('hobbies')[0]);
     fireEvent.click(screen.getAllByText('hobbies.ts')[0]);
