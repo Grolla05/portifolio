@@ -1,12 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import AboutPage from '@/app/about/page';
+import AboutView from '@/components/about/about-view';
 import ContactPage from '@/app/contact/page';
 
 describe('Desktop Window Structure & Resizable Split Views', () => {
   it('should render split view containers with proper desktop resizable attributes in About page', () => {
-    const { container } = render(<AboutPage />);
+    const { container } = render(<AboutView papers={[]} />);
     
     // Check that sidebar and main content container exist
     const aside = container.querySelector('aside');

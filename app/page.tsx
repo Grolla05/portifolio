@@ -63,13 +63,13 @@ export default function ProfilePage() {
           demais para o conteúdo, em vez de cortá-lo.
       */}
       <div
-        className="min-h-[calc(100vh-4rem)] w-full transition-colors duration-300"
+        className="min-h-[calc(100vh-var(--chrome-height))] w-full transition-colors duration-300"
         style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
       >
         <main className="w-full">
           <section
             id="hello"
-            className="min-h-[calc(100vh-4rem)] flex items-center px-6 md:px-12 lg:px-24 py-20 relative overflow-hidden"
+            className="min-h-[calc(100vh-var(--chrome-height))] flex items-center px-6 md:px-12 lg:px-24 py-20 relative overflow-hidden"
           >
             <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
               {/* Left Content */}
