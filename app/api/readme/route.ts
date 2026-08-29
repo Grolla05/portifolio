@@ -40,8 +40,14 @@ export async function GET(request: NextRequest) {
             barras (`src/api` virava `src%2Fapi`) e portanto nunca encontrava o README de
             uma subpasta de verdade. `safeContentPath` codifica segmento a segmento e
             preserva a barra — e rejeita `..`, que é o que escaparia do prefixo /contents.
+
+            O `decodeURIComponent` que envolvia esta chamada saiu: `searchParams.get` JÁ
+            devolve o valor decodificado, então era um segundo decode. Uma pasta chamada
+            `50%-off` chegava aqui como `50%25-off`, virava `50%-off` no primeiro decode
+            (correto) e o decode extra a destruía. Agora a rota recebe o caminho em forma
+            natural, o mesmo contrato de /api/repo — ver parseGitHubUrl em lib/github-url.ts.
         */
-        const safePath = safeContentPath(decodeURIComponent(path));
+        const safePath = safeContentPath(path);
 
         if (safePath === null) {
             return NextResponse.json({ error: 'Caminho inválido.' }, { status: 400 });
