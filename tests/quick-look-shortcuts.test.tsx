@@ -32,11 +32,13 @@ const FIXTURE = {
     },
     {
       id: 102,
-      name: 'simulamedias',
-      title: 'simulamedias',
-      slug: 'simulamedias',
+      // Nome sem resumo curado em lib/case-studies.ts: exercita o fallback derivado.
+      // (Repositórios curados, como `simulamedias`, mostram o resumo em português.)
+      name: 'repo-sem-resumo-curado',
+      title: 'repo sem resumo curado',
+      slug: 'repo-sem-resumo-curado',
       description: null,
-      link: 'https://github.com/Grolla05/simulamedias',
+      link: 'https://github.com/Grolla05/repo-sem-resumo-curado',
       homepage: null,
       date: '2025-12-02T14:09:40Z',
       createdAt: '2025-10-01T10:00:00Z',
@@ -131,8 +133,16 @@ describe('Projects Page — Quick Look (Espaço) e navegação por teclado', () 
   it('usa descrição derivada das linguagens quando o repositório não tem descrição', async () => {
     render(<ProjectsPage />);
 
-    // simulamedias vem com description: null — o texto do card é gerado a partir
-    // das linguagens em vez de ficar vazio.
+    // description: null — o texto do card é gerado a partir das linguagens em vez
+    // de ficar vazio.
     expect(await screen.findByText('Projeto em TypeScript e CSS.')).toBeDefined();
+  });
+
+  it('prefere o resumo curado em português à descrição crua do GitHub', async () => {
+    render(<ProjectsPage />);
+
+    // Flight-Management-Software tem resumo curado: ele substitui o texto do GitHub.
+    expect(await screen.findByText(/busca de rota com menor tempo de conexão/i)).toBeDefined();
+    expect(screen.queryByText('Sistema de gestão de voos em C.')).toBeNull();
   });
 });

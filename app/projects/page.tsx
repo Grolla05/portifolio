@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import {
+  ArrowRight,
   ChevronDown,
   ChevronRight,
   X,
@@ -10,7 +12,7 @@ import {
   Copy,
   Eye,
   Star,
-  GitBranch,
+  FileText,
   AlertCircle,
   RefreshCw,
   Globe,
@@ -46,7 +48,9 @@ import {
 import { ProjectModal } from "@/components/projects/project-modal";
 import { RepoModal } from "@/components/projects/repo-modal";
 import { LanguageIcon } from "@/components/projects/language-icon";
+import { ProjectCover } from "@/components/projects/project-cover";
 import { CtaGroup } from "@/components/cta-group";
+import { getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useProjects } from "@/hooks/use-projects";
@@ -118,7 +122,12 @@ export default function ProjectsPage() {
   const modalProject = useMemo(
     () =>
       selectedProject
-        ? { ...selectedProject, description: describeProject(selectedProject) }
+        ? {
+            ...selectedProject,
+            // Resumo curado (pt-BR) tem prioridade sobre a descrição crua do GitHub.
+            description:
+              getCuratedSummary(selectedProject.name) ?? describeProject(selectedProject),
+          }
         : null,
     [selectedProject],
   );
@@ -155,6 +164,14 @@ export default function ProjectsPage() {
               selectedLanguages.length === languages.length),
         )
         .sort((a, b) => {
+          /*
+              Projetos com estudo de caso ficam fixados no topo, qualquer que seja a
+              ordenação por data: são os que valem a leitura e antes se perdiam no meio
+              de ~28 cards de peso visual idêntico.
+          */
+          const featured = Number(!!getCaseStudy(b.name)) - Number(!!getCaseStudy(a.name));
+          if (featured !== 0) return featured;
+
           const diff = new Date(a.date).getTime() - new Date(b.date).getTime();
           return sortOrder === "newest" ? -diff : diff;
         }),
@@ -358,7 +375,9 @@ export default function ProjectsPage() {
           }}
           whileHover={prefersReduced ? {} : { y: -4 }}
           whileTap={prefersReduced ? {} : { scale: 0.98 }}
-          className="group focus-within:ring-2 focus-within:ring-[var(--ide-accent)] rounded-2xl outline-none"
+          // flex-col: o botão do card ocupa o espaço restante (`flex-1`) e o link do estudo
+          // de caso fica DENTRO da célula do grid. Com `h-full` no botão, o link transbordava.
+          className="group flex flex-col focus-within:ring-2 focus-within:ring-[var(--ide-accent)] rounded-2xl outline-none"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
@@ -399,7 +418,7 @@ export default function ProjectsPage() {
                 setSelectedProject(project);
               }
             }}
-            className="block w-full text-left focus:outline-none h-full"
+            className="block w-full text-left focus:outline-none flex-1"
             aria-label={`Abrir detalhes de ${project.title}`}
           >
             <div
@@ -409,21 +428,16 @@ export default function ProjectsPage() {
                 borderColor: "var(--border-default)",
               }}
             >
-              <div
-                className="h-32 flex items-center justify-center relative overflow-hidden"
-                style={{ backgroundColor: "var(--bg-tertiary)" }}
-              >
-                {project.primaryLanguage ? (
-                  <div className="opacity-50 grayscale transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110">
-                    <LanguageIcon language={project.primaryLanguage} size={48} decorative />
-                  </div>
-                ) : (
-                  <GitBranch
-                    className="w-10 h-10 opacity-30"
-                    style={{ color: "var(--text-muted)" }}
-                    aria-hidden="true"
-                  />
-                )}
+              {/*
+                  Capa real no lugar do quadrado cinza com o logo da linguagem, que era
+                  idêntico nos ~28 cards. O ícone volta sozinho se a imagem falhar.
+              */}
+              <div className="relative">
+                <ProjectCover
+                  repo={project.name}
+                  title={project.title}
+                  primaryLanguage={project.primaryLanguage}
+                />
 
                 {project.languages.length > 0 && (
                   <div
@@ -442,7 +456,7 @@ export default function ProjectsPage() {
                   className="text-sm leading-relaxed font-normal flex-1"
                   style={{ color: "var(--text-secondary)" }}
                 >
-                  {describeProject(project)}
+                  {getCuratedSummary(project.name) ?? describeProject(project)}
                 </p>
 
                 {/*
@@ -468,6 +482,22 @@ export default function ProjectsPage() {
               </div>
             </div>
           </button>
+
+          {/*
+              Link FORA do <button>: <a> dentro de <button> é HTML inválido e o clique no
+              link também abriria o modal. Só projetos com estudo de caso têm a rota.
+          */}
+          {getCaseStudy(project.name) && (
+            <Link
+              href={`/projects/${getCaseStudy(project.name)!.slug}`}
+              className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium rounded-md py-1 hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ide-accent)]"
+              style={{ color: "var(--ide-accent-text)" }}
+              aria-label={`Ler o estudo de caso de ${project.title}`}
+            >
+              Ler estudo de caso
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
+          )}
         </motion.div>
       </ContextMenuTrigger>
       <ContextMenuContent>
@@ -476,6 +506,18 @@ export default function ProjectsPage() {
           Quick Look / Detalhes
           <ContextMenuShortcut>Espaço</ContextMenuShortcut>
         </ContextMenuItem>
+        {getCaseStudy(project.name) && (
+          /*
+              `asChild` + Link em vez de useRouter().push: navegação por <a> real mantém
+              prefetch e abrir em nova aba, e a página não depende do App Router montado.
+          */
+          <ContextMenuItem asChild>
+            <Link href={`/projects/${getCaseStudy(project.name)!.slug}`}>
+              <FileText className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
+              Ler estudo de caso
+            </Link>
+          </ContextMenuItem>
+        )}
         <ContextMenuItem onClick={() => window.open(project.link, "_blank")}>
           <ExternalLink className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
           Abrir no GitHub

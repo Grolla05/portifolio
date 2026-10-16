@@ -69,7 +69,9 @@ export default function ProfilePage() {
         <main className="w-full">
           <section
             id="hello"
-            className="min-h-[calc(100vh-var(--chrome-height))] flex items-center px-6 md:px-12 lg:px-24 py-20 relative overflow-hidden"
+            // pb-40: o bloco "find me in" e o @usuario são `absolute bottom-8`; sem reserva
+            // embaixo, o texto do herói (agora com proposta de valor e chips) colidia com eles.
+            className="min-h-[calc(100vh-var(--chrome-height))] flex items-center px-6 md:px-12 lg:px-24 pt-20 pb-40 relative overflow-hidden"
           >
             <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
               {/* Left Content */}
@@ -107,6 +109,49 @@ export default function ProfilePage() {
                   <span style={{ color: 'var(--ide-accent-text)' }}>&gt;</span>
                   <span style={{ color: 'var(--syntax-type)' }}>Desenvolvedor de Software</span>
                 </motion.h2>
+
+                {/*
+                    Proposta de valor.
+                    O herói dizia só nome e cargo — qualquer dev da turma diria o mesmo. Esta
+                    frase responde "o que ele faz de diferente?" com o que os repositórios
+                    realmente mostram (firmware e circuitos, automação em Python, web) e
+                    ancora o contexto acadêmico, que é verificável na aba About.
+                */}
+                <motion.p
+                  className="max-w-xl text-base md:text-lg leading-relaxed"
+                  style={{ color: 'var(--text-secondary)' }}
+                  variants={prefersReduced ? {} : fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  Estudante de Engenharia de Controle e Automação na PUC-Campinas. Construo software
+                  que conversa com o mundo físico: firmware e circuitos, automações em Python e
+                  aplicações web.
+                </motion.p>
+
+                <motion.ul
+                  className="flex flex-wrap gap-2 max-w-xl"
+                  aria-label="Tecnologias principais"
+                  variants={prefersReduced ? {} : fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {['C / C++', 'Python', 'TypeScript', 'React', 'Sistemas embarcados', 'Flask'].map(
+                    (tech) => (
+                      <li
+                        key={tech}
+                        className="rounded-md border px-2.5 py-1 text-xs font-mono"
+                        style={{
+                          color: 'var(--text-secondary)',
+                          backgroundColor: 'var(--bg-secondary)',
+                          borderColor: 'var(--border-default)',
+                        }}
+                      >
+                        {tech}
+                      </li>
+                    ),
+                  )}
+                </motion.ul>
               </div>
 
               {/*
@@ -130,6 +175,21 @@ export default function ProfilePage() {
                   { href: '/contact', label: 'Falar comigo', icon: Mail },
                 ]}
               />
+
+              {/*
+                  Atalho para um estudo de caso: leva direto à prova de trabalho sem passar
+                  pela grade de ~28 repositórios.
+              */}
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                Em destaque:{' '}
+                <Link
+                  href="/projects/solar-points"
+                  className="hover:underline underline-offset-4"
+                  style={{ color: 'var(--ide-accent-text)' }}
+                >
+                  Solar Points — iluminação autônoma com ESP32 e energia solar →
+                </Link>
+              </p>
 
               {/* Code-style comments */}
               <motion.div
