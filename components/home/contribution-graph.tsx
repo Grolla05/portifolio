@@ -143,7 +143,12 @@ export function ContributionGraph({ delay = 0 }: { delay?: number }) {
           preencher a largura do card (quadradas via aspect-square) e, quando não cabem
           (celular), param no mínimo e a grade rola.
       */}
-      <div ref={scrollRef} className="overflow-x-auto no-scrollbar">
+      {/*
+          p-4 -m-4: respiro DENTRO do container rolável. overflow-x:auto também corta no
+          eixo Y, e a célula ampliada no hover (scale 1.6) e o anel do dia de hoje (scale
+          2.4) eram cortados nas bordas. A margem negativa devolve o espaço ao layout.
+      */}
+      <div ref={scrollRef} className="overflow-x-auto no-scrollbar p-4 -m-4">
         <div
           role="img"
           aria-label={data ? `${data.total} contribuições no GitHub no último ano` : 'Carregando contribuições do GitHub'}
