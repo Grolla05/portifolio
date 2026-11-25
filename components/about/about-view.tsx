@@ -165,7 +165,8 @@ export default function AboutView({ papers }: AboutViewProps) {
     if (!el) return;
     event.preventDefault();
     setActive(id);
-    el.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    // `?.`: o jsdom dos testes não implementa scrollIntoView.
+    el.scrollIntoView?.({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
     history.replaceState(null, "", `#${id}`);
   };
 

@@ -58,18 +58,18 @@
       branco sobre #0a84ff — 3.65:1, reprova AA em rótulo de 14px. No claro, branco sobre
       #0a5fd4 dá 5.48:1; no escuro o design inverte (texto escuro sobre azul claro).
 
-      --statusbar-*: barra de status azul do design, no padrão do VS Code. Branco sobre
-      #0b5cc0 dá 6.4:1.
+      --statusbar-*: barra de status cinza. #4b535d sobre #eaeef2 dá 6.6:1 (claro);
+      #c7c7cc sobre #252526 dá 10:1 (escuro).
 
       --chip-bg: fundo das pílulas de stack/tópico — separado de --bg-tertiary porque no
       design a pílula precisa destacar mesmo DENTRO de um card em --bg-secondary.
   */
   --cta-bg: #0a5fd4;
   --cta-fg: #ffffff;
-  --statusbar-bg: #0b5cc0;
-  --statusbar-fg: #ffffff;
-  /* Ponto de "disponível": verde claro o bastante para ler sobre o azul da barra. */
-  --statusbar-dot: #7ee787;
+  --statusbar-bg: #eaeef2;
+  --statusbar-fg: #4b535d;
+  /* Ponto de "disponível". */
+  --statusbar-dot: #1a7f37;
   /* Cores das pastas do explorer de /about (identidade herdada da árvore original). */
   --folder-bio: #e99287;
   --folder-education: #6c7ae0;
@@ -191,8 +191,9 @@
   /* Redesign: texto #06121f sobre #409cff dá 7.1:1. */
   --cta-bg: #409cff;
   --cta-fg: #06121f;
-  --statusbar-bg: #0b5cc0;
-  --statusbar-fg: #ffffff;
+  --statusbar-bg: #252526;
+  --statusbar-fg: #c7c7cc;
+  --statusbar-dot: #56d364;
   --chip-bg: #323234;
   --surface-sunken: #1b1b1c;
   --status-ok: #56d364;

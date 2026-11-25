@@ -39,21 +39,22 @@ export function StatusBar() {
   };
 
   const itemClass =
-    'flex items-center gap-1.5 px-2 h-full transition-colors hover:bg-white/15 ' +
-    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset ' +
-    'focus-visible:ring-white';
+    'flex items-center gap-1.5 px-2 h-full transition-colors hover:bg-black/5 ' +
+    'dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-1 ' +
+    'focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]';
 
   return (
     <footer
       /*
-          Redesign: barra azul sólida do design (padrão VS Code), no lugar da cinza.
-          Texto em --statusbar-fg sobre --statusbar-bg dá 6.4:1 — por isso todos os itens
-          herdam a mesma cor, sem tons de cinza que perderiam contraste sobre o azul.
+          Barra cinza, discreta (a azul do primeiro redesign chamava atenção demais para
+          um rodapé). Cores em --statusbar-*: todos os itens herdam o mesmo tom, que passa
+          AA sobre o fundo nas duas paletas.
       */
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-center text-[11px] font-mono select-none"
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-center border-t text-[11px] font-mono select-none"
       style={{
         height: 'var(--status-bar-height)',
         backgroundColor: 'var(--statusbar-bg)',
+        borderColor: 'var(--border-default)',
         color: 'var(--statusbar-fg)',
       }}
     >

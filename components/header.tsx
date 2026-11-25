@@ -24,6 +24,9 @@ import {
     contact.ts) com sublinhado deslizante, como as abas de um editor. É o que amarra a
     estética de IDE ao conteúdo, em vez de ser só decoração.
 
+    Sem os três botões de janela do macOS no canto: num site eles são decoração que
+    parece clicável e não faz nada — removidos após a primeira versão.
+
     O nome do arquivo é o rótulo visível; o nome humano da página vai junto como texto
     só para leitores de tela. Assim o nome acessível CONTÉM o texto visível (WCAG 2.5.3,
     quem usa controle por voz diz "hello.tsx") e ainda explica para onde o link leva.
@@ -45,17 +48,6 @@ function isActive(pathname: string, href: string) {
     components/ui/sheet.tsx). Ver `openPaletteFromDrawer` abaixo.
 */
 const SHEET_CLOSE_MS = 300;
-
-function TrafficLights() {
-  return (
-    <div className="hidden sm:flex items-center gap-2" aria-hidden="true">
-      {/* Cores fixas do macOS: são identidade do controle, não do tema. */}
-      <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-      <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-      <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
-    </div>
-  );
-}
 
 export default function Header() {
   const pathname = usePathname();
@@ -88,7 +80,6 @@ export default function Header() {
     >
       <nav className="w-full h-full px-4 sm:px-6 flex items-center justify-between gap-3">
         <div className="flex items-center gap-5 min-w-0">
-          <TrafficLights />
           <Link
             href="/"
             /*
