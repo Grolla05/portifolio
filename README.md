@@ -170,6 +170,26 @@ npx tsc --noEmit
 
 ---
 
+## 🎞️ Fotos e vídeos dos projetos
+
+As capas dos cards aceitam mídia real (foto ou vídeo curto em loop). Sem mídia, o card usa uma capa gerada em CSS.
+
+1. Coloque os arquivos em `public/projects/<nome-do-repo>/` (ex.: `public/projects/Project_SolarPoints/demo.mp4`).
+2. No estudo de caso em `lib/case-studies.ts`, preencha `media`:
+
+```ts
+media: {
+  type: 'video', // ou 'image'
+  src: '/projects/Project_SolarPoints/demo.mp4',
+  poster: '/projects/Project_SolarPoints/poster.jpg', // quadro estático (recomendado)
+  alt: 'Poste do Solar Points aceso à noite',
+},
+```
+
+Recomendações: vídeo MP4 (H.264) de 3–5s, mudo, ≤ 2 MB, 1280×640 (proporção 2:1); imagens WebP/JPG em 1600×800. O vídeo só toca quando está visível na tela e fica parado no `poster` para quem usa movimento reduzido.
+
+---
+
 ## 📄 Licença
 
 Este projeto está sob a licença MIT.

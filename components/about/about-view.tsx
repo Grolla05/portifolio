@@ -232,7 +232,15 @@ export default function AboutView({ papers }: AboutViewProps) {
                         className="absolute inset-0 rounded-md"
                         style={{ backgroundColor: "var(--accent-soft)" }}
                         transition={prefersReduced ? { duration: 0 } : appleSpring}
-                      />
+                      >
+                        {/* Barra de assinatura (--brand-signal): marca o "arquivo aberto" como a
+                            gutter de um editor, e desliza junto com o fundo via layoutId. */}
+                        <span
+                          aria-hidden="true"
+                          className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full"
+                          style={{ backgroundColor: "var(--brand-signal)" }}
+                        />
+                      </motion.span>
                     )}
                     <span className="relative truncate">{section.file}</span>
                   </a>

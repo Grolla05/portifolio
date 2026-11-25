@@ -2,7 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { LanguageIcon } from "@/components/projects/language-icon";
-import { getExplicitCover } from "@/lib/case-studies";
+import { getProjectMedia } from "@/lib/case-studies";
+import { useMotionOff } from "@/lib/animations/use-motion-off";
 import { getLanguageColor } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 
@@ -104,8 +105,53 @@ function GeneratedCover({
   );
 }
 
+/*
+    Vídeo em loop do projeto (Sprint 3 — slots de mídia).
+
+    Só toca quando está na tela (IntersectionObserver): uma grade com vários vídeos
+    tocando fora da viewport gastaria CPU e bateria à toa. Com movimento reduzido, não
+    toca — fica no `poster`. Mudo, inline e sem controles: é capa, não player.
+*/
+function CoverVideo({ src, poster, label, onError }: { src: string; poster?: string; label: string; onError: () => void }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const off = useMotionOff();
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (off) {
+      video.pause();
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(video);
+    return () => io.disconnect();
+  }, [off]);
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      poster={poster}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      aria-label={label}
+      onError={onError}
+      className="ken-burns absolute inset-0 h-full w-full object-cover"
+    />
+  );
+}
+
 export function ProjectCover({ repo, title, primaryLanguage, className }: ProjectCoverProps) {
-  const explicit = getExplicitCover(repo);
+  const media = getProjectMedia(repo);
   const [failed, setFailed] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -119,24 +165,28 @@ export function ProjectCover({ repo, title, primaryLanguage, className }: Projec
     if (img && img.complete && img.naturalWidth === 0) setFailed(true);
   }, []);
 
-  const showImage = explicit && !failed;
+  const label = media?.alt ?? `Capa do projeto ${title}`;
+  const show = media && !failed;
 
   return (
     <div
       className={cn("relative overflow-hidden aspect-[2/1] w-full", className)}
       style={{ backgroundColor: "var(--bg-tertiary)" }}
     >
-      {showImage ? (
+      {show && media.type === "video" ? (
+        <CoverVideo src={media.src} poster={media.poster} label={label} onError={() => setFailed(true)} />
+      ) : show ? (
         // <img> simples: o arquivo é estático e `images.unoptimized` já está ligado.
+        // `ken-burns`: aproximação lenta no hover do card (app/globals.css).
         // eslint-disable-next-line @next/next/no-img-element
         <img
           ref={imgRef}
-          src={explicit}
-          alt={`Capa do projeto ${title}`}
+          src={media.src}
+          alt={label}
           loading="lazy"
           decoding="async"
           onError={() => setFailed(true)}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          className="ken-burns absolute inset-0 h-full w-full object-cover"
         />
       ) : (
         <GeneratedCover repo={repo} primaryLanguage={primaryLanguage} />

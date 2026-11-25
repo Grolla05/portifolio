@@ -295,8 +295,13 @@ export default function ProjectsPage() {
             }}
             whileHover={{ y: -2 }}
             data-vt-card
-            className="group relative flex flex-col gap-3 p-5 sm:p-6 rounded-xl border transition-colors focus-within:ring-2 focus-within:ring-[var(--ide-accent)]"
-            style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
+            className="lang-tint group relative flex flex-col gap-3 p-5 sm:p-6 rounded-xl border transition-colors focus-within:ring-2 focus-within:ring-[var(--ide-accent)]"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              borderColor: "var(--border-default)",
+              // Faixa de 2px na cor da linguagem (.lang-tint): a grade ganha cor sem gradiente.
+              ["--lang" as string]: lang ? getLanguageColor(lang) : undefined,
+            }}
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
@@ -613,7 +618,11 @@ export default function ProjectsPage() {
                           <motion.span
                             layoutId="projectsSortPill"
                             className="absolute inset-0 rounded-full"
-                            style={{ backgroundColor: "var(--surface-subtle)", border: "1px solid var(--border-default)" }}
+                            style={{
+                              backgroundColor: "var(--surface-subtle)",
+                              // Contorno na cor de assinatura: o controle ativo ganha cor sem gradiente.
+                              border: "1px solid color-mix(in srgb, var(--brand-signal) 55%, transparent)",
+                            }}
                             transition={prefersReduced ? { duration: 0 } : appleSpring}
                           />
                         )}

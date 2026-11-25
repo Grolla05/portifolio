@@ -101,7 +101,8 @@ export default function ProfilePage() {
           </motion.section>
 
           {/* PROJETOS EM DESTAQUE */}
-          <section className="pt-20 lg:pt-28" aria-labelledby="featured-title">
+          {/* Mais respiro entre seções (pt-24/32): cada uma "entra em cena" sozinha. */}
+          <section className="pt-24 lg:pt-32" aria-labelledby="featured-title">
             <motion.div
               className="flex flex-wrap items-end justify-between gap-4 mb-8"
               variants={sectionReveal}
@@ -113,7 +114,7 @@ export default function ProfilePage() {
                 </p>
                 <h2
                   id="featured-title"
-                  className="text-3xl md:text-4xl font-medium tracking-tight"
+                  className="text-4xl md:text-5xl lg:text-[56px] lg:leading-[1.05] font-medium tracking-tight"
                 >
                   Projetos em destaque
                 </h2>
@@ -181,7 +182,7 @@ export default function ProfilePage() {
 
           {/* STACK + TRAJETÓRIA — lado a lado no desktop, empilhados no celular */}
           {/* Divisor: o traço de osciloscópio reaparece entre as seções, desenhando ao rolar. */}
-          <SignalTrace variant="divider" className="block w-full h-10 mt-20 lg:mt-28 opacity-70" />
+          <SignalTrace variant="divider" className="block w-full h-10 mt-24 lg:mt-32 opacity-70" />
 
           <motion.section
             className="pt-10 lg:pt-12 grid lg:grid-cols-2 gap-6"
@@ -233,7 +234,7 @@ export default function ProfilePage() {
           </motion.section>
 
           {/* CTA FINAL */}
-          <section className="py-20 lg:py-28">
+          <section className="py-24 lg:py-32">
             <motion.div
               variants={sectionReveal}
               {...revealOnScroll}
@@ -241,7 +242,7 @@ export default function ProfilePage() {
               style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
             >
               <div className="space-y-2 max-w-md">
-                <h2 className="text-3xl font-medium tracking-tight">Vamos conversar?</h2>
+                <h2 className="text-4xl md:text-5xl font-medium tracking-tight">Vamos conversar?</h2>
                 <p style={{ color: 'var(--text-secondary)' }}>
                   Fale comigo por mensagem, e-mail ou LinkedIn.
                 </p>

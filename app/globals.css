@@ -165,16 +165,21 @@
 }
 
 .dark {
-  /* Surface & Base — macOS Native Dark Slate Materials */
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #252526;
+  /* Surface & Base — macOS Native Dark Slate Materials
+
+     Redesign cinematográfico: o cinza neutro (#1e1e1e/#252526/#2a2a2c) ganhou um toque
+     frio (~225°, saturação ≤ 7%). Ainda lê como "grafite macOS", mas dá profundidade e
+     faz o laranja de --brand-signal e o azul de ação saltarem sem precisar de glow.
+     Luminâncias praticamente iguais às anteriores: os ratios de contraste não mudam. */
+  --bg-primary: #1c1d20;
+  --bg-secondary: #232428;
   /* #323234 era claro demais para o resto da paleta: virava o teto de contraste do tema
      escuro e derrubava --text-muted (3.92:1), --syntax-comment (4.16:1) e o acento em
      texto (3.51:1) — todos os chips, cabeçalhos de modal e badges que usam esta
      superfície. #2a2a2c mantém a rampa de elevação (primary < secondary < tertiary)
      e devolve margem de contraste a todos eles. */
-  --bg-tertiary: #2a2a2c;
-  --bg-glass: rgba(30, 30, 30, 0.75);
+  --bg-tertiary: #2a2b30;
+  --bg-glass: rgba(28, 29, 32, 0.75);
 
   /* Borders & Dividers */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -215,11 +220,11 @@
   /* Redesign: texto #06121f sobre #409cff dá 7.1:1. */
   --cta-bg: #409cff;
   --cta-fg: #06121f;
-  --statusbar-bg: #252526;
+  --statusbar-bg: #232428;
   --statusbar-fg: #c7c7cc;
   --statusbar-dot: #56d364;
-  --chip-bg: #323234;
-  --surface-sunken: #1b1b1c;
+  --chip-bg: #303137;
+  --surface-sunken: #18191c;
   --status-ok: #56d364;
   --accent-purple-text: #bc8cff;
 
@@ -232,11 +237,11 @@
   --syntax-comment: #8b949e;
 
   /* Tailwind / Shadcn semantic variables */
-  --background: 0 0% 12%;
+  --background: 225 7% 12%;
   --foreground: 0 0% 96%;
-  --card: 0 0% 15%;
+  --card: 228 6% 15%;
   --card-foreground: 0 0% 96%;
-  --popover: 0 0% 15%;
+  --popover: 228 6% 15%;
   --popover-foreground: 0 0% 96%;
   --primary: 212 100% 52%;
   --primary-foreground: 0 0% 100%;
@@ -282,7 +287,7 @@ body {
   }
 
   .dark .glass-panel {
-    background: rgba(30, 30, 30, 0.75);
+    background: rgba(28, 29, 32, 0.75);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -510,6 +515,29 @@ body {
     animation: none !important;
   }
 }
+
+/*
+    Ken Burns: a mídia do card se aproxima devagar no hover (6s), como câmera em
+    documentário. Só transform; o pai tem overflow:hidden.
+*/
+.ken-burns {
+  transform: scale(1);
+  transition: transform 6s var(--ease-out-expo);
+}
+.group:hover .ken-burns {
+  transform: scale(1.04);
+}
+
+/* Faixa de 2px na cor da linguagem no topo do card (cor via --lang, inline). */
+.lang-tint {
+  box-shadow: inset 0 2px 0 0 var(--lang, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns { transition: none; }
+  .group:hover .ken-burns { transform: none; }
+}
+.a11y-reduce-motion .group:hover .ken-burns { transform: none; }
 
 /* ==========================================================================
    Accessibility Overrides

@@ -41,7 +41,24 @@ export interface CaseStudy {
   demo?: string;
   /** Caminho em /public para um screenshot; sem ele os cards usam uma capa gerada em CSS. */
   cover?: string;
+  /**
+   * Mídia principal do projeto — foto ou vídeo curto em loop (3–5s, mudo) do hardware
+   * funcionando. Tem prioridade sobre `cover`. Coloque os arquivos em
+   * /public/projects/<repo>/ e aponte aqui, ex.:
+   *   media: { type: 'video', src: '/projects/Project_SolarPoints/demo.mp4',
+   *            poster: '/projects/Project_SolarPoints/poster.jpg', alt: 'Poste aceso à noite' }
+   */
+  media?: ProjectMedia;
   nextSteps?: string[];
+}
+
+export interface ProjectMedia {
+  type: 'image' | 'video';
+  src: string;
+  /** Quadro estático do vídeo: aparece antes de carregar e com movimento reduzido. */
+  poster?: string;
+  /** Descrição para leitor de tela. Sem ela usamos "Capa do projeto <título>". */
+  alt?: string;
 }
 
 export const CASE_STUDIES: CaseStudy[] = [
@@ -345,6 +362,17 @@ export function getCuratedSummary(repoName: string): string | null {
  */
 export function getExplicitCover(repoName: string): string | null {
   return getCaseStudy(repoName)?.cover ?? LOCAL_COVERS[repoName] ?? null;
+}
+
+/**
+ * Mídia do projeto, normalizada: `media` do estudo → `cover` → miniatura local → null.
+ * É o que o ProjectCover renderiza (vídeo em loop ou imagem).
+ */
+export function getProjectMedia(repoName: string): ProjectMedia | null {
+  const media = getCaseStudy(repoName)?.media;
+  if (media) return media;
+  const cover = getExplicitCover(repoName);
+  return cover ? { type: 'image', src: cover } : null;
 }
 
 /** Estudo anterior e seguinte, em ordem circular — alimenta a navegação no fim da página. */

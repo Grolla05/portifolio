@@ -7,7 +7,7 @@ import { ExternalLink, Globe, Eye, FileText } from "lucide-react";
 import { ProjectCover } from "@/components/projects/project-cover";
 import { appleSpring, fadeUp } from "@/lib/animations/variants";
 import { getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
-import { type RepoProject, describeProject, displayTopics } from "@/lib/projects";
+import { type RepoProject, describeProject, displayTopics, getLanguageColor } from "@/lib/projects";
 
 /*
     Card de projeto em destaque.
@@ -40,7 +40,7 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
       whileHover={{ y: -4 }}
       transition={appleSpring}
       data-vt-card
-      className="group flex flex-col rounded-xl border overflow-hidden h-full"
+      className="group relative flex flex-col rounded-xl border overflow-hidden h-full"
       style={{
         backgroundColor: "var(--bg-secondary)",
         borderColor: "var(--border-default)",
@@ -51,6 +51,14 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
           quando não) no lugar da faixa com três logos de linguagem — o design pede
           imagem do projeto, e a capa é a mesma que a grade de /projects já usa.
       */}
+      {/* Faixa de 2px na cor da linguagem principal, por cima da capa. */}
+      {project.primaryLanguage && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-0.5 z-10"
+          style={{ backgroundColor: getLanguageColor(project.primaryLanguage) }}
+        />
+      )}
       <div data-vt="cover" className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
         <ProjectCover
           repo={project.name}
