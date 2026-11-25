@@ -150,7 +150,8 @@ export default function ProfilePage() {
                 initial="hidden"
                 animate="visible"
               >
-                Escrevo em C, C++, Python e TypeScript, do firmware em ESP32 e Arduino à
+                Estudante de Engenharia de Controle e Automação na PUC-Campinas. Escrevo em C, C++,
+                Python e TypeScript, do firmware em ESP32 e Arduino à
                 interface web.
               </motion.p>
 
@@ -168,6 +169,18 @@ export default function ProfilePage() {
                   { href: '/contact', label: 'Falar comigo', icon: Mail },
                 ]}
               />
+
+              {/* Atalho para o estudo de caso: leva direto à prova de trabalho. */}
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                Em destaque:{' '}
+                <Link
+                  href="/projects/solar-points"
+                  className="hover:underline underline-offset-4"
+                  style={{ color: 'var(--ide-accent-text)' }}
+                >
+                  Solar Points, iluminação autônoma com ESP32 e energia solar →
+                </Link>
+              </p>
             </div>
 
             {/* profile.ts: código SEU, no lugar dos snippets genéricos */}

@@ -2,9 +2,11 @@
 
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ExternalLink, Globe, Eye } from "lucide-react";
+import Link from "next/link";
+import { ExternalLink, Globe, Eye, FileText } from "lucide-react";
 import { LanguageIcon } from "@/components/projects/language-icon";
 import { appleSpring, fadeUp } from "@/lib/animations/variants";
+import { getCaseStudy } from "@/lib/case-studies";
 import { type RepoProject, describeProject, displayTopics } from "@/lib/projects";
 
 /*
@@ -31,6 +33,7 @@ const linkClasses =
 export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
   const prefersReduced = useReducedMotion();
   const topics = displayTopics(project);
+  const caseStudy = getCaseStudy(project.name);
 
   return (
     <motion.article
@@ -101,6 +104,12 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
               <Eye className="w-3.5 h-3.5" aria-hidden="true" />
               Detalhes
             </button>
+          )}
+          {caseStudy && (
+            <Link href={`/projects/${caseStudy.slug}`} className={linkClasses}>
+              <FileText className="w-3.5 h-3.5" aria-hidden="true" />
+              Estudo de caso
+            </Link>
           )}
           <a
             href={project.link}
