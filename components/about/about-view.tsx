@@ -50,6 +50,11 @@ import { SOCIAL } from "@/lib/site";
     O pdf.js toca DOMMatrix/canvas no escopo do módulo — import dinâmico sem SSR, e o
     bundle (~300kb gz) só desce quando alguém abre um artigo.
 */
+const PdfCover = dynamic(() => import("./pdf-cover").then((m) => m.PdfCover), {
+  ssr: false,
+  loading: () => <div className="w-[180px] aspect-[1/1.414]" />,
+});
+
 const PdfViewer = dynamic(() => import("./pdf-viewer").then((m) => m.PdfViewer), {
   ssr: false,
   loading: () => (
@@ -302,15 +307,8 @@ export default function AboutView({ papers }: AboutViewProps) {
                     backgroundColor: isActive ? "var(--bg-primary)" : "transparent",
                   }}
                 >
-                  {isActive && (
-                    <motion.span
-                      layoutId="activeTab"
-                      className="absolute left-0 right-0 top-0 h-[2px]"
-                      style={{ backgroundColor: "var(--ide-accent)" }}
-                      transition={prefersReduced ? { duration: 0 } : appleSpring}
-                      aria-hidden="true"
-                    />
-                  )}
+                  {/* Sem a barra azul no topo da aba ativa: a aba já se destaca pelo fundo
+                      (--bg-primary) e pelo texto, e a barra duplicava o sublinhado do header. */}
                   <span className="truncate">{section.file}</span>
                 </a>
               );
@@ -352,7 +350,8 @@ export default function AboutView({ papers }: AboutViewProps) {
           </div>
         </div>
 
-        <main className="w-full max-w-[1040px] px-4 sm:px-8 lg:px-12 pt-8 md:pt-14 pb-28 flex flex-col gap-12 md:gap-[72px]">
+        {/* Largura total da área do editor (antes max-w-[1040px] deixava ~1/3 da tela vazio). */}
+        <main className="w-full px-4 sm:px-8 lg:px-12 pt-8 md:pt-14 pb-28 flex flex-col gap-12 md:gap-[72px]">
           {/* INTRO */}
           <motion.section
             id="bio"
@@ -362,22 +361,21 @@ export default function AboutView({ papers }: AboutViewProps) {
             initial="hidden"
             animate="visible"
           >
-            {/*
-                Monograma no lugar da foto: o repositório não tem retrato do Felipe, e uma
-                foto de banco de imagens seria pior que nenhuma. Trocar por <img> quando
-                houver um arquivo em /public.
-            */}
+            {/* Foto real no lugar do monograma "FG". */}
             <motion.div
               variants={fadeUp}
-              className="w-24 h-24 sm:w-[152px] sm:h-[152px] flex-shrink-0 rounded-xl border flex items-center justify-center font-mono text-3xl sm:text-5xl"
-              style={{
-                backgroundColor: "var(--bg-tertiary)",
-                borderColor: "var(--border-default)",
-                color: "var(--syntax-type)",
-              }}
-              aria-hidden="true"
+              className="w-24 h-24 sm:w-[152px] sm:h-[152px] flex-shrink-0 rounded-xl border overflow-hidden"
+              style={{ backgroundColor: "var(--bg-tertiary)", borderColor: "var(--border-default)" }}
             >
-              FG
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/felipe.webp"
+                alt="Foto de Felipe Grolla"
+                width={152}
+                height={152}
+                className="w-full h-full object-cover"
+                decoding="async"
+              />
             </motion.div>
             <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
               <motion.p variants={fadeUp} className="font-mono text-[13px]" style={{ color: "var(--syntax-comment)" }}>
@@ -485,8 +483,14 @@ export default function AboutView({ papers }: AboutViewProps) {
                   className="flex items-center gap-4 px-5 py-4 rounded-xl border"
                   style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
                 >
-                  <span className="font-mono text-xs w-12 flex-shrink-0" style={{ color: "var(--syntax-type)" }}>
-                    curso
+                  {/* Logo da universidade no lugar do rótulo "curso". Fundo branco fixo:
+                      os logos oficiais são pensados para fundo claro, nos dois temas. */}
+                  <span
+                    className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center p-1.5"
+                    style={{ backgroundColor: "var(--switch-knob)" }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={course.logo} alt={course.school} loading="lazy" decoding="async" className="max-w-full max-h-full object-contain" />
                   </span>
                   <span className="text-sm md:text-[15px]" style={{ color: "var(--text-secondary)" }}>
                     <span style={{ color: "var(--text-primary)" }}>{course.name}</span> · {course.detail}
@@ -508,14 +512,19 @@ export default function AboutView({ papers }: AboutViewProps) {
                     className="flex flex-col md:flex-row rounded-xl border overflow-hidden"
                     style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
                   >
-                    <div
-                      className="hidden md:flex w-[200px] flex-shrink-0 flex-col items-center justify-center gap-3 border-r"
+                    {/* Capa = primeira página do próprio PDF (components/about/pdf-cover.tsx).
+                        Clicável: abre o mesmo visualizador do botão "Ler o artigo". */}
+                    <button
+                      type="button"
+                      onClick={() => setOpenPaper(paper)}
+                      className="group relative hidden md:flex w-[220px] flex-shrink-0 items-center justify-center p-5 border-r overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]"
                       style={{ backgroundColor: "var(--bg-tertiary)", borderColor: "var(--border-subtle)" }}
-                      aria-hidden="true"
+                      aria-label={`Abrir o artigo ${paper.title}`}
                     >
-                      <FileText className="w-9 h-9" style={{ color: "var(--ide-accent-purple)" }} strokeWidth={1.4} />
-                      <span className="font-mono text-xs" style={{ color: "var(--text-muted)" }}>PDF</span>
-                    </div>
+                      <span className="block transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.02]">
+                        <PdfCover url={paperUrl(paper)} width={180} />
+                      </span>
+                    </button>
                     <div className="flex-1 p-5 sm:p-8 flex flex-col gap-4">
                       <div className="flex flex-wrap items-center gap-2">
                         <span

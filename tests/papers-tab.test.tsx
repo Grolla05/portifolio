@@ -143,18 +143,15 @@ describe('Página Sobre — seção research', () => {
     expect(screen.getByRole('dialog')).toBeDefined();
   });
 
-  it('monta o my-bio.md próprio, com Código/Prévia, junto com as demais seções', () => {
+  it('monta a bio sincronizada do README junto com as demais seções', async () => {
     render(<AboutView papers={[]} />);
 
-    // A bio deixou de buscar o README de perfil: o conteúdo é síncrono, vem de lib/about.ts.
-    expect(screen.getByRole('heading', { name: 'Sobre mim' })).toBeDefined();
-    expect(screen.getByText('Estruturas de Dados')).toBeDefined();
-    expect(screen.getByRole('link', { name: /README completo no GitHub/ })).toBeDefined();
+    // O rodapé do card da bio é síncrono, qualquer que seja o estado da busca.
+    expect(screen.getByText(/Grolla05\/Grolla05\/README\.md/)).toBeDefined();
     expect(screen.getByText('Formação')).toBeDefined();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Ver o markdown cru' }));
-    // No modo Código o markdown aparece cru (tokenizado), sem virar <h2>.
-    expect(screen.queryByRole('heading', { name: 'Sobre mim' })).toBeNull();
-    expect(screen.getByRole('button', { name: 'Ver o markdown cru' }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByText('Fora do editor')).toBeDefined();
+    await waitFor(() => {
+      expect(screen.getByText('README de teste')).toBeDefined();
+    });
   });
 });

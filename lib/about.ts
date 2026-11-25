@@ -51,9 +51,10 @@ export const EDUCATION: EducationItem[] = [
 ];
 
 /** Cursos livres. Mesmos nomes usados no profile.ts da home. */
+/* `logo`: arquivo em public/logos/ da instituição que oferece o curso. */
 export const COURSES = [
-  { name: 'CS50x', detail: 'Harvard · Introdução à Ciência da Computação' },
-  { name: 'MIT 6.002.1x', detail: 'MIT · Circuitos e Eletrônica' },
+  { name: 'CS50x', detail: 'Harvard · Introdução à Ciência da Computação', school: 'Harvard University', logo: '/logos/harvard.svg' },
+  { name: 'MIT 6.002.1x', detail: 'MIT · Circuitos e Eletrônica', school: 'Massachusetts Institute of Technology', logo: '/logos/mit.svg' },
 ];
 
 export interface Hobby {
@@ -91,31 +92,3 @@ export const QUICK_FACTS = [
   { key: 'stack', value: 'C · C++ · Python · TypeScript' },
   { key: 'estudando', value: 'CS50x · MIT 6.002.1x' },
 ];
-
-/*
-    Conteúdo do card my-bio.md. Fatos tirados do README do perfil (Grolla05/Grolla05):
-    semestre, o que está estudando e certificações. Escrito como markdown porque o card
-    mostra o mesmo texto cru (Código) ou renderizado (Prévia).
-
-    Ao mudar de semestre ou concluir um curso, é aqui que se atualiza.
-*/
-export const BIO_MARKDOWN = `## Sobre mim
-
-Estou no **4º semestre de Engenharia de Controle e Automação** na PUC-Campinas, depois de
-começar em Engenharia de Computação na mesma universidade.
-
-Gosto de projetos que juntam hardware e software: firmware em C/C++ para ESP32 e
-Arduino, ferramentas em Python e interfaces web em TypeScript.
-
-## Estudando agora
-
-- Estruturas de Dados
-- Estatística e Análise de Dados
-- Inteligência Artificial
-- Circuitos elétricos
-
-## Certificações
-
-- **CS50x**: Introdução à Ciência da Computação (Harvard)
-- **6.002.1x**: Circuits and Electronics (MIT)
-`;
