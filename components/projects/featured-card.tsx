@@ -39,6 +39,7 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
       variants={fadeUp}
       whileHover={{ y: -4 }}
       transition={appleSpring}
+      data-vt-card
       className="group flex flex-col rounded-xl border overflow-hidden h-full"
       style={{
         backgroundColor: "var(--bg-secondary)",
@@ -50,7 +51,7 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
           quando não) no lugar da faixa com três logos de linguagem — o design pede
           imagem do projeto, e a capa é a mesma que a grade de /projects já usa.
       */}
-      <div className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
+      <div data-vt="cover" className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
         <ProjectCover
           repo={project.name}
           title={project.title}
@@ -60,6 +61,7 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
 
       <div className="flex flex-col gap-4 p-6 flex-1">
         <h3
+          data-vt="title"
           className="text-lg font-medium tracking-tight"
           style={{ color: "var(--text-primary)" }}
         >

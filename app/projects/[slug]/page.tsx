@@ -131,9 +131,10 @@ export default async function CaseStudyPage({ params }: { params: Promise<RouteP
             )}
           </div>
 
+          {/* viewTransitionName: destino do morph do título do card (view-transition-router). */}
           <h1
             className="text-3xl md:text-5xl font-medium tracking-tight"
-            style={{ color: 'var(--text-primary)' }}
+            style={{ color: 'var(--text-primary)', viewTransitionName: 'vt-title' }}
           >
             {study.title}
           </h1>
@@ -160,7 +161,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<RouteP
         {study.cover && (
           <div
             className="mt-10 rounded-xl overflow-hidden border"
-            style={{ borderColor: 'var(--border-default)' }}
+            style={{ borderColor: 'var(--border-default)', viewTransitionName: 'vt-cover' }}
           >
             <ProjectCover repo={study.repo} title={study.title} primaryLanguage={null} />
           </div>

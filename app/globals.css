@@ -82,6 +82,10 @@
      (#bf5af2) dá só 3.5:1 sobre --chip-bg; este token passa AA nas duas paletas. */
   --accent-purple-text: #8250df;
 
+  /* Assinatura "hardware": traço do osciloscópio, palavras-chave da narrativa,
+     marcadores da timeline. Segundo acento de marca (o azul fica para ação). */
+  --brand-signal: #953800;
+
   /* Syntax Highlighting */
   /* #d1242f dava 4.50:1 sobre --bg-tertiary — em cima da linha, sem margem.
      #cf222e (danger.fg do GitHub Primer) sobe para 4.59:1 e é visualmente idêntico. */
@@ -218,6 +222,8 @@
   --surface-sunken: #1b1b1c;
   --status-ok: #56d364;
   --accent-purple-text: #bc8cff;
+
+  --brand-signal: #ffa657;
 
   /* Xcode Syntax Highlighting */
   --syntax-keyword: #ff7b72;
@@ -384,14 +390,63 @@ body {
   50%, 100% { opacity: 0; }
 }
 
+/*
+    fill-mode `backwards` (não `both`): durante o atraso o elemento fica no estado
+    inicial, mas ao terminar a animação SOLTA o transform. Com `both`, o
+    `translate3d(0,0,0)` final ficaria aplicado para sempre — e um transform cria
+    containing block para descendentes `position: fixed` (modais, menus), que passariam
+    a se posicionar relativos ao card e não à janela.
+*/
 .reveal-up {
-  animation: reveal-up var(--dur-xl) var(--ease-out-expo) both;
+  animation: reveal-up var(--dur-xl) var(--ease-out-expo) backwards;
   animation-delay: var(--reveal-delay, 0ms);
 }
 
 .reveal-fade {
-  animation: reveal-fade var(--dur-xl) var(--ease-out-expo) both;
+  animation: reveal-fade var(--dur-xl) var(--ease-out-expo) backwards;
   animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Caractere de máquina de escrever (components/motion/typewriter.tsx). */
+.type-char {
+  animation: reveal-fade 1ms linear backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Entrada de rota (app/template.tsx): troca de "arquivo" no editor, curta e discreta. */
+@keyframes route-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.route-enter {
+  animation: route-in var(--dur-lg) var(--ease-out-expo) backwards;
+}
+
+/*
+    View Transitions (components/motion/view-transition-router.tsx).
+    O card de projeto "vira" a página do estudo de caso: título e capa recebem
+    view-transition-name no clique e o navegador interpola posição e tamanho.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-md);
+  animation-timing-function: var(--ease-out-expo);
+}
+
+::view-transition-group(vt-title),
+::view-transition-group(vt-cover) {
+  animation-duration: var(--dur-lg);
+  animation-timing-function: var(--ease-out-expo);
+}
+
+/* Texto não deve esticar durante o morph: mantém proporção e só reposiciona. */
+::view-transition-old(vt-title),
+::view-transition-new(vt-title) {
+  height: 100%;
+  width: auto;
+  object-fit: none;
+  object-position: left top;
 }
 
 .word-mask {
@@ -405,12 +460,12 @@ body {
 
 .word-mask > .word {
   display: inline-block;
-  animation: word-up var(--dur-xl) var(--ease-out-expo) both;
+  animation: word-up var(--dur-xl) var(--ease-out-expo) backwards;
   animation-delay: var(--reveal-delay, 0ms);
 }
 
 .wipe-in {
-  animation: wipe-in var(--dur-lg) var(--ease-in-out-quint) both;
+  animation: wipe-in var(--dur-lg) var(--ease-in-out-quint) backwards;
   animation-delay: var(--reveal-delay, 0ms);
 }
 
@@ -418,11 +473,23 @@ body {
   animation: caret-blink 1s steps(1) infinite;
 }
 
+/* Toggle "Reduce Motion" do menu de acessibilidade: sem atraso nem animação de cena. */
+.a11y-reduce-motion .reveal-up,
+.a11y-reduce-motion .reveal-fade,
+.a11y-reduce-motion .word-mask > .word,
+.a11y-reduce-motion .wipe-in,
+.a11y-reduce-motion .type-char,
+.a11y-reduce-motion .route-enter {
+  animation: none !important;
+}
+
 /* Visita repetida na mesma sessão: a cena já foi vista, entra pronta. */
-.scene-seen .reveal-up,
-.scene-seen .reveal-fade,
-.scene-seen .word-mask > .word,
-.scene-seen .wipe-in {
+.scene-seen [data-scene] .reveal-up,
+.scene-seen [data-scene] .reveal-fade,
+.scene-seen [data-scene] .word-mask > .word,
+.scene-seen [data-scene] .wipe-in,
+.scene-seen [data-scene] .type-char,
+.scene-seen [data-scene].reveal-up {
   animation: none;
 }
 
@@ -431,8 +498,16 @@ body {
   .reveal-fade,
   .word-mask > .word,
   .wipe-in,
+  .type-char,
+  .route-enter,
   .caret {
     animation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 

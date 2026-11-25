@@ -118,8 +118,10 @@ function CaseStudyHero({
       initial="hidden"
       animate="visible"
       aria-labelledby="hero-case-title"
+      data-vt-card
     >
       <div
+        data-vt="cover"
         className="lg:w-1/2 border-b lg:border-b-0 lg:border-r"
         style={{ borderColor: "var(--border-subtle)" }}
       >
@@ -140,6 +142,7 @@ function CaseStudyHero({
         </span>
         <h2
           id="hero-case-title"
+          data-vt="title"
           className="text-2xl md:text-3xl font-medium tracking-tight"
           style={{ color: "var(--text-primary)" }}
         >
@@ -291,6 +294,7 @@ export default function ProjectsPage() {
               delay: prefersReduced ? 0 : Math.min(index, 8) * 0.04,
             }}
             whileHover={{ y: -2 }}
+            data-vt-card
             className="group relative flex flex-col gap-3 p-5 sm:p-6 rounded-xl border transition-colors focus-within:ring-2 focus-within:ring-[var(--ide-accent)]"
             style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
           >
@@ -321,7 +325,7 @@ export default function ProjectsPage() {
               )}
             </div>
 
-            <h3 className="text-[17px] font-medium tracking-tight" style={{ color: "var(--text-primary)" }}>
+            <h3 data-vt="title" className="text-[17px] font-medium tracking-tight" style={{ color: "var(--text-primary)" }}>
               {/*
                   O botão do título estica sobre o card inteiro (after:inset-0): o card todo
                   abre o Quick Look, mas os links internos continuam clicáveis por cima.

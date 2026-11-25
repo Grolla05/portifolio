@@ -127,14 +127,15 @@ export const wordReveal: Variants = {
 /** Traço SVG se desenhando (pathLength é transform-free: anima stroke-dashoffset). */
 export const drawPath: Variants = {
   hidden: { pathLength: 0, opacity: 0 },
-  visible: {
+  // `custom` = atraso em segundos, para encadear o traço na cena do hero.
+  visible: (delay: number = 0) => ({
     pathLength: 1,
     opacity: 1,
     transition: {
-      pathLength: { duration: 1.2, ease: ease.inOutQuint },
-      opacity: { duration: dur.xs },
+      pathLength: { duration: 1.2, ease: ease.inOutQuint, delay },
+      opacity: { duration: dur.xs, delay },
     },
-  },
+  }),
 };
 
 /** Reveal de seção ao rolar: sobe 24px e assenta com a curva de cena. */
