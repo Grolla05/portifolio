@@ -51,9 +51,8 @@ const REVALIDATE_SECONDS = 3600;
 /**
  * Busca o breakdown de linguagens de um repositório, em bytes.
  *
- * Os `topics` da conta estão todos vazios, então as linguagens são a única fonte real
- * de tags para o filtro lateral. O breakdown por bytes é melhor que o campo `language`
- * sozinho: um repositório TypeScript com CSS e HTML aparece nos três filtros, como
+ * As linguagens alimentam o filtro lateral (os `topics` ficam nos cards). O breakdown
+ * por bytes é melhor que o campo `language` sozinho: um repositório TypeScript com CSS e HTML aparece nos três filtros, como
  * deveria, em vez de só no dominante.
  */
 async function fetchLanguages(
@@ -161,6 +160,7 @@ export async function GET() {
       primaryLanguage: languages[0] ?? repo.language ?? null,
       // `tags` mantém o nome que os modais já consomem para casar ícone com linguagem.
       tags: languages,
+      topics: repo.topics ?? [],
     };
   });
 
