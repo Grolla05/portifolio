@@ -47,6 +47,7 @@ import { ProjectModal } from "@/components/projects/project-modal";
 import { RepoModal } from "@/components/projects/repo-modal";
 import { LanguageIcon } from "@/components/projects/language-icon";
 import { CtaGroup } from "@/components/cta-group";
+import { FeaturedCard } from "@/components/projects/featured-card";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useProjects } from "@/hooks/use-projects";
@@ -54,6 +55,8 @@ import {
   type RepoProject,
   collectLanguages,
   describeProject,
+  displayTopics,
+  pickFeatured,
   formatRelativeDate,
   getLanguageIcon,
   prefersReadmeView,
@@ -84,6 +87,7 @@ export default function ProjectsPage() {
   const sidebarPanelRef = useSidebarToggle();
 
   const languages = useMemo(() => collectLanguages(projects), [projects]);
+  const featured = useMemo(() => pickFeatured(projects), [projects]);
 
   /*
       O filtro guarda o que foi DESmarcado, não o que foi marcado.
@@ -445,6 +449,24 @@ export default function ProjectsPage() {
                   {describeProject(project)}
                 </p>
 
+                {/* Topics do GitHub: dizem do que o projeto trata sem abrir o modal */}
+                {displayTopics(project, 3).length > 0 && (
+                  <ul className="flex flex-wrap gap-1.5" aria-label="Tópicos do projeto">
+                    {displayTopics(project, 3).map((topic) => (
+                      <li
+                        key={topic}
+                        className="rounded-full px-2 py-0.5 text-[10px] font-mono"
+                        style={{
+                          backgroundColor: "var(--bg-tertiary)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        {topic}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
                 {/*
                     Rodapé com sinal de atividade. Data do último push é o que separa
                     um portfólio vivo de um abandonado — e só pode ser exibida porque
@@ -623,6 +645,42 @@ export default function ProjectsPage() {
 
         {status === "ready" && filteredProjects.length > 0 && (
           <>
+            {/*
+                Destaques curados no topo. Somem quando há filtro ativo: quem filtrou por
+                linguagem quer ver o resultado do filtro, não uma seção fixa por cima.
+            */}
+            {deselectedLanguages.length === 0 && featured.length > 0 && (
+              <section className="mb-14" aria-labelledby="featured-projects-title">
+                <h2
+                  id="featured-projects-title"
+                  className="text-xs font-mono mb-5"
+                  style={{ color: "var(--syntax-comment)" }}
+                >
+                  {"// em destaque"}
+                </h2>
+                <motion.div
+                  className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                  variants={prefersReduced ? {} : staggerContainer}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {featured.map((project) => (
+                    <FeaturedCard
+                      key={project.id}
+                      project={project}
+                      onOpen={setSelectedProject}
+                    />
+                  ))}
+                </motion.div>
+                <h2
+                  className="text-xs font-mono mt-12"
+                  style={{ color: "var(--syntax-comment)" }}
+                >
+                  {"// todos os repositórios"}
+                </h2>
+              </section>
+            )}
+
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
               layout

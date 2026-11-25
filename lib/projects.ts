@@ -19,6 +19,42 @@ export interface RepoProject extends Omit<Project, 'description'> {
   languages: string[];
   languageBytes: Record<string, number>;
   primaryLanguage: string | null;
+  /** Topics do repositório no GitHub (kebab-case, na ordem em que a API devolve). */
+  topics?: string[];
+}
+
+/*
+    Projetos em destaque na home e no topo de /projects.
+
+    Curadoria manual por nome de repositório: a ordem aqui é a ordem na tela. Os dados
+    (descrição, topics, demo, linguagens) continuam vindo da API, então o card nunca
+    diverge do GitHub. Escolhidos por ilustrarem o recorte hardware + software + IA:
+    firmware ESP32 com PCB e dashboard, assistente local com LLM, e skill Claude/MCP.
+*/
+export const FEATURED_REPOS = [
+  'Project_SolarPoints',
+  'J.A.R.V.I.S-Just-A-Rather-Very-Intelligent-System',
+  'Generate-bambu',
+] as const;
+
+/** Devolve os destaques presentes no conjunto, na ordem de FEATURED_REPOS. */
+export function pickFeatured(projects: RepoProject[]): RepoProject[] {
+  return FEATURED_REPOS.map((name) => projects.find((p) => p.name === name)).filter(
+    (p): p is RepoProject => p !== undefined,
+  );
+}
+
+/**
+ * Topics para exibir num card: sem os que só repetem a linguagem (já mostrada pelo
+ * ícone) e limitados a `max` para o card não virar uma nuvem de tags.
+ */
+export function displayTopics(project: RepoProject, max = 4): string[] {
+  const languageNames = new Set(project.languages.map((l) => l.toLowerCase()));
+  const redundant = new Set(['cpp', 'c', 'c-language', 'python', 'javascript', 'typescript']);
+
+  return (project.topics ?? [])
+    .filter((t) => !languageNames.has(t.toLowerCase()) && !redundant.has(t))
+    .slice(0, max);
 }
 
 /**

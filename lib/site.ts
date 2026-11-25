@@ -29,6 +29,13 @@ export const SITE_DESCRIPTION =
   "Portfólio de Felipe Grolla, desenvolvedor de software. Projetos em C, C++, Python, " +
   "TypeScript e sistemas embarcados, apresentados numa interface inspirada em IDE.";
 
+/**
+ * Disponibilidade exibida como selo na home ("Aberto a ...").
+ * `null` esconde o selo. Preencher só com algo que seja verdade hoje, ex.:
+ * "Aberto a estágio e projetos freelance".
+ */
+export const AVAILABILITY: string | null = null;
+
 /** Handle do GitHub — fonte dos projetos exibidos em /projects. */
 export const GITHUB_USER = "Grolla05";
 
