@@ -445,6 +445,14 @@ body {
   animation-timing-function: var(--ease-out-expo);
 }
 
+/* Troca de tema (lib/theme-transition.ts): sem crossfade; a camada nova é revelada
+   em círculo por clip-path animado via JS. */
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 /* Texto não deve esticar durante o morph: mantém proporção e só reposiciona. */
 ::view-transition-old(vt-title),
 ::view-transition-new(vt-title) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { GitBranch, TerminalSquare, Search, Circle } from "lucide-react";
@@ -29,6 +29,32 @@ export function StatusBar() {
   const { resolvedTheme } = useTheme();
 
   const route = ROUTE_LABELS[pathname] ?? pathname.replace(/^\//, '');
+
+  /*
+      Linha de boot (primeira visita da sessão): "compiling portfolio…" e depois
+      "✓ ready in Xs" com o tempo REAL de carregamento (performance.now() na montagem),
+      e então volta ao caminho da rota. Coerente com a regra acima: nada de número
+      inventado — se o site levou 1,8s, a barra diz 1,8s.
+      Renderizado só no cliente, depois da montagem: o HTML do servidor mostra a rota
+      normal, sem divergência de hidratação.
+  */
+  const [boot, setBoot] = useState<string | null>(null);
+  useEffect(() => {
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem('boot-seen') === '1';
+      sessionStorage.setItem('boot-seen', '1');
+    } catch {}
+    if (seen) return;
+    const loadedIn = (performance.now() / 1000).toFixed(2);
+    setBoot('compiling portfolio…');
+    const t1 = window.setTimeout(() => setBoot(`✓ ready in ${loadedIn}s`), 700);
+    const t2 = window.setTimeout(() => setBoot(null), 2200);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, []);
 
   const openTerminal = () => {
     window.dispatchEvent(new CustomEvent('portfolio:toggle-terminal'));
@@ -64,7 +90,18 @@ export function StatusBar() {
       </span>
 
       <span className="px-2 h-full flex items-center">
-        {`~/${route}`}
+        {boot ? (
+          <span
+            key={boot}
+            className="reveal-fade"
+            style={{ color: boot.startsWith('✓') ? 'var(--statusbar-dot)' : undefined, ['--reveal-delay' as string]: '0ms' }}
+            aria-hidden="true"
+          >
+            {boot}
+          </span>
+        ) : (
+          `~/${route}`
+        )}
       </span>
 
       <button onClick={openTerminal} className={itemClass} aria-label="Abrir terminal integrado">

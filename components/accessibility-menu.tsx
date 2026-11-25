@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion, type Variants } from 'framer-motion';
 import { Accessibility, X, Type, Contrast, Zap, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useThemeSwitch, originFromEvent } from '@/lib/theme-transition';
 import { appleSpring } from '@/lib/animations/variants';
 
 interface A11ySettings {
@@ -26,7 +27,9 @@ export default function AccessibilityMenu() {
     const systemReducedMotion = useReducedMotion();
     const [settings, setSettings] = useState<A11ySettings>(defaults);
     const [mounted, setMounted] = useState(false);
-    const { resolvedTheme, setTheme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    // Troca com revelação circular a partir do botão clicado (lib/theme-transition.ts).
+    const switchTheme = useThemeSwitch();
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -173,7 +176,7 @@ export default function AccessibilityMenu() {
                                     return (
                                         <motion.button
                                             key={value}
-                                            onClick={() => setTheme(value)}
+                                            onClick={(e) => switchTheme(value, originFromEvent(e))}
                                             whileHover={animOff ? {} : { scale: 1.03 }}
                                             whileTap={animOff ? {} : { scale: 0.97 }}
                                             aria-pressed={active}

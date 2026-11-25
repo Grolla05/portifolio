@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { appleSpring } from "@/lib/animations/variants";
+import { useMagnet } from "@/lib/animations/use-tilt";
 import { cn } from "@/lib/utils";
 
 /*
@@ -56,6 +57,27 @@ const variantClasses: Record<CtaVariant, string> = {
   glass: "border border-[var(--border-default)] hover:bg-black/5 dark:hover:bg-white/5",
 };
 
+/*
+    Wrapper de cada botão. O primário é magnético: é atraído até 6px na direção do
+    cursor (useMagnet), um convite discreto ao clique. Os demais só fazem a mola de
+    hover/tap de antes.
+*/
+function CtaItem({ children, magnetic }: { children: React.ReactNode; magnetic: boolean }) {
+  const magnet = useMagnet(6);
+  return (
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      transition={appleSpring}
+      style={magnetic ? magnet.style : undefined}
+      onPointerMove={magnetic ? magnet.onPointerMove : undefined}
+      onPointerLeave={magnetic ? magnet.onPointerLeave : undefined}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroupProps) {
   const prefersReduced = useReducedMotion();
 
@@ -85,12 +107,7 @@ export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroup
         const classes = cn(baseClasses, variantClasses[variant]);
 
         return (
-          <motion.div
-            key={href + label}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            transition={appleSpring}
-          >
+          <CtaItem key={href + label} magnetic={variant === "primary"}>
             {external ? (
               /*
                   Links externos usam <a> e não next/link: não há rota interna para
@@ -122,7 +139,7 @@ export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroup
                 {content}
               </Link>
             )}
-          </motion.div>
+          </CtaItem>
         );
       })}
     </motion.div>

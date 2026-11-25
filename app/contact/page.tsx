@@ -296,11 +296,35 @@ export default function ContactPage() {
                 className="inline-flex items-center justify-center gap-2 w-11 h-11 md:w-auto md:min-h-11 md:px-4 rounded-[10px] md:border text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                 style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               >
-                {emailCopied ? (
-                  <Check className="w-4 h-4" style={{ color: "var(--status-ok)" }} aria-hidden="true" />
-                ) : (
-                  <Copy className="w-4 h-4" aria-hidden="true" />
-                )}
+                {/* Morph Copy → Check: o ícone sai girando e o check entra com mola e um
+                    "ping" de escala — o retorno do clique é físico, não só a troca de glifo. */}
+                <span className="relative inline-flex w-4 h-4" aria-hidden="true">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    {emailCopied ? (
+                      <motion.span
+                        key="check"
+                        className="absolute inset-0"
+                        initial={{ scale: 0.3, opacity: 0, rotate: -45 }}
+                        animate={{ scale: [0.3, 1.25, 1], opacity: 1, rotate: 0 }}
+                        exit={{ scale: 0.3, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <Check className="w-4 h-4" style={{ color: "var(--status-ok)" }} />
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="copy"
+                        className="absolute inset-0"
+                        initial={{ scale: 0.3, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                        exit={{ scale: 0.3, opacity: 0, rotate: 45 }}
+                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <Copy className="w-4 h-4" />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </span>
                 <span className="hidden md:inline">{emailCopied ? "Copiado" : "Copiar"}</span>
               </button>
               <a

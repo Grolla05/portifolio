@@ -8,6 +8,7 @@ import { fadeUp, staggerContainer, sectionReveal, revealOnScroll } from '@/lib/a
 import { Hero } from '@/components/home/hero';
 import { CountUp } from '@/components/motion/count-up';
 import { SignalTrace } from '@/components/motion/signal-trace';
+import { TimelineGraph } from '@/components/home/timeline-graph';
 import { CtaGroup } from '@/components/cta-group';
 import { FeaturedCard } from '@/components/projects/featured-card';
 import { useProjects } from '@/hooks/use-projects';
@@ -215,21 +216,10 @@ export default function ProfilePage() {
               style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
             >
               <h2 className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
-                {'// git log --oneline --trajetória'}
+                {'// git log --graph --trajetória'}
               </h2>
-              <ol className="space-y-3 text-sm">
-                {TIMELINE.map(({ when, what }) => (
-                  <li key={what} className="flex gap-4">
-                    <span
-                      className="w-16 flex-shrink-0 font-mono"
-                      style={{ color: 'var(--text-muted)' }}
-                    >
-                      {when}
-                    </span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{what}</span>
-                  </li>
-                ))}
-              </ol>
+              {/* Grafo que se desenha com o scroll (components/home/timeline-graph.tsx). */}
+              <TimelineGraph entries={TIMELINE} />
             </motion.div>
           </motion.section>
 

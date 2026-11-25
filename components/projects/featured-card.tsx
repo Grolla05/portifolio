@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ExternalLink, Globe, Eye, FileText } from "lucide-react";
 import { ProjectCover } from "@/components/projects/project-cover";
 import { appleSpring, fadeUp } from "@/lib/animations/variants";
+import { useTilt } from "@/lib/animations/use-tilt";
 import { getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
 import { type RepoProject, describeProject, displayTopics, getLanguageColor } from "@/lib/projects";
 
@@ -33,6 +34,8 @@ const linkClasses =
 export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
   const topics = displayTopics(project);
   const caseStudy = getCaseStudy(project.name);
+  // Inclinação 3D seguindo o cursor (±4°): o card "responde" à mão, como objeto físico.
+  const tilt = useTilt(4);
 
   return (
     <motion.article
@@ -41,7 +44,10 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
       transition={appleSpring}
       data-vt-card
       className="group relative flex flex-col rounded-xl border overflow-hidden h-full"
+      onPointerMove={tilt.onPointerMove}
+      onPointerLeave={tilt.onPointerLeave}
       style={{
+        ...tilt.style,
         backgroundColor: "var(--bg-secondary)",
         borderColor: "var(--border-default)",
       }}

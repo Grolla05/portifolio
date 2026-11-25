@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useThemeSwitch } from "@/lib/theme-transition";
 import {
   Home,
   User,
@@ -35,7 +36,9 @@ import {
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
+  // Troca com revelação circular (lib/theme-transition.ts).
+  const setTheme = useThemeSwitch();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {

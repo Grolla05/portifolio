@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useMotionOff } from '@/lib/animations/use-motion-off';
 import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { TrafficLights } from '@/components/traffic-lights';
@@ -66,16 +68,26 @@ export function ProfileCard({ delay = 400, tokenStagger = 14 }: ProfileCardProps
   const typingStart = delay + 200;
   const caretDelay = typingStart + TOKENS.length * tokenStagger;
 
+  /*
+      Parallax leve: ao rolar, o painel sobe um pouco mais devagar que a página (até 40px),
+      dando profundidade à cena sem chamar atenção. Wrapper separado do .reveal-up para
+      o transform da animação CSS e o do scroll não brigarem.
+  */
+  const off = useMotionOff();
+  const { scrollY } = useScroll();
+  const parallaxY = useTransform(scrollY, [0, 500], [0, -40]);
+
   const copyProfile = () => {
     navigator.clipboard.writeText(PROFILE_TS);
     toast.success('profile.ts copiado para a área de transferência!');
   };
 
   return (
+    <motion.div className="w-full max-w-xl lg:ml-auto" style={off ? undefined : { y: parallaxY }}>
     <ContextMenu>
       <ContextMenuTrigger asChild>
         <div
-          className="reveal-up glass-panel rounded-xl overflow-hidden elevation-1 border border-white/30 dark:border-white/10 cursor-context-menu w-full max-w-xl lg:ml-auto"
+          className="reveal-up glass-panel rounded-xl overflow-hidden elevation-1 border border-white/30 dark:border-white/10 cursor-context-menu w-full"
           style={{ '--reveal-delay': `${delay}ms` } as React.CSSProperties}
         >
           <div className="border-b px-4 py-2.5 flex items-center justify-between border-white/15 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md">
@@ -130,5 +142,6 @@ export function ProfileCard({ delay = 400, tokenStagger = 14 }: ProfileCardProps
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
+    </motion.div>
   );
 }
