@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useThemeSwitch } from "@/lib/theme-transition";
 import {
   Home,
   User,
@@ -35,7 +36,9 @@ import {
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
+  // Troca com revelação circular (lib/theme-transition.ts).
+  const setTheme = useThemeSwitch();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -94,7 +97,7 @@ export function CommandPalette() {
             <CommandShortcut>⌘1</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => router.push("/about"))}>
-            <User className="mr-2 h-4 w-4 text-[#FFA657]" />
+            <User className="mr-2 h-4 w-4 text-[var(--syntax-type)]" />
             <span>Sobre / About</span>
             <CommandShortcut>⌘2</CommandShortcut>
           </CommandItem>
@@ -115,7 +118,7 @@ export function CommandPalette() {
         {/* Editor Files */}
         <CommandGroup heading="Arquivos do Editor">
           <CommandItem onSelect={() => runCommand(() => router.push("/about"))}>
-            <FileText className="mr-2 h-4 w-4 text-[#FFA657]" />
+            <FileText className="mr-2 h-4 w-4 text-[var(--syntax-type)]" />
             <span>my-bio.md</span>
             <CommandShortcut>Bio</CommandShortcut>
           </CommandItem>
@@ -216,7 +219,7 @@ export function CommandPalette() {
               )
             }
           >
-            <ExternalLink className="mr-2 h-4 w-4 text-[#0A66C2]" />
+            <ExternalLink className="mr-2 h-4 w-4 text-[var(--ide-accent-text)]" />
             <span>LinkedIn (/in/felipegrolla)</span>
           </CommandItem>
         </CommandGroup>

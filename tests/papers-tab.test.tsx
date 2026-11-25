@@ -86,89 +86,72 @@ describe('lib/papers — derivação a partir do nome do arquivo', () => {
   });
 });
 
-describe('Página Sobre — pasta research', () => {
+/*
+    Redesign: /about virou página única. Os artigos deixaram de abrir em aba com painel
+    lateral e passaram a ser cards na seção "Pesquisa e extensão"; o visualizador de PDF
+    próprio abre num diálogo pelo botão "Ler o artigo".
+*/
+describe('Página Sobre — seção research', () => {
   it('não mostra a pasta research quando não há PDF na pasta', () => {
     render(<AboutView papers={[]} />);
 
     expect(screen.queryByText('research')).toBeNull();
+    expect(screen.queryByText('Pesquisa e extensão')).toBeNull();
   });
 
-  it('lista qualquer PDF varrido de public/papers', () => {
+  it('lista qualquer PDF varrido de public/papers, com ou sem metadados', () => {
     render(<AboutView papers={[buildPaper(REGISTERED), buildPaper(UNREGISTERED)]} />);
 
     expect(screen.getAllByText('research').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(REGISTERED).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(UNREGISTERED).length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getByRole('heading', { name: /Qualificação Formal da População em Situação de Rua/ }),
+    ).toBeDefined();
+    expect(screen.getByRole('heading', { name: 'Rascunho sem metadados' })).toBeDefined();
+    expect(screen.getAllByRole('button', { name: 'Ler o artigo' })).toHaveLength(2);
   });
 
-  it('abre o artigo em aba e monta o painel de informações', async () => {
+  it('mostra os metadados registrados no card do artigo', () => {
     render(<AboutView papers={[buildPaper(REGISTERED)]} />);
 
-    fireEvent.click(screen.getAllByText(REGISTERED)[0]);
-
-    /*
-        Asserta MONTAGEM, não visibilidade: o framer-motion anima via requestAnimationFrame,
-        que não roda no jsdom, então o wrapper permanece no estado `initial` (opacity 0)
-        mesmo funcionando no navegador. Verificar opacidade aqui daria falso negativo.
-    */
-    await waitFor(() => {
-      expect(screen.getByText('Paper info')).toBeDefined();
-    });
-
-    // O venue aparece duas vezes: na linha de citação e na linha "Publicado em".
     expect(screen.getAllByText(/COBENGE 2025/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText(/Extensão Universitária/)).toBeDefined();
+    expect(screen.getByText('Felipe Grolla Freitas')).toBeDefined();
+    expect(screen.getByRole('link', { name: /DOI/ }).getAttribute('href')).toContain('doi.org');
   });
 
-  it('monta o painel mesmo para PDF sem metadados, omitindo as seções vazias', async () => {
+  it('omite DOI para PDF sem metadados e mantém o download', () => {
     render(<AboutView papers={[buildPaper(UNREGISTERED)]} />);
 
-    fireEvent.click(screen.getAllByText(UNREGISTERED)[0]);
-
-    await waitFor(() => {
-      expect(screen.getByText('Paper info')).toBeDefined();
-    });
-
-    expect(screen.getByText('Rascunho sem metadados')).toBeDefined();
-    expect(screen.queryByText('Resumo')).toBeNull();
-    expect(screen.queryByText('Ano')).toBeNull();
+    expect(screen.queryByRole('link', { name: /DOI/ })).toBeNull();
+    expect(screen.getByRole('link', { name: /Baixar PDF/ }).getAttribute('href')).toBe(
+      '/papers/Rascunho%20sem%20metadados.pdf',
+    );
   });
 
-  it('aponta o visualizador para o arquivo em public/papers', async () => {
+  it('abre o visualizador no diálogo apontando para o arquivo em public/papers', async () => {
     render(<AboutView papers={[buildPaper(REGISTERED)]} />);
 
-    fireEvent.click(screen.getAllByText(REGISTERED)[0]);
+    fireEvent.click(screen.getByRole('button', { name: 'Ler o artigo' }));
 
     /*
         Timeout acima do padrão (1s): o visualizador entra por `next/dynamic`, e resolver
-        o import sob carga paralela do vitest passa de um segundo com facilidade — o teste
-        falhava de forma intermitente só quando a suíte inteira rodava junto.
+        o import sob carga paralela do vitest passa de um segundo com facilidade.
     */
     const viewer = await screen.findByTestId('pdf-viewer', {}, { timeout: 5000 });
     expect(viewer.getAttribute('data-url')).toBe(
       '/papers/Artigo%20Qualifica%C3%A7%C3%A3o%20Formal%20de%20PSR.pdf',
     );
+    expect(screen.getByRole('dialog')).toBeDefined();
   });
 
-  it('troca de aba monta o componente correspondente', async () => {
+  it('monta a bio sincronizada do README junto com as demais seções', async () => {
     render(<AboutView papers={[]} />);
 
-    /*
-        Antes esta linha era `getByText(/About me/i)`, casando com a bio escrita à mão
-        que vivia dentro de bio.tsx. O conteúdo agora vem do README de perfil do GitHub,
-        de forma assíncrona, então não há texto de bio no primeiro render.
-
-        O que este teste cobre é a MONTAGEM da aba, não o texto dela — daí a asserção
-        passar para o cabeçalho do arquivo, que a bio renderiza de forma síncrona
-        qualquer que seja o estado da busca.
-    */
-    expect(screen.getByText('Grolla05/Grolla05/README.md')).toBeDefined();
-
-    fireEvent.click(screen.getAllByText('hobbies')[0]);
-    fireEvent.click(screen.getAllByText('hobbies.ts')[0]);
-
+    // O rodapé do card da bio é síncrono, qualquer que seja o estado da busca.
+    expect(screen.getByText(/Grolla05\/Grolla05\/README\.md/)).toBeDefined();
+    expect(screen.getByText('Formação')).toBeDefined();
+    expect(screen.getByText('Fora do editor')).toBeDefined();
     await waitFor(() => {
-      expect(screen.getByText(/Hobbies preview/i)).toBeDefined();
+      expect(screen.getByText('README de teste')).toBeDefined();
     });
   });
 });

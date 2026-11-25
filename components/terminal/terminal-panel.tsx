@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useThemeSwitch } from "@/lib/theme-transition";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { TerminalSquare, X, Trash2 } from "lucide-react";
 import type { Paper } from "@/lib/papers";
@@ -39,7 +40,9 @@ interface TerminalPanelProps {
 
 export function TerminalPanel({ papers }: TerminalPanelProps) {
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
+  // Troca com revelação circular (lib/theme-transition.ts).
+  const switchTheme = useThemeSwitch();
   const prefersReduced = useReducedMotion();
 
   const [open, setOpen] = useState(false);
@@ -108,7 +111,7 @@ export function TerminalPanel({ papers }: TerminalPanelProps) {
           window.open(effect.url, '_blank', 'noopener,noreferrer');
           break;
         case 'theme':
-          setTheme(
+          switchTheme(
             effect.value === 'toggle' ? (theme === 'dark' ? 'light' : 'dark') : effect.value,
           );
           break;
@@ -120,7 +123,7 @@ export function TerminalPanel({ papers }: TerminalPanelProps) {
           break;
       }
     },
-    [router, setTheme, theme],
+    [router, switchTheme, theme],
   );
 
   const submit = useCallback(() => {
@@ -221,7 +224,7 @@ export function TerminalPanel({ papers }: TerminalPanelProps) {
               aria-hidden="true"
             />
             <span
-              className="text-[11px] font-semibold tracking-tight uppercase"
+              className="text-[11px] font-medium tracking-tight uppercase"
               style={{ color: 'var(--text-secondary)' }}
             >
               terminal

@@ -26,11 +26,11 @@ vi.mock('next-themes', () => ({
 }));
 
 describe('Header — navegação mobile', () => {
-  it('esconde a lista de pills abaixo de md', () => {
+  it('esconde as abas de arquivo abaixo de md', () => {
     render(<Header />);
 
-    // A pill da rota ativa vive dentro do container que precisa sumir no mobile.
-    const desktopNav = screen.getByText('Projects').closest('div.hidden');
+    // As abas de arquivo vivem dentro do container que precisa sumir no mobile.
+    const desktopNav = screen.getByText('projects/').closest('div.hidden');
 
     expect(desktopNav).not.toBeNull();
     expect(desktopNav?.className).toContain('hidden');
@@ -59,10 +59,10 @@ describe('Header — navegação mobile', () => {
   it('não duplica os rótulos das rotas enquanto o drawer está fechado', () => {
     render(<Header />);
 
-    // O conteúdo do Sheet só monta quando aberto (portal Radix), então cada rótulo
-    // aparece uma única vez — getByText lançaria se houvesse dois.
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Contact')).toBeInTheDocument();
+    // O conteúdo do Sheet só monta quando aberto (portal Radix), então cada rota tem
+    // um único link. (O nome do arquivo atual ao lado do logo é aria-hidden, não link.)
+    expect(screen.getAllByRole('link', { name: /hello\.tsx/ })).toHaveLength(1);
+    expect(screen.getAllByRole('link', { name: /contact\.ts/ })).toHaveLength(1);
   });
 
   it('abre o drawer com as quatro rotas', async () => {
@@ -72,8 +72,8 @@ describe('Header — navegação mobile', () => {
 
     const drawer = await screen.findByRole('dialog');
 
-    for (const label of ['Home', 'About Me', 'Projects', 'Contact']) {
-      expect(within(drawer).getByRole('link', { name: label })).toBeInTheDocument();
+    for (const file of [/hello\.tsx/, /about-me\.md/, /projects\//, /contact\.ts/]) {
+      expect(within(drawer).getByRole('link', { name: file })).toBeInTheDocument();
     }
   });
 
@@ -83,7 +83,7 @@ describe('Header — navegação mobile', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Abrir menu de navegação' }));
 
     const drawer = await screen.findByRole('dialog');
-    const home = within(drawer).getByRole('link', { name: 'Home' });
+    const home = within(drawer).getByRole('link', { name: /hello\.tsx/ });
 
     expect(home.className).toContain('min-h-[44px]');
   });

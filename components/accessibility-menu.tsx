@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion, type Variants } from 'framer-motion';
 import { Accessibility, X, Type, Contrast, Zap, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useThemeSwitch, originFromEvent } from '@/lib/theme-transition';
 import { appleSpring } from '@/lib/animations/variants';
 
 interface A11ySettings {
@@ -26,7 +27,9 @@ export default function AccessibilityMenu() {
     const systemReducedMotion = useReducedMotion();
     const [settings, setSettings] = useState<A11ySettings>(defaults);
     const [mounted, setMounted] = useState(false);
-    const { resolvedTheme, setTheme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    // Troca com revelação circular a partir do botão clicado (lib/theme-transition.ts).
+    const switchTheme = useThemeSwitch();
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -145,7 +148,7 @@ export default function AccessibilityMenu() {
                         <div className="flex items-center justify-between mb-5">
                             <div className="flex items-center gap-2">
                                 <Accessibility className="w-4 h-4" style={{ color: 'var(--ide-accent)' }} />
-                                <span className="text-sm font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                                <span className="text-sm font-medium tracking-tight" style={{ color: 'var(--text-primary)' }}>
                                     Accessibility
                                 </span>
                             </div>
@@ -173,7 +176,7 @@ export default function AccessibilityMenu() {
                                     return (
                                         <motion.button
                                             key={value}
-                                            onClick={() => setTheme(value)}
+                                            onClick={(e) => switchTheme(value, originFromEvent(e))}
                                             whileHover={animOff ? {} : { scale: 1.03 }}
                                             whileTap={animOff ? {} : { scale: 0.97 }}
                                             aria-pressed={active}
@@ -284,7 +287,7 @@ export default function AccessibilityMenu() {
                                                 }
                                                 className="absolute top-0.5 w-4 h-4 rounded-full"
                                                 style={{
-                                                    background: '#ffffff',
+                                                    background: 'var(--switch-knob)',
                                                     left: active ? 'calc(100% - 18px)' : '2px',
                                                     boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                                                 }}

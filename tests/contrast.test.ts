@@ -69,6 +69,8 @@ const TEXT_TOKENS = [
   'syntax-string',
   'syntax-type',
   'syntax-comment',
+  // Assinatura laranja (redesign cinematográfico): pinta "hardware" e marcadores.
+  'brand-signal',
 ];
 
 // Superfícies sobre as quais esse texto pode cair.

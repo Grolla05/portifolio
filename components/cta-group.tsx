@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { appleSpring } from "@/lib/animations/variants";
+import { useMagnet } from "@/lib/animations/use-tilt";
 import { cn } from "@/lib/utils";
 
 /*
@@ -39,16 +40,43 @@ interface CtaGroupProps {
   animateOnMount?: boolean;
 }
 
+/*
+    Redesign: botões do design — 48px de altura (alvo de toque confortável), raio de 10px,
+    rótulo 14px peso 500. O primário saiu de `bg-primary text-primary-foreground` (branco
+    sobre #0a84ff, 3.65:1, reprova AA) para --cta-bg/--cta-fg. O secundário trocou o
+    vidro por contorno simples, que é o que o design pede e lê melhor sobre os cards.
+*/
 const baseClasses =
-  "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold tracking-tight " +
+  "inline-flex items-center justify-center gap-2 min-h-12 rounded-[10px] px-6 text-sm font-medium " +
   "transition-colors focus-visible:outline-none focus-visible:ring-2 " +
   "focus-visible:ring-[var(--ide-accent)] focus-visible:ring-offset-2 " +
   "focus-visible:ring-offset-[var(--bg-primary)]";
 
 const variantClasses: Record<CtaVariant, string> = {
-  primary: "bg-primary text-primary-foreground shadow-sm hover:opacity-95 px-6",
-  glass: "glass-pill hover:bg-black/5 dark:hover:bg-white/10",
+  primary: "bg-[var(--cta-bg)] text-[var(--cta-fg)] hover:opacity-90",
+  glass: "border border-[var(--border-default)] hover:bg-black/5 dark:hover:bg-white/5",
 };
+
+/*
+    Wrapper de cada botão. O primário é magnético: é atraído até 6px na direção do
+    cursor (useMagnet), um convite discreto ao clique. Os demais só fazem a mola de
+    hover/tap de antes.
+*/
+function CtaItem({ children, magnetic }: { children: React.ReactNode; magnetic: boolean }) {
+  const magnet = useMagnet(6);
+  return (
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      transition={appleSpring}
+      style={magnetic ? magnet.style : undefined}
+      onPointerMove={magnetic ? magnet.onPointerMove : undefined}
+      onPointerLeave={magnetic ? magnet.onPointerLeave : undefined}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroupProps) {
   const prefersReduced = useReducedMotion();
@@ -67,7 +95,7 @@ export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroup
               <Icon
                 className={cn(
                   "w-4 h-4",
-                  variant === "primary" ? "" : "text-primary",
+                  variant === "primary" ? "" : "text-[var(--text-secondary)]",
                 )}
                 aria-hidden="true"
               />
@@ -79,12 +107,7 @@ export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroup
         const classes = cn(baseClasses, variantClasses[variant]);
 
         return (
-          <motion.div
-            key={href + label}
-            whileHover={prefersReduced ? {} : { scale: 1.02 }}
-            whileTap={prefersReduced ? {} : { scale: 0.97 }}
-            transition={appleSpring}
-          >
+          <CtaItem key={href + label} magnetic={variant === "primary"}>
             {external ? (
               /*
                   Links externos usam <a> e não next/link: não há rota interna para
@@ -116,7 +139,7 @@ export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroup
                 {content}
               </Link>
             )}
-          </motion.div>
+          </CtaItem>
         );
       })}
     </motion.div>

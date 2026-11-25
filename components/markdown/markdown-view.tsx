@@ -6,6 +6,22 @@ import rehypeRaw from "rehype-raw";
 import type { Components } from "react-markdown";
 
 /*
+    Links de imagem no formato `github.com/<dono>/<repo>/blob/<ref>/<caminho>` apontam para a
+    PÁGINA do arquivo (HTML), não para a imagem. No github.com funcionam porque o próprio
+    GitHub reescreve esses links ao renderizar o README; aqui o <img> recebia HTML e
+    quebrava (era o caso do GIF do Gengar no README de perfil). Reescrevemos para o
+    conteúdo cru em raw.githubusercontent.com — o mesmo destino que o GitHub usa.
+*/
+const GITHUB_BLOB = /^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/(?:blob|raw)\/([^?#]+)/;
+
+export function toRawImageUrl(src: string): string {
+  const match = src.match(GITHUB_BLOB);
+  if (!match) return src;
+  const [, owner, repo, rest] = match;
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${rest}`;
+}
+
+/*
     Vocabulário visual do markdown renderizado.
 
     Estava embutido em components/projects/project-modal.tsx. Saiu de lá quando a bio do
@@ -203,7 +219,8 @@ export const markdownComponents: Components = {
       {children}
     </td>
   ),
-  img: ({ src, alt, width, height }) => {
+  img: ({ src: rawSrc, alt, width, height }) => {
+    const src = typeof rawSrc === "string" ? toRawImageUrl(rawSrc) : rawSrc;
     /*
         READMEs de perfil são majoritariamente badges (shields.io, github-readme-stats).
         Tratadas como imagem de bloco, cada uma quebraria linha e a bio viraria uma coluna

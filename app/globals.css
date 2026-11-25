@@ -51,6 +51,52 @@
   --surface-subtle: rgba(1, 22, 39, 0.03);
   --switch-track: rgba(1, 22, 39, 0.20);
 
+  /*
+      Redesign (canvas "Avaliação e Redesign do Portfólio").
+
+      --cta-*: botão primário. O antigo `bg-primary text-primary-foreground` punha texto
+      branco sobre #0a84ff — 3.65:1, reprova AA em rótulo de 14px. No claro, branco sobre
+      #0a5fd4 dá 5.48:1; no escuro o design inverte (texto escuro sobre azul claro).
+
+      --statusbar-*: barra de status cinza. #4b535d sobre #eaeef2 dá 6.6:1 (claro);
+      #c7c7cc sobre #252526 dá 10:1 (escuro).
+
+      --chip-bg: fundo das pílulas de stack/tópico — separado de --bg-tertiary porque no
+      design a pílula precisa destacar mesmo DENTRO de um card em --bg-secondary.
+  */
+  --cta-bg: #0a5fd4;
+  --cta-fg: #ffffff;
+  --statusbar-bg: #eaeef2;
+  --statusbar-fg: #4b535d;
+  /* Ponto de "disponível". */
+  --statusbar-dot: #1a7f37;
+  /* Cores das pastas do explorer de /about (identidade herdada da árvore original). */
+  --folder-bio: #e99287;
+  --folder-education: #6c7ae0;
+  --folder-research: #bc8cff;
+  --folder-hobbies: #43d9ad;
+  --chip-bg: #eaeef2;
+  --surface-sunken: #eef1f4;
+  --status-ok: #1a7f37;
+  /* Roxo para TEXTO (rótulo "Artigo", período atual). --ide-accent-purple escuro
+     (#bf5af2) dá só 3.5:1 sobre --chip-bg; este token passa AA nas duas paletas. */
+  --accent-purple-text: #8250df;
+
+  /* Assinatura "hardware": traço do osciloscópio, palavras-chave da narrativa,
+     marcadores da timeline. Segundo acento de marca (o azul fica para ação). */
+  --brand-signal: #953800;
+
+  /* Gráfico de contribuições (components/home/contribution-graph.tsx): escala de
+     verdes do próprio GitHub, para o gráfico ser reconhecido de relance. */
+  --contrib-0: #ebedf0;
+  --contrib-1: #9be9a8;
+  --contrib-2: #40c463;
+  --contrib-3: #30a14e;
+  --contrib-4: #216e39;
+  /* Tamanho MÍNIMO da célula (abaixo disso a grade rola) e espaço entre células. */
+  --cell: 11px;
+  --gap: 4px;
+
   /* Syntax Highlighting */
   /* #d1242f dava 4.50:1 sobre --bg-tertiary — em cima da linha, sem margem.
      #cf222e (danger.fg do GitHub Primer) sobe para 4.59:1 e é visualmente idêntico. */
@@ -85,6 +131,26 @@
   --status-bar-height: 1.5rem; /* components/status-bar.tsx — h-6 */
   --chrome-height: calc(var(--header-height) + var(--status-bar-height));
 
+  /*
+      Tokens de motion — espelho de `dur`/`ease` em lib/animations/variants.ts.
+      Usados pelas animações em CSS puro: primeiro paint do hero (que não pode esperar
+      a hidratação) e View Transitions entre rotas.
+  */
+  --dur-xs: 120ms;
+  --dur-sm: 200ms;
+  --dur-md: 300ms;
+  --dur-lg: 600ms;
+  --dur-xl: 900ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* Botões de janela do macOS (decorativos nos cards de código). Eram hex soltos no JSX. */
+  --traffic-red: #ff5f56;
+  --traffic-yellow: #ffbd2e;
+  --traffic-green: #27c93f;
+  /* Botão do switch: branco nos dois temas (convenção macOS). Era hex no JSX. */
+  --switch-knob: #ffffff;
+
   /* Tailwind / Shadcn semantic variables */
   --background: 210 20% 98%;
   --foreground: 220 15% 10%;
@@ -105,20 +171,26 @@
   --border: 220 13% 90%;
   --input: 220 13% 90%;
   --ring: 211 100% 50%;
-  --radius: 1rem;
+  /* 12px: teto de raio para containers principais (CLAUDE.md). Era 1rem. */
+  --radius: 0.75rem;
 }
 
 .dark {
-  /* Surface & Base — macOS Native Dark Slate Materials */
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #252526;
+  /* Surface & Base — macOS Native Dark Slate Materials
+
+     Redesign cinematográfico: o cinza neutro (#1e1e1e/#252526/#2a2a2c) ganhou um toque
+     frio (~225°, saturação ≤ 7%). Ainda lê como "grafite macOS", mas dá profundidade e
+     faz o laranja de --brand-signal e o azul de ação saltarem sem precisar de glow.
+     Luminâncias praticamente iguais às anteriores: os ratios de contraste não mudam. */
+  --bg-primary: #1c1d20;
+  --bg-secondary: #232428;
   /* #323234 era claro demais para o resto da paleta: virava o teto de contraste do tema
      escuro e derrubava --text-muted (3.92:1), --syntax-comment (4.16:1) e o acento em
      texto (3.51:1) — todos os chips, cabeçalhos de modal e badges que usam esta
      superfície. #2a2a2c mantém a rampa de elevação (primary < secondary < tertiary)
      e devolve margem de contraste a todos eles. */
-  --bg-tertiary: #2a2a2c;
-  --bg-glass: rgba(30, 30, 30, 0.75);
+  --bg-tertiary: #2a2b30;
+  --bg-glass: rgba(28, 29, 32, 0.75);
 
   /* Borders & Dividers */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -156,6 +228,25 @@
   --surface-subtle: rgba(255, 255, 255, 0.04);
   --switch-track: rgba(255, 255, 255, 0.20);
 
+  /* Redesign: texto #06121f sobre #409cff dá 7.1:1. */
+  --cta-bg: #409cff;
+  --cta-fg: #06121f;
+  --statusbar-bg: #232428;
+  --statusbar-fg: #c7c7cc;
+  --statusbar-dot: #56d364;
+  --chip-bg: #303137;
+  --surface-sunken: #18191c;
+  --status-ok: #56d364;
+  --accent-purple-text: #bc8cff;
+
+  --brand-signal: #ffa657;
+
+  --contrib-0: #2a2c31;
+  --contrib-1: #0e4429;
+  --contrib-2: #006d32;
+  --contrib-3: #26a641;
+  --contrib-4: #39d353;
+
   /* Xcode Syntax Highlighting */
   --syntax-keyword: #ff7b72;
   --syntax-string: #a5d6ff;
@@ -163,11 +254,11 @@
   --syntax-comment: #8b949e;
 
   /* Tailwind / Shadcn semantic variables */
-  --background: 0 0% 12%;
+  --background: 225 7% 12%;
   --foreground: 0 0% 96%;
-  --card: 0 0% 15%;
+  --card: 228 6% 15%;
   --card-foreground: 0 0% 96%;
-  --popover: 0 0% 15%;
+  --popover: 228 6% 15%;
   --popover-foreground: 0 0% 96%;
   --primary: 212 100% 52%;
   --primary-foreground: 0 0% 100%;
@@ -213,7 +304,7 @@ body {
   }
 
   .dark .glass-panel {
-    background: rgba(30, 30, 30, 0.75);
+    background: rgba(28, 29, 32, 0.75);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -251,6 +342,15 @@ body {
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.40), 0 2px 8px rgba(0, 0, 0, 0.20);
   }
 
+  /* Fileiras de chips que rolam na horizontal no celular: rola, mas sem a barra
+     cinza por baixo, que o design não tem e que parecia um sublinhado quebrado. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -272,6 +372,258 @@ body {
       "Liberation Mono", "Courier New", monospace;
   }
 }
+
+/* ==========================================================================
+   Motion em CSS puro — primeiro paint
+   ==========================================================================
+
+   O Framer Motion renderiza `initial="hidden"` no HTML do servidor como `opacity:0` e só
+   anima depois da hidratação. Acima da dobra isso significava tela vazia até o JS
+   carregar (no mobile, em dev, o hero ainda estava a meio fade 6s depois). Estas classes
+   animam no primeiro frame, sem JS, e o conteúdo existe no HTML desde o início.
+
+   `--reveal-delay` encadeia a cena (definido inline por elemento).
+*/
+@keyframes reveal-up {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes reveal-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Palavra subindo de dentro da máscara (título do hero). */
+@keyframes word-up {
+  from { transform: translate3d(0, 110%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+/* Wipe de cor da esquerda para a direita — só clip-path, sem reflow. */
+@keyframes wipe-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+/* Caret de editor: pisca (steps), não faz fade. */
+@keyframes caret-blink {
+  0%, 49.9% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/*
+    fill-mode `backwards` (não `both`): durante o atraso o elemento fica no estado
+    inicial, mas ao terminar a animação SOLTA o transform. Com `both`, o
+    `translate3d(0,0,0)` final ficaria aplicado para sempre — e um transform cria
+    containing block para descendentes `position: fixed` (modais, menus), que passariam
+    a se posicionar relativos ao card e não à janela.
+*/
+.reveal-up {
+  animation: reveal-up var(--dur-xl) var(--ease-out-expo) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-fade {
+  animation: reveal-fade var(--dur-xl) var(--ease-out-expo) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Caractere de máquina de escrever (components/motion/typewriter.tsx). */
+.type-char {
+  animation: reveal-fade 1ms linear backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Entrada de rota (app/template.tsx): troca de "arquivo" no editor, curta e discreta. */
+@keyframes route-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.route-enter {
+  animation: route-in var(--dur-lg) var(--ease-out-expo) backwards;
+}
+
+/*
+    View Transitions (components/motion/view-transition-router.tsx).
+    O card de projeto "vira" a página do estudo de caso: título e capa recebem
+    view-transition-name no clique e o navegador interpola posição e tamanho.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-md);
+  animation-timing-function: var(--ease-out-expo);
+}
+
+::view-transition-group(vt-title),
+::view-transition-group(vt-cover) {
+  animation-duration: var(--dur-lg);
+  animation-timing-function: var(--ease-out-expo);
+}
+
+/* Troca de tema (lib/theme-transition.ts): sem crossfade; a camada nova é revelada
+   em círculo por clip-path animado via JS. */
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Texto não deve esticar durante o morph: mantém proporção e só reposiciona. */
+::view-transition-old(vt-title),
+::view-transition-new(vt-title) {
+  height: 100%;
+  width: auto;
+  object-fit: none;
+  object-position: left top;
+}
+
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* Respiro para descendentes (g, p, ç) não serem cortados pela máscara. */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.word-mask > .word {
+  display: inline-block;
+  animation: word-up var(--dur-xl) var(--ease-out-expo) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.wipe-in {
+  animation: wipe-in var(--dur-lg) var(--ease-in-out-quint) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.caret {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+/* Toggle "Reduce Motion" do menu de acessibilidade: sem atraso nem animação de cena. */
+.a11y-reduce-motion .reveal-up,
+.a11y-reduce-motion .reveal-fade,
+.a11y-reduce-motion .word-mask > .word,
+.a11y-reduce-motion .wipe-in,
+.a11y-reduce-motion .type-char,
+.a11y-reduce-motion .route-enter {
+  animation: none !important;
+}
+
+/* Visita repetida na mesma sessão: a cena já foi vista, entra pronta. */
+.scene-seen [data-scene] .reveal-up,
+.scene-seen [data-scene] .reveal-fade,
+.scene-seen [data-scene] .word-mask > .word,
+.scene-seen [data-scene] .wipe-in,
+.scene-seen [data-scene] .type-char,
+.scene-seen [data-scene].reveal-up {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .reveal-fade,
+  .word-mask > .word,
+  .wipe-in,
+  .type-char,
+  .route-enter,
+  .caret {
+    animation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/*
+    Ken Burns: a mídia do card se aproxima devagar no hover (6s), como câmera em
+    documentário. Só transform; o pai tem overflow:hidden.
+*/
+.ken-burns {
+  transform: scale(1);
+  transition: transform 6s var(--ease-out-expo);
+}
+.group:hover .ken-burns {
+  transform: scale(1.04);
+}
+
+/*
+    Capa de artigo (components/about/pdf-cover.tsx): o react-pdf fixa width/height do
+    canvas em px pelo atributo `width`. Aqui ele passa a COBRIR o container inteiro,
+    cortando o excesso embaixo — o topo da página (título, congresso) fica sempre visível.
+*/
+.pdf-cover .react-pdf__Page {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.pdf-cover canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  object-position: top;
+}
+
+/*
+    Células do gráfico de contribuições: entrada em onda diagonal (atraso por célula via
+    --reveal-delay), hover que amplia e o dia de hoje pulsando. Só transform/opacity.
+*/
+@keyframes contrib-in {
+  0%   { opacity: 0; transform: scale(0.2); }
+  60%  { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes contrib-ping {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.contrib-cell {
+  position: relative;
+  animation: contrib-in 500ms var(--ease-out-expo) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+  transition: transform var(--dur-sm) var(--ease-out-expo);
+}
+
+.contrib-cell:hover {
+  transform: scale(1.6);
+  z-index: 1;
+  outline: 1px solid var(--text-primary);
+  outline-offset: 1px;
+}
+
+.contrib-today::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--contrib-4);
+  animation: contrib-ping 1.8s var(--ease-out-expo) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contrib-cell, .contrib-today::after { animation: none; }
+}
+.a11y-reduce-motion .contrib-cell,
+.a11y-reduce-motion .contrib-today::after { animation: none !important; }
+
+/* Faixa de 2px na cor da linguagem no topo do card (cor via --lang, inline). */
+.lang-tint {
+  box-shadow: inset 0 2px 0 0 var(--lang, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns { transition: none; }
+  .group:hover .ken-burns { transform: none; }
+}
+.a11y-reduce-motion .group:hover .ken-burns { transform: none; }
 
 /* ==========================================================================
    Accessibility Overrides

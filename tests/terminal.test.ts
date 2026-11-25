@@ -44,7 +44,8 @@ describe('terminal — parsing', () => {
   });
 
   it('reporta comando desconhecido sem quebrar', () => {
-    const result = runCommand('sudo rm -rf /', context());
+    // `sudo` virou easter egg (lib/terminal.ts); `rm` continua inexistente.
+    const result = runCommand('rm -rf /', context());
 
     expect(result.lines[0].kind).toBe('error');
     expect(result.lines[0].text).toContain('comando não encontrado');
@@ -199,5 +200,18 @@ describe('terminal — efeitos', () => {
   it('clear e exit devolvem os efeitos correspondentes', () => {
     expect(runCommand('clear', context()).effect).toEqual({ type: 'clear' });
     expect(runCommand('exit', context()).effect).toEqual({ type: 'close' });
+  });
+});
+
+describe('terminal — easter eggs', () => {
+  it('neofetch funciona mas fica fora do help e do autocompletar', () => {
+    expect(textOf('neofetch')).toContain('felipe@portfolio');
+    expect(textOf('help')).not.toContain('neofetch');
+    expect(COMMAND_NAMES).not.toContain('neofetch');
+  });
+
+  it('sudo hire felipe leva à página de contato', () => {
+    expect(runCommand('sudo hire felipe', context()).effect).toEqual({ type: 'navigate', to: '/contact' });
+    expect(runCommand('sudo rm -rf', context()).effect).toBeUndefined();
   });
 });

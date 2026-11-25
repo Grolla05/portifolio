@@ -278,7 +278,7 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold glass-pill"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium glass-pill"
               style={{ color: "var(--text-primary)" }}
             >
               <ExternalLink className="w-3.5 h-3.5 text-primary" />

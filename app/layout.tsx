@@ -7,6 +7,8 @@ import { CommandPalette } from '@/components/command-palette';
 import { StatusBar } from '@/components/status-bar';
 import { TerminalPanel } from '@/components/terminal/terminal-panel';
 import { Toaster } from '@/components/ui/sonner';
+import { MotionProvider } from '@/components/motion/motion-provider';
+import { ViewTransitionRouter } from '@/components/motion/view-transition-router';
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SOCIAL } from '@/lib/site';
 import { readPapers } from '@/lib/papers-server';
 
@@ -102,7 +104,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#f5f5f7' },
-    { media: '(prefers-color-scheme: dark)', color: '#1e1e1e' },
+    { media: '(prefers-color-scheme: dark)', color: '#1c1d20' },
   ],
   colorScheme: 'dark light',
 };
@@ -130,6 +132,19 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        {/*
+            Cena do hero já vista nesta sessão? Marca o <html> ANTES do primeiro paint,
+            senão a home recarregada tocaria a cena de novo por um frame antes do React
+            hidratar. Mesmo valor de SCENE_KEY em components/home/hero.tsx.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(sessionStorage.getItem('scene-seen')==='1')document.documentElement.classList.add('scene-seen')}catch(e){}",
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider
           attribute="class"
@@ -137,12 +152,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          {children}
-          <CommandPalette />
-          <TerminalPanel papers={papers} />
-          <StatusBar />
-          <Toaster />
+          {/* MotionProvider: preferência de movimento aplicada a todo motion.* de uma vez. */}
+          <MotionProvider>
+            <Header />
+            {children}
+            <CommandPalette />
+            <TerminalPanel papers={papers} />
+            <StatusBar />
+            <Toaster />
+            <ViewTransitionRouter />
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

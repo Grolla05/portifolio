@@ -50,6 +50,8 @@ interface CommandSpec {
   description: string;
   /** Nomes alternativos aceitos na linha de comando. */
   aliases?: string[];
+  /** Easter egg: funciona, mas não aparece no `help` nem no autocompletar. */
+  hidden?: boolean;
   run: (args: string[], context: TerminalContext) => CommandResult;
 }
 
@@ -84,7 +86,7 @@ const COMMANDS: CommandSpec[] = [
     run: () => ({
       lines: [
         accent('Comandos disponíveis'),
-        ...COMMANDS.map((command) =>
+        ...COMMANDS.filter((command) => !command.hidden).map((command) =>
           out(`  ${pad(command.usage, 22)} ${command.description}`),
         ),
         muted(''),
@@ -310,6 +312,53 @@ const COMMANDS: CommandSpec[] = [
     aliases: ['cls'],
     run: () => ({ lines: [], effect: { type: 'clear' } }),
   },
+  /*
+      Easter eggs (ocultos do `help`): recompensa para quem explora o terminal —
+      geralmente justamente o recrutador técnico. Conteúdo verdadeiro, só com humor.
+  */
+  {
+    name: 'neofetch',
+    usage: 'neofetch',
+    description: 'Resumo do sistema.',
+    aliases: ['fastfetch'],
+    hidden: true,
+    run: (_args, { projects, papers, theme }) => ({
+      lines: [
+        accent(`felipe@portfolio`),
+        muted('----------------'),
+        out(`${pad('OS:', 10)} Engenharia de Controle e Automação (PUC-Campinas)`),
+        out(`${pad('Kernel:', 10)} C · C++ · Python · TypeScript`),
+        out(`${pad('Shell:', 10)} ESP32 / Arduino → Next.js`),
+        out(`${pad('Repos:', 10)} ${projects ? projects.length : '…'} públicos no GitHub`),
+        out(`${pad('Papers:', 10)} ${papers.length}`),
+        out(`${pad('Theme:', 10)} ${theme ?? 'system'}`),
+        out(`${pad('Uptime:', 10)} aprendendo desde 2021`),
+      ],
+    }),
+  },
+  {
+    name: 'sudo',
+    usage: 'sudo <comando>',
+    description: 'Privilégios de administrador.',
+    hidden: true,
+    run: (args) => {
+      if (args.join(' ').toLowerCase() === 'hire felipe') {
+        return {
+          lines: [
+            accent('[sudo] senha para recrutador: ********'),
+            out('✓ Permissão concedida. Abrindo canal de contato…'),
+          ],
+          effect: { type: 'navigate', to: '/contact' },
+        };
+      }
+      return {
+        lines: [
+          error(`${args[0] ?? 'usuário'} não está no arquivo sudoers. Este incidente será reportado.`),
+          muted('Dica: tente `sudo hire felipe`.'),
+        ],
+      };
+    },
+  },
   {
     name: 'exit',
     usage: 'exit',
@@ -320,7 +369,9 @@ const COMMANDS: CommandSpec[] = [
 ];
 
 /** Todos os nomes aceitos, incluindo aliases — usado pelo autocompletar do Tab. */
-export const COMMAND_NAMES: string[] = COMMANDS.flatMap((c) => [c.name, ...(c.aliases ?? [])]).sort();
+export const COMMAND_NAMES: string[] = COMMANDS.filter((c) => !c.hidden)
+  .flatMap((c) => [c.name, ...(c.aliases ?? [])])
+  .sort();
 
 function findCommand(name: string): CommandSpec | undefined {
   const lower = name.toLowerCase();

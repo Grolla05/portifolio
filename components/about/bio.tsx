@@ -6,12 +6,8 @@ import {
     AlertCircle,
     Code2,
     Eye,
-    FileDown,
-    FolderGit2,
-    Mail,
     RefreshCw,
 } from 'lucide-react';
-import { CtaGroup } from '@/components/cta-group';
 import { MarkdownView } from '@/components/markdown/markdown-view';
 import { useGitHubReadme } from '@/hooks/use-github-readme';
 import { PROFILE_README, repoUrl } from '@/lib/github-url';
@@ -65,7 +61,8 @@ function ViewToggle({
         <div
             role="group"
             aria-label="Modo de exibição do arquivo"
-            className="flex items-center gap-0.5 p-1 rounded-full glass-panel flex-shrink-0"
+            className="flex items-center gap-0.5 p-1 rounded-full border flex-shrink-0"
+            style={{ borderColor: 'var(--border-default)' }}
         >
             {options.map(({ value, label, hint, icon: Icon }) => {
                 const active = mode === value;
@@ -74,12 +71,12 @@ function ViewToggle({
                         key={value}
                         type="button"
                         onClick={() => onChange(value)}
-                        whileTap={prefersReduced ? {} : { scale: 0.96 }}
+                        whileTap={{ scale: 0.96 }}
                         transition={appleSpring}
                         aria-pressed={active}
                         aria-label={hint}
                         title={hint}
-                        className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium tracking-tight transition-colors select-none cursor-pointer"
+                        className="relative flex items-center gap-1.5 min-h-8 px-3 rounded-full text-xs font-medium tracking-tight transition-colors select-none cursor-pointer"
                         style={{
                             color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
                         }}
@@ -87,7 +84,8 @@ function ViewToggle({
                         {active && (
                             <motion.span
                                 layoutId="bioViewTogglePill"
-                                className="absolute inset-0 rounded-full bg-white/70 dark:bg-white/10 shadow-sm border border-white/30 dark:border-white/15"
+                                className="absolute inset-0 rounded-full"
+                                style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-default)' }}
                                 transition={prefersReduced ? { duration: 0 } : appleSpring}
                             />
                         )}
@@ -228,48 +226,38 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
     );
 }
 
+/*
+    Redesign: a bio deixou de ser uma aba de tela cheia e virou um card dentro da página
+    única de /about (canvas, artboard 5). O cabeçalho do card é a "aba" do arquivo
+    my-bio.md com o alternador Código/Prévia; o corpo tem altura máxima e rola sozinho,
+    porque o README de perfil pode ser longo e não deve empurrar formação e pesquisa
+    para longe. Os CTAs saíram daqui: a página inteira fecha com o próprio chamado.
+*/
 export default function Bio() {
     const [mode, setMode] = useState<ViewMode>('preview');
     const { content, status, error, retry } = useGitHubReadme(PROFILE_README);
 
     return (
-        <main className="flex-1 flex flex-col min-h-[500px] min-w-0 transition-colors duration-300">
-            {/*
-                Barra de ações do arquivo — o "canto superior" do editor.
-                Fica dentro do Bio, e não na barra de abas de app/about/page.tsx, porque o
-                alternador só faz sentido para este arquivo: hobbies.ts e Education.tsx não
-                têm markdown para renderizar.
-            */}
+        <article
+            className="flex flex-col min-w-0 rounded-xl border overflow-hidden"
+            style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
+            aria-label="my-bio.md"
+        >
             <div
-                className="h-10 flex items-center justify-between gap-3 px-4 sm:px-6 border-b flex-shrink-0"
-                style={{
-                    backgroundColor: 'var(--bg-primary)',
-                    borderColor: 'var(--border-subtle)',
-                }}
+                className="min-h-11 flex items-center justify-between gap-3 pl-4 pr-1.5 py-1 border-b flex-shrink-0"
+                style={{ borderColor: 'var(--border-subtle)' }}
             >
-                <a
-                    href={GITHUB_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] font-mono truncate transition-colors hover:underline"
-                    style={{ color: 'var(--text-muted)' }}
-                    title="Abrir o repositório de perfil no GitHub"
-                >
-                    {PROFILE_README.owner}/{PROFILE_README.repo}/README.md
-                </a>
-
+                <span className="font-mono text-[13px] truncate" style={{ color: 'var(--text-primary)' }}>
+                    my-bio.md
+                </span>
                 <ViewToggle mode={mode} onChange={setMode} />
             </div>
 
-            <div
-                className="flex-1 p-6 overflow-y-auto transition-colors duration-300"
-                style={{ backgroundColor: 'var(--bg-primary)' }}
-            >
+            {/* Mais alto (era 560px): o README de perfil tem GIF, cards e tabelas, e com 560px
+                quase tudo ficava escondido atrás da rolagem interna. */}
+            <div className="p-5 sm:p-7 max-h-[min(85vh,960px)] overflow-y-auto">
                 {status === 'error' ? (
-                    <ErrorState
-                        message={error ?? 'Erro desconhecido.'}
-                        onRetry={retry}
-                    />
+                    <ErrorState message={error ?? 'Erro desconhecido.'} onRetry={retry} />
                 ) : status !== 'ready' || content === null ? (
                     <LoadingSkeleton />
                 ) : mode === 'code' ? (
@@ -277,32 +265,19 @@ export default function Bio() {
                 ) : (
                     <MarkdownView content={content} />
                 )}
-
-                {/*
-                    Fecho do arquivo: quem termina de ler sobre mim precisa de um próximo
-                    passo. Fica fora do bloco de estados de propósito — os CTAs continuam
-                    disponíveis mesmo se o GitHub falhar.
-                */}
-                <div className="mt-10 pt-6 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-                    <p className="font-mono text-xs mb-4" style={{ color: 'var(--syntax-comment)' }}>
-                        {'// próximos passos'}
-                    </p>
-                    <CtaGroup
-                        animateOnMount={false}
-                        actions={[
-                            { href: '/projects', label: 'Ver meus projetos', icon: FolderGit2, variant: 'primary' },
-                            {
-                                href: '/api/cv',
-                                label: 'Baixar CV',
-                                icon: FileDown,
-                                external: true,
-                                ariaLabel: 'Baixar currículo em PDF (abre em nova aba)',
-                            },
-                            { href: '/contact', label: 'Falar comigo', icon: Mail },
-                        ]}
-                    />
-                </div>
             </div>
-        </main>
+
+            <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 sm:px-7 py-3 border-t font-mono text-xs transition-colors hover:underline"
+                style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
+                title="Abrir o repositório de perfil no GitHub"
+            >
+                ↳ sincronizado de {PROFILE_README.owner}/{PROFILE_README.repo}/README.md
+                <span className="sr-only"> (abre em nova aba)</span>
+            </a>
+        </article>
     );
 }

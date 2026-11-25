@@ -7,8 +7,9 @@ describe('macOS Dark Mode Design Tokens', () => {
   const cssContent = fs.readFileSync(cssPath, 'utf-8');
 
   it('should define authentic macOS dark mode background surfaces (#1e1e1e, #252526 / #282828)', () => {
-    expect(cssContent).toMatch(/--bg-primary:\s*#1e1e1e/);
-    expect(cssContent).toMatch(/--bg-secondary:\s*(#252526|#282828)/);
+    // #1c1d20/#232428: grafite com toque frio (redesign cinematográfico).
+    expect(cssContent).toMatch(/--bg-primary:\s*(#1e1e1e|#1c1d20)/);
+    expect(cssContent).toMatch(/--bg-secondary:\s*(#252526|#282828|#232428)/);
   });
 
   it('should define macOS primary and secondary text tokens (#f5f5f7, #a1a1a6)', () => {

@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
-import { Home, User, FolderGit2, Mail, Search, Menu } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 import AccessibilityMenu from "./accessibility-menu";
 import { appleSpring } from "@/lib/animations/variants";
 import {
@@ -16,12 +16,32 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const navLinks = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/about", label: "About Me", icon: User },
-  { href: "/projects", label: "Projects", icon: FolderGit2 },
-  { href: "/contact", label: "Contact", icon: Mail },
+/*
+    Redesign — topbar de janela (canvas "Avaliação e Redesign do Portfólio").
+
+    Antes: pills arredondadas com ícone e rótulo em inglês ("About Me", "Projects").
+    Agora: cada rota é um ARQUIVO aberto na janela (hello.tsx, about-me.md, projects/,
+    contact.ts) com sublinhado deslizante, como as abas de um editor. É o que amarra a
+    estética de IDE ao conteúdo, em vez de ser só decoração.
+
+    Sem os três botões de janela do macOS no canto: num site eles são decoração que
+    parece clicável e não faz nada — removidos após a primeira versão.
+
+    O nome do arquivo é o rótulo visível; o nome humano da página vai junto como texto
+    só para leitores de tela. Assim o nome acessível CONTÉM o texto visível (WCAG 2.5.3,
+    quem usa controle por voz diz "hello.tsx") e ainda explica para onde o link leva.
+*/
+export const navLinks = [
+  { href: "/", file: "hello.tsx", label: "Início" },
+  { href: "/about", file: "about-me.md", label: "Sobre mim" },
+  { href: "/projects", file: "projects/", label: "Projetos" },
+  { href: "/contact", file: "contact.ts", label: "Contato" },
 ];
+
+/** Rota ativa: /projects/[slug] continua marcando "projects/". */
+function isActive(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+}
 
 /*
     Tempo da animação de saída do drawer (`data-[state=closed]:duration-300` em
@@ -33,6 +53,8 @@ export default function Header() {
   const pathname = usePathname();
   const prefersReduced = useReducedMotion();
   const [menuOpen, setMenuOpen] = React.useState(false);
+
+  const current = navLinks.find((link) => isActive(pathname, link.href));
 
   const openCommandPalette = () => {
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
@@ -49,105 +71,107 @@ export default function Header() {
   };
 
   return (
-    <motion.header
-      className="sticky top-0 z-50 h-16 w-full backdrop-blur-xl bg-[var(--bg-glass)] border-b border-[var(--border-default)] transition-colors duration-300 shadow-sm"
-      initial={prefersReduced ? {} : { opacity: 0, y: -10 }}
-      animate={prefersReduced ? {} : { opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    <header
+      className="sticky top-0 z-50 h-16 w-full border-b transition-colors duration-300"
+      style={{
+        backgroundColor: "var(--bg-secondary)",
+        borderColor: "var(--border-default)",
+      }}
     >
-      <nav className="w-full h-full max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
-        {/* Logo / Name with SF Pro */}
-        <motion.div whileTap={prefersReduced ? {} : { scale: 0.96 }} transition={appleSpring}>
+      <nav className="w-full h-full px-4 sm:px-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-5 min-w-0">
           <Link
             href="/"
             /*
                 `whitespace-nowrap`: sem isso o nome quebrava em duas linhas a 375px,
-                estourando a altura de 64px do header.
+                estourando a altura do header.
             */
-            className="text-sm font-semibold tracking-tight whitespace-nowrap transition-colors duration-200 hover:text-primary"
+            className="text-sm font-medium tracking-tight whitespace-nowrap transition-opacity hover:opacity-75"
             style={{ color: "var(--text-primary)" }}
           >
             Felipe Grolla
           </Link>
-        </motion.div>
+          {/* Mobile: o arquivo aberto aparece ao lado do nome, como no design. */}
+          {current && (
+            <span
+              className="md:hidden font-mono text-xs truncate"
+              style={{ color: "var(--text-muted)" }}
+              aria-hidden="true"
+            >
+              {current.file}
+            </span>
+          )}
+        </div>
 
         {/*
-            Navegação desktop.
-
-            `hidden md:flex`: abaixo de 768px as quatro pills não cabiam ao lado do logo e
-            dos controles da direita. O flex simplesmente transbordava — "Contact" saía da
-            tela e o menu de acessibilidade ficava inalcançável. No mobile esta lista dá
-            lugar ao drawer, logo abaixo.
+            Abas desktop. `hidden md:flex`: abaixo de 768px as quatro abas não cabem ao
+            lado do nome e dos controles; lá elas dão lugar ao drawer.
         */}
-        <div className="hidden md:flex items-center gap-1.5 p-1 rounded-full glass-panel">
-          {navLinks.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href;
+        <div className="hidden md:flex items-stretch h-full font-mono text-[13px]">
+          {navLinks.map(({ href, file, label }) => {
+            const active = isActive(pathname, href);
             return (
               <motion.div
                 key={href}
-                whileTap={prefersReduced ? {} : { scale: 0.96 }}
-                transition={appleSpring}
-                className="relative"
+                className="relative flex"
+                whileHover={prefersReduced || active ? {} : { opacity: 0.75 }}
               >
                 <Link
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  className="relative flex items-center gap-2 px-4 py-1.5 text-xs font-medium tracking-tight rounded-full transition-colors duration-200 select-none"
+                  className="relative flex items-center px-4 transition-colors duration-200 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]"
                   style={{
                     color: active ? "var(--text-primary)" : "var(--text-secondary)",
                   }}
                 >
-                  {active && (
-                    <motion.div
-                      layoutId="headerNavPill"
-                      className="absolute inset-0 rounded-full bg-white/70 dark:bg-white/10 shadow-sm border border-white/30 dark:border-white/15"
-                      transition={appleSpring}
-                    />
-                  )}
-                  <Icon className="w-3.5 h-3.5 relative z-10 text-primary" />
-                  <span className="relative z-10">{label}</span>
+                  {file}
+                  <span className="sr-only"> — {label}</span>
                 </Link>
+                {active && (
+                  /* layoutId: o sublinhado desliza de uma aba para a outra ao navegar. */
+                  <motion.span
+                    layoutId="navUnderline"
+                    className="absolute left-0 right-0 bottom-0 h-[2px]"
+                    style={{ backgroundColor: "var(--ide-accent)" }}
+                    transition={prefersReduced ? { duration: 0 } : appleSpring}
+                    aria-hidden="true"
+                  />
+                )}
               </motion.div>
             );
           })}
         </div>
 
-        {/* Right — Command Palette trigger, drawer mobile & Accessibility Menu */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <motion.button
+          <button
+            type="button"
             onClick={openCommandPalette}
-            whileHover={prefersReduced ? {} : { scale: 1.02 }}
-            whileTap={prefersReduced ? {} : { scale: 0.96 }}
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] glass-panel transition-colors border border-white/20 dark:border-white/10 select-none cursor-pointer"
+            className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg border text-[13px] transition-colors hover:bg-black/5 dark:hover:bg-white/5 select-none cursor-pointer"
+            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
             title="Abrir Command Palette (⌘K)"
           >
-            <Search className="w-3.5 h-3.5 text-[var(--ide-accent)]" />
-            <span className="text-[11px]">Buscar...</span>
-            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/5">
+            <Search className="w-3.5 h-3.5" aria-hidden="true" />
+            Buscar
+            <kbd className="font-mono text-[12px]" style={{ color: "var(--text-primary)" }}>
               ⌘K
             </kbd>
-          </motion.button>
+          </button>
 
           {/*
-              Drawer de navegação (só mobile).
-
-              Usa o Sheet (Radix Dialog) que já existia no projeto em vez de um painel
-              próprio: traz focus trap, fechar no Esc, aria-modal e trava de scroll — tudo
-              que uma implementação manual erraria. O conteúdo só monta quando aberto, então
+              Drawer de navegação (só mobile). Usa o Sheet (Radix Dialog): focus trap,
+              Esc, aria-modal e trava de scroll. O conteúdo só monta quando aberto, então
               não duplica os rótulos das rotas no DOM.
           */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <motion.button
+              <button
                 type="button"
-                whileTap={prefersReduced ? {} : { scale: 0.96 }}
-                transition={appleSpring}
                 aria-label="Abrir menu de navegação"
-                className="md:hidden flex items-center justify-center w-9 h-9 rounded-full glass-panel border border-white/20 dark:border-white/10 select-none cursor-pointer"
-                style={{ color: "var(--text-secondary)" }}
+                className="md:hidden flex items-center justify-center w-11 h-11 rounded-lg select-none cursor-pointer"
+                style={{ color: "var(--text-primary)" }}
               >
-                <Menu className="w-4 h-4 text-primary" />
-              </motion.button>
+                <Menu className="w-5 h-5" aria-hidden="true" />
+              </button>
             </SheetTrigger>
 
             <SheetContent
@@ -164,40 +188,36 @@ export default function Header() {
                 style={{ borderColor: "var(--border-subtle)" }}
               >
                 <SheetTitle
-                  className="text-sm font-semibold tracking-tight text-left"
-                  style={{ color: "var(--text-primary)" }}
+                  className="text-[11px] font-medium tracking-[0.08em] text-left"
+                  style={{ color: "var(--text-muted)" }}
                 >
-                  Navegação
+                  EXPLORER
                 </SheetTitle>
-                {/* Radix exige um descritor acessível; visualmente o título já basta. */}
                 <SheetDescription className="sr-only">
                   Links para as páginas do portfólio
                 </SheetDescription>
               </SheetHeader>
 
               <nav className="flex-1 flex flex-col gap-1 px-3 py-3">
-                {navLinks.map(({ href, label, icon: Icon }) => {
-                  const active = pathname === href;
+                {navLinks.map(({ href, file, label }) => {
+                  const active = isActive(pathname, href);
                   return (
                     <Link
                       key={href}
                       href={href}
                       onClick={() => setMenuOpen(false)}
                       aria-current={active ? "page" : undefined}
-                      /*
-                          `min-h-[44px]`: alvo de toque mínimo do Apple HIG. As pills do
-                          desktop têm ~28px de altura, insuficiente para o dedo.
-                      */
-                      className="flex items-center gap-3 min-h-[44px] px-3 rounded-xl text-sm font-medium tracking-tight transition-colors"
+                      /* `min-h-[44px]`: alvo de toque mínimo do Apple HIG. */
+                      className="flex items-center justify-between gap-3 min-h-[44px] px-3 rounded-lg transition-colors"
                       style={{
-                        color: active ? "var(--ide-accent-text)" : "var(--text-secondary)",
+                        color: active ? "var(--text-primary)" : "var(--text-secondary)",
                         backgroundColor: active ? "var(--accent-soft)" : "transparent",
-                        border: "1px solid",
-                        borderColor: active ? "var(--accent-ring)" : "transparent",
                       }}
                     >
-                      <Icon className="w-4 h-4 flex-shrink-0" />
-                      <span>{label}</span>
+                      <span className="font-mono text-[13px]">{file}</span>
+                      <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        {label}
+                      </span>
                     </Link>
                   );
                 })}
@@ -210,10 +230,10 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={openPaletteFromDrawer}
-                  className="w-full flex items-center gap-3 min-h-[44px] px-3 rounded-xl text-sm font-medium tracking-tight transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                  className="w-full flex items-center gap-3 min-h-[44px] px-3 rounded-lg text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                   style={{ color: "var(--text-secondary)" }}
                 >
-                  <Search className="w-4 h-4 flex-shrink-0 text-[var(--ide-accent)]" />
+                  <Search className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   <span>Buscar</span>
                 </button>
               </div>
@@ -223,6 +243,6 @@ export default function Header() {
           <AccessibilityMenu />
         </div>
       </nav>
-    </motion.header>
+    </header>
   );
 }

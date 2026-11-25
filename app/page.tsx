@@ -1,23 +1,19 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
-import { Github, Linkedin, Copy, FolderGit2, FileDown, Mail } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
-import { fadeUp, fadeIn, staggerContainer } from '@/lib/animations/variants';
-import { toast } from 'sonner';
+import { Github, Linkedin, Mail } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeUp, staggerContainer, sectionReveal, revealOnScroll } from '@/lib/animations/variants';
+import { Hero } from '@/components/home/hero';
+import { CountUp } from '@/components/motion/count-up';
+import { SignalTrace } from '@/components/motion/signal-trace';
+import { TimelineGraph } from '@/components/home/timeline-graph';
 import { CtaGroup } from '@/components/cta-group';
 import { FeaturedCard } from '@/components/projects/featured-card';
 import { useProjects } from '@/hooks/use-projects';
 import { collectLanguages, pickFeatured } from '@/lib/projects';
-import { AVAILABILITY, SOCIAL } from '@/lib/site';
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuShortcut,
-} from '@/components/ui/context-menu';
+import { SOCIAL } from '@/lib/site';
 
 /*
     Home redesenhada.
@@ -28,43 +24,21 @@ import {
     código mostra um `profile.ts` com dados reais, e abaixo vêm a prova (números ao vivo
     da conta do GitHub) e três projetos em destaque.
 
-    Preservado: CTAs, tokens, animações Framer Motion, menu de contexto no card de código.
+    Preservado: CTAs, tokens, menu de contexto no card de código (agora em
+    components/home/profile-card.tsx). Hero vira cena coreografada em components/home/hero.tsx;
+    as seções abaixo da dobra entram ao rolar, e os números contam até o valor.
 */
 
-function TrafficLights() {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div
-      className="flex items-center gap-1.5 cursor-pointer"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      aria-hidden="true"
-    >
-      <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm border border-black/10 flex items-center justify-center text-[8px] text-black/60 leading-none select-none">
-        <span className={hovered ? 'opacity-100' : 'opacity-0'}>×</span>
-      </div>
-      <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm border border-black/10 flex items-center justify-center text-[8px] text-black/60 leading-none select-none">
-        <span className={hovered ? 'opacity-100' : 'opacity-0'}>−</span>
-      </div>
-      <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm border border-black/10 flex items-center justify-center text-[7px] text-black/60 leading-none select-none">
-        <span className={hovered ? 'opacity-100' : 'opacity-0'}>+</span>
-      </div>
-    </div>
-  );
-}
-
-const PROFILE_TS = `const felipe = {
-  role: "Desenvolvedor de Software",
-  stack: ["C", "C++", "Python", "TypeScript"],
-  focus: "sistemas embarcados + web",
-  courses: ["CS50x", "MIT 6.002.1x"],
-  contact: "${SOCIAL.email}",
-};`;
-
-const kw = { color: 'var(--syntax-keyword)' } as const;
-const str = { color: 'var(--syntax-string)' } as const;
-const ty = { color: 'var(--syntax-type)' } as const;
-const mu = { color: 'var(--text-muted)' } as const;
+/*
+    Trajetória do design ("git log --oneline"). Só marcos com ano verificável no próprio
+    site (components/about/education.tsx e lib/papers.ts) — nada de "[ANO]" inventado.
+*/
+const TIMELINE = [
+  { when: '2025–', what: 'Engenharia de Controle e Automação, PUC-Campinas' },
+  { when: '2025', what: 'Artigo publicado no COBENGE 2025' },
+  { when: '2024', what: 'Engenharia de Computação, PUC-Campinas' },
+  { when: '2021–23', what: 'Ensino Médio, Colégio Objetivo' },
+];
 
 const STACK = [
   { dir: 'embarcados/', items: 'C, C++, Arduino, ESP32, KiCad' },
@@ -73,7 +47,6 @@ const STACK = [
 ];
 
 export default function ProfilePage() {
-  const prefersReduced = useReducedMotion();
   const { projects, status } = useProjects();
 
   const featured = useMemo(() => pickFeatured(projects), [projects]);
@@ -87,11 +60,6 @@ export default function ProfilePage() {
     [projects],
   );
 
-  const copyProfile = () => {
-    navigator.clipboard.writeText(PROFILE_TS);
-    toast.success('profile.ts copiado para a área de transferência!');
-  };
-
   return (
     <div
       className="min-h-[calc(100vh-var(--chrome-height))] w-full transition-colors duration-300"
@@ -99,185 +67,32 @@ export default function ProfilePage() {
     >
       <main className="w-full px-6 md:px-12 lg:px-24">
         <div className="max-w-7xl mx-auto w-full">
-          {/* HERO */}
-          <section
-            id="hello"
-            className="grid lg:grid-cols-2 gap-12 items-center py-16 lg:py-24"
-          >
-            <div className="space-y-6">
-              {AVAILABILITY && (
-                <motion.p
-                  className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs"
-                  style={{ borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}
-                  variants={prefersReduced ? {} : fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <span
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: 'var(--ide-accent-green)' }}
-                    aria-hidden="true"
-                  />
-                  {AVAILABILITY}
-                </motion.p>
-              )}
-
-              <motion.p
-                className="font-mono text-sm"
-                style={{ color: 'var(--syntax-comment)' }}
-                variants={prefersReduced ? {} : fadeUp}
-                initial="hidden"
-                animate="visible"
-              >
-                {'// Felipe Grolla · desenvolvedor de software'}
-              </motion.p>
-
-              <motion.h1
-                className="text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight leading-[1.05]"
-                style={{ color: 'var(--text-primary)' }}
-                variants={prefersReduced ? {} : fadeUp}
-                initial="hidden"
-                animate="visible"
-              >
-                Software que conversa com o{' '}
-                <span style={{ color: 'var(--syntax-type)' }}>hardware</span>.
-              </motion.h1>
-
-              <motion.p
-                className="text-lg md:text-xl leading-relaxed max-w-xl"
-                style={{ color: 'var(--text-secondary)' }}
-                variants={prefersReduced ? {} : fadeUp}
-                initial="hidden"
-                animate="visible"
-              >
-                Estudante de Engenharia de Controle e Automação na PUC-Campinas. Escrevo em C, C++,
-                Python e TypeScript, do firmware em ESP32 e Arduino à
-                interface web.
-              </motion.p>
-
-              <CtaGroup
-                className="pt-2"
-                actions={[
-                  { href: '/projects', label: 'Ver meus projetos', icon: FolderGit2, variant: 'primary' },
-                  {
-                    href: '/api/cv',
-                    label: 'Baixar CV',
-                    icon: FileDown,
-                    external: true,
-                    ariaLabel: 'Baixar currículo em PDF (abre em nova aba)',
-                  },
-                  { href: '/contact', label: 'Falar comigo', icon: Mail },
-                ]}
-              />
-
-              {/* Atalho para o estudo de caso: leva direto à prova de trabalho. */}
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                Em destaque:{' '}
-                <Link
-                  href="/projects/solar-points"
-                  className="hover:underline underline-offset-4"
-                  style={{ color: 'var(--ide-accent-text)' }}
-                >
-                  Solar Points, iluminação autônoma com ESP32 e energia solar →
-                </Link>
-              </p>
-            </div>
-
-            {/* profile.ts: código SEU, no lugar dos snippets genéricos */}
-            <ContextMenu>
-              <ContextMenuTrigger asChild>
-                <motion.div
-                  className="glass-panel rounded-2xl overflow-hidden elevation-1 border border-white/30 dark:border-white/10 cursor-context-menu w-full max-w-xl lg:ml-auto"
-                  variants={prefersReduced ? {} : fadeIn}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <div className="border-b px-4 py-2.5 flex items-center justify-between border-white/15 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md">
-                    <div className="flex items-center gap-2">
-                      <TrafficLights />
-                      <span className="text-xs font-medium tracking-tight ml-1 text-foreground/90">
-                        profile.ts
-                      </span>
-                    </div>
-                    <span className="text-[11px] font-mono text-muted-foreground">TypeScript</span>
-                  </div>
-                  <div className="p-6 overflow-x-auto">
-                    <pre
-                      className="font-mono text-[13px] sm:text-sm leading-7"
-                      style={{ color: 'var(--text-secondary)' }}
-                      aria-label="Arquivo profile.ts com stack, foco, cursos e contato"
-                    >
-                      <code>
-                        <span style={kw}>const</span> <span style={ty}>felipe</span>{' '}
-                        <span style={mu}>= {'{'}</span>
-                        {'\n  '}role<span style={mu}>:</span>{' '}
-                        <span style={str}>&quot;Desenvolvedor de Software&quot;</span>
-                        <span style={mu}>,</span>
-                        {'\n  '}stack<span style={mu}>: [</span>
-                        <span style={str}>&quot;C&quot;</span>
-                        <span style={mu}>, </span>
-                        <span style={str}>&quot;C++&quot;</span>
-                        <span style={mu}>, </span>
-                        <span style={str}>&quot;Python&quot;</span>
-                        <span style={mu}>, </span>
-                        <span style={str}>&quot;TypeScript&quot;</span>
-                        <span style={mu}>],</span>
-                        {'\n  '}focus<span style={mu}>:</span>{' '}
-                        <span style={str}>&quot;sistemas embarcados + web&quot;</span>
-                        <span style={mu}>,</span>
-                        {'\n  '}courses<span style={mu}>: [</span>
-                        <span style={str}>&quot;CS50x&quot;</span>
-                        <span style={mu}>, </span>
-                        <span style={str}>&quot;MIT 6.002.1x&quot;</span>
-                        <span style={mu}>],</span>
-                        {'\n  '}contact<span style={mu}>:</span>{' '}
-                        <span style={str}>&quot;{SOCIAL.email}&quot;</span>
-                        <span style={mu}>,</span>
-                        {'\n'}
-                        <span style={mu}>{'};'}</span>
-                        {'\n'}
-                        <motion.span
-                          aria-hidden="true"
-                          className="inline-block w-[9px] h-[1.1em] align-text-bottom"
-                          style={{ backgroundColor: 'var(--ide-accent)' }}
-                          animate={prefersReduced ? undefined : { opacity: [1, 0, 1] }}
-                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                        />
-                      </code>
-                    </pre>
-                  </div>
-                </motion.div>
-              </ContextMenuTrigger>
-              <ContextMenuContent>
-                <ContextMenuItem onClick={copyProfile}>
-                  <Copy className="w-3.5 h-3.5 mr-2 text-[var(--text-muted)]" />
-                  Copiar profile.ts
-                  <ContextMenuShortcut>⌘C</ContextMenuShortcut>
-                </ContextMenuItem>
-              </ContextMenuContent>
-            </ContextMenu>
-          </section>
+          {/* HERO: cena coreografada (components/home/hero.tsx). */}
+          <Hero />
 
           {/* FAIXA DE PROVA: números ao vivo da conta do GitHub */}
           <motion.section
             aria-label="Números do portfólio"
-            className="grid grid-cols-2 lg:grid-cols-4 rounded-2xl border overflow-hidden"
+            className="grid grid-cols-2 lg:grid-cols-4 rounded-xl border overflow-hidden"
             style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
-            variants={prefersReduced ? {} : staggerContainer}
-            initial="hidden"
-            animate="visible"
+            variants={staggerContainer}
+            {...revealOnScroll}
           >
             {stats.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                variants={prefersReduced ? {} : fadeUp}
+                variants={fadeUp}
                 className={`p-6 md:p-7 flex flex-col gap-1.5 border-b lg:border-b-0 ${
                   i % 2 === 0 ? 'border-r' : ''
                 } ${i < 3 ? 'lg:border-r' : 'lg:border-r-0'}`}
                 style={{ borderColor: 'var(--border-subtle)' }}
               >
                 <span className="text-3xl md:text-4xl font-medium tracking-tight tabular-nums">
-                  {status === 'ready' || stat.label.startsWith('artigo') ? stat.value : '–'}
+                  {/* Contagem de 0 até o valor quando a faixa entra na tela. */}
+                  <CountUp
+                    value={stat.value}
+                    ready={status === 'ready' || stat.label.startsWith('artigo')}
+                  />
                 </span>
                 <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {stat.label}
@@ -287,15 +102,20 @@ export default function ProfilePage() {
           </motion.section>
 
           {/* PROJETOS EM DESTAQUE */}
-          <section className="pt-20 lg:pt-28" aria-labelledby="featured-title">
-            <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+          {/* Mais respiro entre seções (pt-24/32): cada uma "entra em cena" sozinha. */}
+          <section className="pt-24 lg:pt-32" aria-labelledby="featured-title">
+            <motion.div
+              className="flex flex-wrap items-end justify-between gap-4 mb-8"
+              variants={sectionReveal}
+              {...revealOnScroll}
+            >
               <div className="space-y-2">
                 <p className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
                   {'// projects/featured'}
                 </p>
                 <h2
                   id="featured-title"
-                  className="text-3xl md:text-4xl font-medium tracking-tight"
+                  className="text-4xl md:text-5xl lg:text-[56px] lg:leading-[1.05] font-medium tracking-tight"
                 >
                   Projetos em destaque
                 </h2>
@@ -307,14 +127,14 @@ export default function ProfilePage() {
               >
                 Ver todos os projetos →
               </Link>
-            </div>
+            </motion.div>
 
             {status === 'loading' && (
               <div className="grid md:grid-cols-3 gap-5" aria-hidden="true">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-72 rounded-2xl border animate-pulse"
+                    className="h-72 rounded-xl border animate-pulse"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-default)',
@@ -327,9 +147,8 @@ export default function ProfilePage() {
             {status === 'ready' && featured.length > 0 && (
               <motion.div
                 className="grid md:grid-cols-3 gap-5"
-                variants={prefersReduced ? {} : staggerContainer}
-                initial="hidden"
-                animate="visible"
+                variants={staggerContainer}
+                {...revealOnScroll}
               >
                 {featured.map((project) => (
                   <FeaturedCard key={project.id} project={project} />
@@ -362,13 +181,22 @@ export default function ProfilePage() {
             )}
           </section>
 
-          {/* STACK */}
-          <section className="pt-20 lg:pt-28" aria-labelledby="stack-title">
-            <div
-              className="rounded-2xl border p-6 md:p-8 space-y-5"
+          {/* STACK + TRAJETÓRIA — lado a lado no desktop, empilhados no celular */}
+          {/* Divisor: o traço de osciloscópio reaparece entre as seções, desenhando ao rolar. */}
+          <SignalTrace variant="divider" className="block w-full h-10 mt-24 lg:mt-32 opacity-70" />
+
+          <motion.section
+            className="pt-10 lg:pt-12 grid lg:grid-cols-2 gap-6"
+            aria-label="Stack e trajetória"
+            variants={staggerContainer}
+            {...revealOnScroll}
+          >
+            <motion.div
+              variants={sectionReveal}
+              className="rounded-xl border p-6 md:p-8 space-y-5"
               style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
             >
-              <h2 id="stack-title" className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
+              <h2 className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
                 {'// stack/'}
               </h2>
               <dl className="space-y-3 font-mono text-sm">
@@ -381,29 +209,42 @@ export default function ProfilePage() {
                   </div>
                 ))}
               </dl>
-            </div>
-          </section>
+            </motion.div>
+            <motion.div
+              variants={sectionReveal}
+              className="rounded-xl border p-6 md:p-8 space-y-5"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
+            >
+              <h2 className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
+                {'// git log --graph --trajetória'}
+              </h2>
+              {/* Grafo que se desenha com o scroll (components/home/timeline-graph.tsx). */}
+              <TimelineGraph entries={TIMELINE} />
+            </motion.div>
+          </motion.section>
 
           {/* CTA FINAL */}
-          <section className="py-20 lg:py-28">
-            <div
-              className="rounded-2xl border p-8 md:p-12 flex flex-wrap items-center justify-between gap-8"
+          <section className="py-24 lg:py-32">
+            <motion.div
+              variants={sectionReveal}
+              {...revealOnScroll}
+              className="rounded-xl border p-8 md:p-12 flex flex-wrap items-center justify-between gap-8"
               style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
             >
               <div className="space-y-2 max-w-md">
-                <h2 className="text-3xl font-medium tracking-tight">Vamos conversar?</h2>
+                <h2 className="text-4xl md:text-5xl font-medium tracking-tight">Vamos conversar?</h2>
                 <p style={{ color: 'var(--text-secondary)' }}>
                   Fale comigo por mensagem, e-mail ou LinkedIn.
                 </p>
               </div>
-              <div className="flex flex-col items-start gap-5">
+              <div className="flex flex-col items-start gap-5 min-w-0">
                 <CtaGroup
                   animateOnMount={false}
                   actions={[
                     { href: '/contact', label: 'Enviar mensagem', icon: Mail, variant: 'primary' },
                   ]}
                 />
-                <div className="flex items-center gap-5 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                   <a
                     href={SOCIAL.github}
                     target="_blank"
@@ -432,7 +273,7 @@ export default function ProfilePage() {
                   </a>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </section>
         </div>
       </main>

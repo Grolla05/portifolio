@@ -1,5 +1,31 @@
 import type { Transition, Variants } from 'framer-motion';
 
+/*
+    Tokens de motion — fonte única de tempo e curva do site.
+
+    Antes cada componente escolhia a própria duração (0.25, 0.3, 0.35…) e a própria curva,
+    e o site não "respirava" num ritmo só. As mesmas durações existem como CSS custom
+    properties em app/globals.css (--dur-*, --ease-out-expo) para as animações em CSS
+    puro (primeiro paint do hero, View Transitions); mexeu aqui, mexe lá.
+*/
+export const ease = {
+  /** Desaceleração longa: entra rápido e assenta devagar. Curva padrão de "cena". */
+  outExpo: [0.16, 1, 0.3, 1] as [number, number, number, number],
+  /** Para movimentos que começam e terminam parados (linhas desenhadas, wipes). */
+  inOutQuint: [0.83, 0, 0.17, 1] as [number, number, number, number],
+  /** Curva padrão do Material/Apple para microinterações. */
+  standard: [0.4, 0, 0.2, 1] as [number, number, number, number],
+};
+
+/** Durações em segundos. Interação ≤ md; cena ≤ xl. */
+export const dur = {
+  xs: 0.12,
+  sm: 0.2,
+  md: 0.3,
+  lg: 0.6,
+  xl: 0.9,
+};
+
 /**
  * Apple HIG Spring Transitions
  */
@@ -40,7 +66,7 @@ export const fadeIn: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: dur.md, ease: ease.outExpo },
   },
 };
 
@@ -81,3 +107,53 @@ export const staggerContainer: Variants = {
     },
   },
 };
+
+/*
+    Variantes de "cena" (Sprint 2 do redesign cinematográfico).
+*/
+
+/**
+ * Palavra subindo de dentro de uma máscara (`overflow: hidden` no pai).
+ * É o efeito de "título de trailer": só transform, então não causa reflow.
+ */
+export const wordReveal: Variants = {
+  hidden: { y: '110%' },
+  visible: {
+    y: '0%',
+    transition: { duration: dur.xl, ease: ease.outExpo },
+  },
+};
+
+/** Traço SVG se desenhando (pathLength é transform-free: anima stroke-dashoffset). */
+export const drawPath: Variants = {
+  hidden: { pathLength: 0, opacity: 0 },
+  // `custom` = atraso em segundos, para encadear o traço na cena do hero.
+  visible: (delay: number = 0) => ({
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { duration: 1.2, ease: ease.inOutQuint, delay },
+      opacity: { duration: dur.xs, delay },
+    },
+  }),
+};
+
+/** Reveal de seção ao rolar: sobe 24px e assenta com a curva de cena. */
+export const sectionReveal: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: dur.lg, ease: ease.outExpo },
+  },
+};
+
+/**
+ * Props prontas para "anima quando entra na tela, uma vez só".
+ * margin negativa: espera o bloco entrar 15% para não animar algo que mal apareceu.
+ */
+export const revealOnScroll = {
+  initial: 'hidden',
+  whileInView: 'visible',
+  viewport: { once: true, margin: '0px 0px -15% 0px' },
+} as const;
