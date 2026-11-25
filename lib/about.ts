@@ -51,10 +51,29 @@ export const EDUCATION: EducationItem[] = [
 ];
 
 /** Cursos livres. Mesmos nomes usados no profile.ts da home. */
-/* `logo`: arquivo em public/logos/ da instituição que oferece o curso. */
+/*
+    Cursos livres com certificado. `logo`: arquivo em public/logos/ da instituição;
+    `certificate`: imagem do certificado em public/thumbnails/ (aberta em nova aba).
+*/
 export const COURSES = [
-  { name: 'CS50x', detail: 'Harvard · Introdução à Ciência da Computação', school: 'Harvard University', logo: '/logos/harvard.svg' },
-  { name: 'MIT 6.002.1x', detail: 'MIT · Circuitos e Eletrônica', school: 'Massachusetts Institute of Technology', logo: '/logos/mit.svg' },
+  {
+    name: 'CS50x',
+    title: 'Introdução à Ciência da Computação',
+    school: 'Harvard University',
+    platform: 'Harvard · edX',
+    issued: '2025',
+    logo: '/logos/harvard.svg',
+    certificate: '/thumbnails/CS50.jpg',
+  },
+  {
+    name: 'MIT 6.002.1x',
+    title: 'Circuits and Electronics 1: Basic Circuit Analysis',
+    school: 'Massachusetts Institute of Technology',
+    platform: 'MITx · edX',
+    issued: 'jul 2025',
+    logo: '/logos/mit.svg',
+    certificate: '/thumbnails/MIT.jpg',
+  },
 ];
 
 export interface Hobby {

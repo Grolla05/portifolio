@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { appleSpring, fadeUp, slideInLeft, staggerContainer } from "@/lib/animations/variants";
+import { useTilt } from "@/lib/animations/use-tilt";
 import Bio from "@/components/about/bio";
 import { CtaGroup } from "@/components/cta-group";
 import {
@@ -89,6 +90,53 @@ interface AboutViewProps {
 }
 
 /** Título de seção no padrão do design: comentário de caminho + h2. */
+/*
+    Card de certificado. Mesma inclinação 3D dos cards de projeto (useTilt): o card
+    "responde" ao cursor. Logo sobre fundo branco fixo — os logos oficiais são pensados
+    para fundo claro, nos dois temas.
+*/
+function CourseCard({ course }: { course: (typeof COURSES)[number] }) {
+  const tilt = useTilt(4);
+  return (
+    <motion.li
+      whileHover={{ y: -4 }}
+      transition={appleSpring}
+      onPointerMove={tilt.onPointerMove}
+      onPointerLeave={tilt.onPointerLeave}
+      className="flex items-center gap-5 sm:gap-6 p-5 sm:p-6 rounded-xl border"
+      style={{ ...tilt.style, backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
+    >
+      <span
+        className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-xl flex items-center justify-center p-2.5"
+        style={{ backgroundColor: "var(--switch-knob)" }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={course.logo} alt={course.school} loading="lazy" decoding="async" className="max-w-full max-h-full object-contain" />
+      </span>
+      <div className="flex flex-col gap-1.5 min-w-0">
+        <span className="font-mono text-xs" style={{ color: "var(--syntax-type)" }}>
+          {course.platform} · {course.issued}
+        </span>
+        <h3 className="text-lg md:text-xl font-medium tracking-tight">{course.name}</h3>
+        <p className="text-sm md:text-[15px] leading-snug" style={{ color: "var(--text-secondary)" }}>
+          {course.title}
+        </p>
+        <a
+          href={course.certificate}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 pt-1 text-xs font-medium hover:underline underline-offset-4 self-start"
+          style={{ color: "var(--ide-accent-text)" }}
+        >
+          <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+          Ver certificado
+          <span className="sr-only"> de {course.name} (abre em nova aba)</span>
+        </a>
+      </div>
+    </motion.li>
+  );
+}
+
 function SectionTitle({ path, title, id }: { path: string; title: string; id: string }) {
   return (
     <div className="flex flex-col gap-2">
@@ -417,6 +465,9 @@ export default function AboutView({ papers }: AboutViewProps) {
           {/* FORMAÇÃO */}
           <motion.section id="formacao" aria-labelledby="formacao-title" className="scroll-mt-40 flex flex-col gap-7" {...motionProps(fadeUp)}>
             <SectionTitle path="about/education" title="Formação" id="formacao-title" />
+            {/* Timeline à esquerda, certificados à direita (empilham no celular): os cards
+                ganham espaço para crescer e a seção usa a largura toda da tela. */}
+            <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 lg:gap-12 items-start">
             <ol className="ml-1.5 border-l flex flex-col" style={{ borderColor: "var(--border-default)" }}>
               {EDUCATION.map((item, i) => (
                 <li
@@ -450,28 +501,17 @@ export default function AboutView({ papers }: AboutViewProps) {
                 </li>
               ))}
             </ol>
-            <ul className="grid sm:grid-cols-2 gap-3" aria-label="Cursos livres">
-              {COURSES.map((course) => (
-                <li
-                  key={course.name}
-                  className="flex items-center gap-4 px-5 py-4 rounded-xl border"
-                  style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
-                >
-                  {/* Logo da universidade no lugar do rótulo "curso". Fundo branco fixo:
-                      os logos oficiais são pensados para fundo claro, nos dois temas. */}
-                  <span
-                    className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center p-1.5"
-                    style={{ backgroundColor: "var(--switch-knob)" }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={course.logo} alt={course.school} loading="lazy" decoding="async" className="max-w-full max-h-full object-contain" />
-                  </span>
-                  <span className="text-sm md:text-[15px]" style={{ color: "var(--text-secondary)" }}>
-                    <span style={{ color: "var(--text-primary)" }}>{course.name}</span> · {course.detail}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <div className="flex flex-col gap-4">
+              <span className="font-mono text-xs" style={{ color: "var(--syntax-comment)" }}>
+                {"// certificados"}
+              </span>
+              <ul className="flex flex-col gap-4" aria-label="Cursos livres">
+                {COURSES.map((course) => (
+                  <CourseCard key={course.name} course={course} />
+                ))}
+              </ul>
+            </div>
+            </div>
           </motion.section>
 
           {/* PESQUISA */}
