@@ -237,14 +237,14 @@ export default function ProfilePage() {
                   Fale comigo por mensagem, e-mail ou LinkedIn.
                 </p>
               </div>
-              <div className="flex flex-col items-start gap-5">
+              <div className="flex flex-col items-start gap-5 min-w-0">
                 <CtaGroup
                   animateOnMount={false}
                   actions={[
                     { href: '/contact', label: 'Enviar mensagem', icon: Mail, variant: 'primary' },
                   ]}
                 />
-                <div className="flex items-center gap-5 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                   <a
                     href={SOCIAL.github}
                     target="_blank"

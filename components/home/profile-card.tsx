@@ -82,8 +82,9 @@ export function ProfileCard({ delay = 400, tokenStagger = 14 }: ProfileCardProps
     toast.success('profile.ts copiado para a área de transferência!');
   };
 
+  // min-w-0: item de grid com min-width:auto cresceria até a largura do <pre>, vazando no mobile.
   return (
-    <motion.div className="w-full max-w-xl lg:ml-auto" style={off ? undefined : { y: parallaxY }}>
+    <motion.div className="w-full min-w-0 max-w-xl lg:ml-auto" style={off ? undefined : { y: parallaxY }}>
     <ContextMenu>
       <ContextMenuTrigger asChild>
         <div
