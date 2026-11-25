@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
+import { TrafficLights } from '@/components/traffic-lights';
 import Link from 'next/link';
 import { Github, Linkedin, Copy, FolderGit2, FileDown, Mail } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { fadeUp, fadeIn, staggerContainer } from '@/lib/animations/variants';
 import { toast } from 'sonner';
 import { CtaGroup } from '@/components/cta-group';
@@ -30,28 +31,6 @@ import {
 
     Preservado: CTAs, tokens, animações Framer Motion, menu de contexto no card de código.
 */
-
-function TrafficLights() {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div
-      className="flex items-center gap-1.5 cursor-pointer"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      aria-hidden="true"
-    >
-      <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm border border-black/10 flex items-center justify-center text-[8px] text-black/60 leading-none select-none">
-        <span className={hovered ? 'opacity-100' : 'opacity-0'}>×</span>
-      </div>
-      <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm border border-black/10 flex items-center justify-center text-[8px] text-black/60 leading-none select-none">
-        <span className={hovered ? 'opacity-100' : 'opacity-0'}>−</span>
-      </div>
-      <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm border border-black/10 flex items-center justify-center text-[7px] text-black/60 leading-none select-none">
-        <span className={hovered ? 'opacity-100' : 'opacity-0'}>+</span>
-      </div>
-    </div>
-  );
-}
 
 const PROFILE_TS = `const felipe = {
   role: "Desenvolvedor de Software",
@@ -84,7 +63,6 @@ const STACK = [
 ];
 
 export default function ProfilePage() {
-  const prefersReduced = useReducedMotion();
   const { projects, status } = useProjects();
 
   const featured = useMemo(() => pickFeatured(projects), [projects]);
@@ -120,7 +98,7 @@ export default function ProfilePage() {
                 <motion.p
                   className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs"
                   style={{ borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}
-                  variants={prefersReduced ? {} : fadeUp}
+                  variants={fadeUp}
                   initial="hidden"
                   animate="visible"
                 >
@@ -136,7 +114,7 @@ export default function ProfilePage() {
               <motion.p
                 className="font-mono text-sm"
                 style={{ color: 'var(--syntax-comment)' }}
-                variants={prefersReduced ? {} : fadeUp}
+                variants={fadeUp}
                 initial="hidden"
                 animate="visible"
               >
@@ -146,7 +124,7 @@ export default function ProfilePage() {
               <motion.h1
                 className="text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight leading-[1.05]"
                 style={{ color: 'var(--text-primary)' }}
-                variants={prefersReduced ? {} : fadeUp}
+                variants={fadeUp}
                 initial="hidden"
                 animate="visible"
               >
@@ -157,7 +135,7 @@ export default function ProfilePage() {
               <motion.p
                 className="text-lg md:text-xl leading-relaxed max-w-xl"
                 style={{ color: 'var(--text-secondary)' }}
-                variants={prefersReduced ? {} : fadeUp}
+                variants={fadeUp}
                 initial="hidden"
                 animate="visible"
               >
@@ -199,7 +177,7 @@ export default function ProfilePage() {
               <ContextMenuTrigger asChild>
                 <motion.div
                   className="glass-panel rounded-xl overflow-hidden elevation-1 border border-white/30 dark:border-white/10 cursor-context-menu w-full max-w-xl lg:ml-auto"
-                  variants={prefersReduced ? {} : fadeIn}
+                  variants={fadeIn}
                   initial="hidden"
                   animate="visible"
                 >
@@ -247,12 +225,11 @@ export default function ProfilePage() {
                         {'\n'}
                         <span style={mu}>{'};'}</span>
                         {'\n'}
-                        <motion.span
+                        {/* Caret em CSS (steps): pisca como num editor, em vez do fade linear de antes. */}
+                        <span
                           aria-hidden="true"
-                          className="inline-block w-[9px] h-[1.1em] align-text-bottom"
+                          className="caret inline-block w-[9px] h-[1.1em] align-text-bottom"
                           style={{ backgroundColor: 'var(--ide-accent)' }}
-                          animate={prefersReduced ? undefined : { opacity: [1, 0, 1] }}
-                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                         />
                       </code>
                     </pre>
@@ -274,14 +251,14 @@ export default function ProfilePage() {
             aria-label="Números do portfólio"
             className="grid grid-cols-2 lg:grid-cols-4 rounded-xl border overflow-hidden"
             style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
-            variants={prefersReduced ? {} : staggerContainer}
+            variants={staggerContainer}
             initial="hidden"
             animate="visible"
           >
             {stats.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                variants={prefersReduced ? {} : fadeUp}
+                variants={fadeUp}
                 className={`p-6 md:p-7 flex flex-col gap-1.5 border-b lg:border-b-0 ${
                   i % 2 === 0 ? 'border-r' : ''
                 } ${i < 3 ? 'lg:border-r' : 'lg:border-r-0'}`}
@@ -338,7 +315,7 @@ export default function ProfilePage() {
             {status === 'ready' && featured.length > 0 && (
               <motion.div
                 className="grid md:grid-cols-3 gap-5"
-                variants={prefersReduced ? {} : staggerContainer}
+                variants={staggerContainer}
                 initial="hidden"
                 animate="visible"
               >

@@ -114,7 +114,7 @@ function CaseStudyHero({
     <motion.article
       className="flex flex-col lg:flex-row rounded-xl border overflow-hidden"
       style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
-      variants={prefersReduced ? {} : fadeUp}
+      variants={fadeUp}
       initial="hidden"
       animate="visible"
       aria-labelledby="hero-case-title"
@@ -290,7 +290,7 @@ export default function ProjectsPage() {
               ease: [0.4, 0, 0.2, 1],
               delay: prefersReduced ? 0 : Math.min(index, 8) * 0.04,
             }}
-            whileHover={prefersReduced ? {} : { y: -2 }}
+            whileHover={{ y: -2 }}
             className="group relative flex flex-col gap-3 p-5 sm:p-6 rounded-xl border transition-colors focus-within:ring-2 focus-within:ring-[var(--ide-accent)]"
             style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
           >
@@ -436,25 +436,25 @@ export default function ProjectsPage() {
       <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 pt-8 sm:pt-16 pb-28 flex flex-col gap-10 sm:gap-14">
         <motion.header
           className="flex flex-col gap-3"
-          variants={prefersReduced ? {} : staggerContainer}
+          variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
           <motion.p
-            variants={prefersReduced ? {} : fadeUp}
+            variants={fadeUp}
             className="font-mono text-sm"
             style={{ color: "var(--syntax-comment)" }}
           >
             {"// projects/"}
           </motion.p>
           <motion.h1
-            variants={prefersReduced ? {} : fadeUp}
+            variants={fadeUp}
             className="text-4xl md:text-5xl font-medium tracking-tight"
           >
             Projetos
           </motion.h1>
           <motion.p
-            variants={prefersReduced ? {} : fadeUp}
+            variants={fadeUp}
             className="text-[15px] md:text-[17px] leading-relaxed max-w-2xl"
             style={{ color: "var(--text-secondary)" }}
           >
@@ -486,7 +486,7 @@ export default function ProjectsPage() {
         {status === "error" && (
           <motion.div
             className="flex flex-col items-center justify-center text-center py-24 gap-4"
-            variants={prefersReduced ? {} : fadeUp}
+            variants={fadeUp}
             initial="hidden"
             animate="visible"
           >
@@ -497,7 +497,7 @@ export default function ProjectsPage() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               <motion.button
                 onClick={retry}
-                whileTap={prefersReduced ? {} : { scale: 0.97 }}
+                whileTap={{ scale: 0.97 }}
                 transition={appleSpring}
                 className="inline-flex items-center gap-2 min-h-11 px-5 rounded-[10px] border text-sm"
                 style={{ color: "var(--text-primary)", borderColor: "var(--border-default)" }}
@@ -534,7 +534,7 @@ export default function ProjectsPage() {
                 </h2>
                 <motion.div
                   className="grid grid-cols-1 md:grid-cols-2 gap-5"
-                  variants={prefersReduced ? {} : staggerContainer}
+                  variants={staggerContainer}
                   initial="hidden"
                   animate="visible"
                 >
@@ -657,7 +657,7 @@ export default function ProjectsPage() {
             <motion.div
               className="pt-10 border-t flex flex-col items-center gap-4 text-center"
               style={{ borderColor: "var(--border-subtle)" }}
-              variants={prefersReduced ? {} : fadeUp}
+              variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.4 }}

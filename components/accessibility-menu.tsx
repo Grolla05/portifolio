@@ -145,7 +145,7 @@ export default function AccessibilityMenu() {
                         <div className="flex items-center justify-between mb-5">
                             <div className="flex items-center gap-2">
                                 <Accessibility className="w-4 h-4" style={{ color: 'var(--ide-accent)' }} />
-                                <span className="text-sm font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                                <span className="text-sm font-medium tracking-tight" style={{ color: 'var(--text-primary)' }}>
                                     Accessibility
                                 </span>
                             </div>
@@ -284,7 +284,7 @@ export default function AccessibilityMenu() {
                                                 }
                                                 className="absolute top-0.5 w-4 h-4 rounded-full"
                                                 style={{
-                                                    background: '#ffffff',
+                                                    background: 'var(--switch-knob)',
                                                     left: active ? 'calc(100% - 18px)' : '2px',
                                                     boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                                                 }}

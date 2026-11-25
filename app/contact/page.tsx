@@ -228,22 +228,22 @@ export default function ContactPage() {
         {/* CABEÇALHO */}
         <motion.header
           className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 lg:gap-8"
-          variants={prefersReduced ? {} : staggerContainer}
+          variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
           <div className="flex flex-col gap-3.5 sm:gap-4 max-w-2xl">
-            <motion.p variants={prefersReduced ? {} : fadeUp} className="font-mono text-[13px]" style={{ color: "var(--syntax-comment)" }}>
+            <motion.p variants={fadeUp} className="font-mono text-[13px]" style={{ color: "var(--syntax-comment)" }}>
               {"// contact.ts"}
             </motion.p>
             <motion.h1
-              variants={prefersReduced ? {} : fadeUp}
+              variants={fadeUp}
               className="text-[38px] sm:text-[56px] leading-[1.05] font-medium tracking-tight"
             >
               Vamos conversar.
             </motion.h1>
             <motion.p
-              variants={prefersReduced ? {} : fadeUp}
+              variants={fadeUp}
               className="text-base sm:text-lg leading-relaxed"
               style={{ color: "var(--text-secondary)" }}
             >
@@ -254,7 +254,7 @@ export default function ContactPage() {
           {/* Selo só quando AVAILABILITY está preenchido em lib/site.ts (nada inventado). */}
           {AVAILABILITY && (
             <motion.p
-              variants={prefersReduced ? {} : fadeUp}
+              variants={fadeUp}
               className="self-start lg:self-auto inline-flex items-center gap-2.5 px-4 py-2 rounded-full border text-sm"
               style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
             >
@@ -269,12 +269,12 @@ export default function ContactPage() {
           aria-label="Canais diretos"
           className="grid md:grid-cols-3 rounded-xl md:rounded-none border md:border-0 overflow-hidden md:overflow-visible md:gap-4"
           style={{ borderColor: "var(--border-default)" }}
-          variants={prefersReduced ? {} : staggerContainer}
+          variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
           <motion.div
-            variants={prefersReduced ? {} : fadeUp}
+            variants={fadeUp}
             className="flex md:flex-col items-center md:items-stretch gap-3 md:gap-3.5 pl-4 pr-1.5 py-2.5 md:p-6 md:rounded-xl md:border border-b md:border-b"
             style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
           >
@@ -322,8 +322,8 @@ export default function ContactPage() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              variants={prefersReduced ? {} : fadeUp}
-              whileHover={prefersReduced ? {} : { y: -2 }}
+              variants={fadeUp}
+              whileHover={{ y: -2 }}
               className={`group flex md:flex-col items-center md:items-stretch gap-3 md:gap-3.5 min-h-16 px-4 md:p-6 md:rounded-xl md:border ${i === 0 ? "border-b md:border-b" : ""} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]`}
               style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
             >
@@ -352,7 +352,7 @@ export default function ContactPage() {
               {state === "sent" ? (
                 <motion.div
                   key="sent"
-                  variants={prefersReduced ? {} : scaleIn}
+                  variants={scaleIn}
                   initial="hidden"
                   animate="visible"
                   exit={prefersReduced ? undefined : { opacity: 0 }}
@@ -386,7 +386,7 @@ export default function ContactPage() {
                   key="form"
                   onSubmit={sendEmail}
                   className="flex flex-col gap-5 sm:gap-[22px]"
-                  variants={prefersReduced ? {} : fadeUp}
+                  variants={fadeUp}
                   initial="hidden"
                   animate="visible"
                   exit={prefersReduced ? undefined : { opacity: 0 }}
@@ -506,7 +506,7 @@ export default function ContactPage() {
                     <motion.button
                       type="submit"
                       disabled={state === "sending"}
-                      whileTap={prefersReduced ? {} : { scale: 0.98 }}
+                      whileTap={{ scale: 0.98 }}
                       transition={appleSpring}
                       className="inline-flex items-center justify-center gap-2.5 min-h-12 px-6 rounded-[10px] text-[15px] font-medium bg-[var(--cta-bg)] text-[var(--cta-fg)] hover:opacity-90 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ide-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-secondary)]"
                     >

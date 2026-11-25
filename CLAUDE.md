@@ -48,7 +48,7 @@ Espaçamento base 4px:
 ## FRAMER MOTION — PADRÕES DE ANIMAÇÃO OBRIGATÓRIOS
 
 1. Variantes globais reutilizáveis
-Criar arquivo: src/animations/variants.ts
+Criar arquivo: lib/animations/variants.ts
 
 export const fadeUp = {
   hidden:  { opacity: 0, y: 12 },
@@ -134,7 +134,7 @@ Cursor piscante (simulação de editor):
 ## COMPONENTES A REFATORAR (ordem de execução)
 
 [ ] 1. design-tokens.css — centralizar todas as variáveis CSS
-[ ] 2. src/animations/variants.ts — criar arquivo de variantes
+[ ] 2. lib/animations/variants.ts — criar arquivo de variantes
 [ ] 3. Topbar / Window Chrome
 [ ] 4. Sidebar (file explorer)
 [ ] 5. Tab bar do editor
@@ -161,6 +161,6 @@ Cursor piscante (simulação de editor):
 
 1. Relatório de análise do projeto (antes de alterar qualquer coisa)
 2. Arquivo design-tokens.css ou equivalente
-3. Arquivo src/animations/variants.ts com todas as variantes
+3. Arquivo lib/animations/variants.ts com todas as variantes
 4. Todos os componentes refatorados
 5. Checklist de QA: contraste, responsividade, acessibilidade, performance

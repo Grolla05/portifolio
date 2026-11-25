@@ -69,7 +69,7 @@ function ViewToggle({
                         key={value}
                         type="button"
                         onClick={() => onChange(value)}
-                        whileTap={prefersReduced ? {} : { scale: 0.96 }}
+                        whileTap={{ scale: 0.96 }}
                         transition={appleSpring}
                         aria-pressed={active}
                         aria-label={hint}

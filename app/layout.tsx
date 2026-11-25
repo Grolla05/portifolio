@@ -7,6 +7,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { StatusBar } from '@/components/status-bar';
 import { TerminalPanel } from '@/components/terminal/terminal-panel';
 import { Toaster } from '@/components/ui/sonner';
+import { MotionProvider } from '@/components/motion/motion-provider';
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SOCIAL } from '@/lib/site';
 import { readPapers } from '@/lib/papers-server';
 
@@ -137,12 +138,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          {children}
-          <CommandPalette />
-          <TerminalPanel papers={papers} />
-          <StatusBar />
-          <Toaster />
+          {/* MotionProvider: preferência de movimento aplicada a todo motion.* de uma vez. */}
+          <MotionProvider>
+            <Header />
+            {children}
+            <CommandPalette />
+            <TerminalPanel papers={papers} />
+            <StatusBar />
+            <Toaster />
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

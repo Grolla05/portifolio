@@ -116,6 +116,26 @@
   --status-bar-height: 1.5rem; /* components/status-bar.tsx — h-6 */
   --chrome-height: calc(var(--header-height) + var(--status-bar-height));
 
+  /*
+      Tokens de motion — espelho de `dur`/`ease` em lib/animations/variants.ts.
+      Usados pelas animações em CSS puro: primeiro paint do hero (que não pode esperar
+      a hidratação) e View Transitions entre rotas.
+  */
+  --dur-xs: 120ms;
+  --dur-sm: 200ms;
+  --dur-md: 300ms;
+  --dur-lg: 600ms;
+  --dur-xl: 900ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* Botões de janela do macOS (decorativos nos cards de código). Eram hex soltos no JSX. */
+  --traffic-red: #ff5f56;
+  --traffic-yellow: #ffbd2e;
+  --traffic-green: #27c93f;
+  /* Botão do switch: branco nos dois temas (convenção macOS). Era hex no JSX. */
+  --switch-knob: #ffffff;
+
   /* Tailwind / Shadcn semantic variables */
   --background: 210 20% 98%;
   --foreground: 220 15% 10%;
@@ -322,6 +342,97 @@ body {
   .font-mono-ascii {
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
       "Liberation Mono", "Courier New", monospace;
+  }
+}
+
+/* ==========================================================================
+   Motion em CSS puro — primeiro paint
+   ==========================================================================
+
+   O Framer Motion renderiza `initial="hidden"` no HTML do servidor como `opacity:0` e só
+   anima depois da hidratação. Acima da dobra isso significava tela vazia até o JS
+   carregar (no mobile, em dev, o hero ainda estava a meio fade 6s depois). Estas classes
+   animam no primeiro frame, sem JS, e o conteúdo existe no HTML desde o início.
+
+   `--reveal-delay` encadeia a cena (definido inline por elemento).
+*/
+@keyframes reveal-up {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes reveal-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Palavra subindo de dentro da máscara (título do hero). */
+@keyframes word-up {
+  from { transform: translate3d(0, 110%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+/* Wipe de cor da esquerda para a direita — só clip-path, sem reflow. */
+@keyframes wipe-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+/* Caret de editor: pisca (steps), não faz fade. */
+@keyframes caret-blink {
+  0%, 49.9% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.reveal-up {
+  animation: reveal-up var(--dur-xl) var(--ease-out-expo) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-fade {
+  animation: reveal-fade var(--dur-xl) var(--ease-out-expo) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* Respiro para descendentes (g, p, ç) não serem cortados pela máscara. */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.word-mask > .word {
+  display: inline-block;
+  animation: word-up var(--dur-xl) var(--ease-out-expo) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.wipe-in {
+  animation: wipe-in var(--dur-lg) var(--ease-in-out-quint) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.caret {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+/* Visita repetida na mesma sessão: a cena já foi vista, entra pronta. */
+.scene-seen .reveal-up,
+.scene-seen .reveal-fade,
+.scene-seen .word-mask > .word,
+.scene-seen .wipe-in {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .reveal-fade,
+  .word-mask > .word,
+  .wipe-in,
+  .caret {
+    animation: none;
   }
 }
 

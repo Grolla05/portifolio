@@ -185,7 +185,7 @@ export default function AboutView({ papers }: AboutViewProps) {
       <motion.aside
         className="hidden md:flex flex-col gap-5 w-64 flex-shrink-0 sticky top-16 self-start h-[calc(100vh-var(--chrome-height))] overflow-y-auto border-r px-3 pt-5 pb-8"
         style={{ backgroundColor: "var(--surface-sunken)", borderColor: "var(--border-subtle)" }}
-        variants={prefersReduced ? {} : slideInLeft}
+        variants={slideInLeft}
         initial="hidden"
         animate="visible"
       >
@@ -201,14 +201,14 @@ export default function AboutView({ papers }: AboutViewProps) {
         <nav aria-label="Seções da página">
           <motion.ul
             className="flex flex-col gap-0.5 font-mono text-[13px]"
-            variants={prefersReduced ? {} : staggerContainer}
+            variants={staggerContainer}
             initial="hidden"
             animate="visible"
           >
             {sections.map((section) => {
               const isActive = section.id === active;
               return (
-                <motion.li key={section.id} variants={prefersReduced ? {} : fadeUp}>
+                <motion.li key={section.id} variants={fadeUp}>
                   <div
                     className="flex items-center gap-2 min-h-8 px-2"
                     style={{ color: "var(--text-secondary)" }}
@@ -350,7 +350,7 @@ export default function AboutView({ papers }: AboutViewProps) {
             id="bio"
             aria-labelledby="about-title"
             className="scroll-mt-40 flex flex-col sm:flex-row gap-6 sm:gap-10 items-start"
-            variants={prefersReduced ? {} : staggerContainer}
+            variants={staggerContainer}
             initial="hidden"
             animate="visible"
           >
@@ -360,7 +360,7 @@ export default function AboutView({ papers }: AboutViewProps) {
                 houver um arquivo em /public.
             */}
             <motion.div
-              variants={prefersReduced ? {} : fadeUp}
+              variants={fadeUp}
               className="w-24 h-24 sm:w-[152px] sm:h-[152px] flex-shrink-0 rounded-xl border flex items-center justify-center font-mono text-3xl sm:text-5xl"
               style={{
                 backgroundColor: "var(--bg-tertiary)",
@@ -372,18 +372,18 @@ export default function AboutView({ papers }: AboutViewProps) {
               FG
             </motion.div>
             <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
-              <motion.p variants={prefersReduced ? {} : fadeUp} className="font-mono text-[13px]" style={{ color: "var(--syntax-comment)" }}>
+              <motion.p variants={fadeUp} className="font-mono text-[13px]" style={{ color: "var(--syntax-comment)" }}>
                 # about/bio
               </motion.p>
               <motion.h1
                 id="about-title"
-                variants={prefersReduced ? {} : fadeUp}
+                variants={fadeUp}
                 className="text-4xl md:text-[52px] leading-[1.06] font-medium tracking-tight"
               >
                 Oi, eu sou o Felipe.
               </motion.h1>
               <motion.p
-                variants={prefersReduced ? {} : fadeUp}
+                variants={fadeUp}
                 className="text-base md:text-[19px] leading-relaxed max-w-[620px]"
                 style={{ color: "var(--text-secondary)" }}
               >
@@ -586,7 +586,7 @@ export default function AboutView({ papers }: AboutViewProps) {
             <SectionTitle path="about/hobbies" title="Fora do editor" id="hobbies-title" />
             <motion.ul
               className="grid sm:grid-cols-3 gap-3 sm:gap-4"
-              variants={prefersReduced ? {} : staggerContainer}
+              variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
@@ -596,8 +596,8 @@ export default function AboutView({ papers }: AboutViewProps) {
                 return (
                   <motion.li
                     key={hobby.id}
-                    variants={prefersReduced ? {} : fadeUp}
-                    whileHover={prefersReduced ? {} : { y: -2 }}
+                    variants={fadeUp}
+                    whileHover={{ y: -2 }}
                     className="flex sm:flex-col gap-4 sm:gap-3 p-4 sm:p-6 rounded-xl border"
                     style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
                   >

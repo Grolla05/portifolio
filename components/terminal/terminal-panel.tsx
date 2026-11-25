@@ -221,7 +221,7 @@ export function TerminalPanel({ papers }: TerminalPanelProps) {
               aria-hidden="true"
             />
             <span
-              className="text-[11px] font-semibold tracking-tight uppercase"
+              className="text-[11px] font-medium tracking-tight uppercase"
               style={{ color: 'var(--text-secondary)' }}
             >
               terminal

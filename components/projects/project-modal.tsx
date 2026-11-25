@@ -149,7 +149,7 @@ export function ProjectModal({ project, onClose, technologies }: ProjectModalPro
                                 </span>
                                 <span
                                     id="project-modal-title"
-                                    className="text-xs font-semibold tracking-tight truncate"
+                                    className="text-xs font-medium tracking-tight truncate"
                                     style={{ color: 'var(--text-muted)' }}
                                 >
                                     — {project.title}

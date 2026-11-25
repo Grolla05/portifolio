@@ -410,7 +410,7 @@ export function RepoModal({ project, onClose, technologies }: RepoModalProps) {
                                 />
                                 <span
                                     id="repo-modal-title"
-                                    className="text-xs font-semibold tracking-tight flex-shrink-0"
+                                    className="text-xs font-medium tracking-tight flex-shrink-0"
                                     style={{ color: 'var(--text-secondary)' }}
                                 >
                                     {parsed ? `${parsed.owner}/${parsed.repo}` : 'repository'}

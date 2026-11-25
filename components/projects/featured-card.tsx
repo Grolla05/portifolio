@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { ExternalLink, Globe, Eye, FileText } from "lucide-react";
 import { ProjectCover } from "@/components/projects/project-cover";
@@ -31,14 +31,13 @@ const linkClasses =
   "focus-visible:ring-[var(--ide-accent)]";
 
 export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
-  const prefersReduced = useReducedMotion();
   const topics = displayTopics(project);
   const caseStudy = getCaseStudy(project.name);
 
   return (
     <motion.article
-      variants={prefersReduced ? {} : fadeUp}
-      whileHover={prefersReduced ? {} : { y: -4 }}
+      variants={fadeUp}
+      whileHover={{ y: -4 }}
       transition={appleSpring}
       className="group flex flex-col rounded-xl border overflow-hidden h-full"
       style={{

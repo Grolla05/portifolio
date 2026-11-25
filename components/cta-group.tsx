@@ -87,8 +87,8 @@ export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroup
         return (
           <motion.div
             key={href + label}
-            whileHover={prefersReduced ? {} : { scale: 1.02 }}
-            whileTap={prefersReduced ? {} : { scale: 0.97 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             transition={appleSpring}
           >
             {external ? (
