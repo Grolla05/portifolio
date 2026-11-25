@@ -51,6 +51,37 @@
   --surface-subtle: rgba(1, 22, 39, 0.03);
   --switch-track: rgba(1, 22, 39, 0.20);
 
+  /*
+      Redesign (canvas "Avaliação e Redesign do Portfólio").
+
+      --cta-*: botão primário. O antigo `bg-primary text-primary-foreground` punha texto
+      branco sobre #0a84ff — 3.65:1, reprova AA em rótulo de 14px. No claro, branco sobre
+      #0a5fd4 dá 5.48:1; no escuro o design inverte (texto escuro sobre azul claro).
+
+      --statusbar-*: barra de status azul do design, no padrão do VS Code. Branco sobre
+      #0b5cc0 dá 6.4:1.
+
+      --chip-bg: fundo das pílulas de stack/tópico — separado de --bg-tertiary porque no
+      design a pílula precisa destacar mesmo DENTRO de um card em --bg-secondary.
+  */
+  --cta-bg: #0a5fd4;
+  --cta-fg: #ffffff;
+  --statusbar-bg: #0b5cc0;
+  --statusbar-fg: #ffffff;
+  /* Ponto de "disponível": verde claro o bastante para ler sobre o azul da barra. */
+  --statusbar-dot: #7ee787;
+  /* Cores das pastas do explorer de /about (identidade herdada da árvore original). */
+  --folder-bio: #e99287;
+  --folder-education: #6c7ae0;
+  --folder-research: #bc8cff;
+  --folder-hobbies: #43d9ad;
+  --chip-bg: #eaeef2;
+  --surface-sunken: #eef1f4;
+  --status-ok: #1a7f37;
+  /* Roxo para TEXTO (rótulo "Artigo", período atual). --ide-accent-purple escuro
+     (#bf5af2) dá só 3.5:1 sobre --chip-bg; este token passa AA nas duas paletas. */
+  --accent-purple-text: #8250df;
+
   /* Syntax Highlighting */
   /* #d1242f dava 4.50:1 sobre --bg-tertiary — em cima da linha, sem margem.
      #cf222e (danger.fg do GitHub Primer) sobe para 4.59:1 e é visualmente idêntico. */
@@ -105,7 +136,8 @@
   --border: 220 13% 90%;
   --input: 220 13% 90%;
   --ring: 211 100% 50%;
-  --radius: 1rem;
+  /* 12px: teto de raio para containers principais (CLAUDE.md). Era 1rem. */
+  --radius: 0.75rem;
 }
 
 .dark {
@@ -155,6 +187,16 @@
 
   --surface-subtle: rgba(255, 255, 255, 0.04);
   --switch-track: rgba(255, 255, 255, 0.20);
+
+  /* Redesign: texto #06121f sobre #409cff dá 7.1:1. */
+  --cta-bg: #409cff;
+  --cta-fg: #06121f;
+  --statusbar-bg: #0b5cc0;
+  --statusbar-fg: #ffffff;
+  --chip-bg: #323234;
+  --surface-sunken: #1b1b1c;
+  --status-ok: #56d364;
+  --accent-purple-text: #bc8cff;
 
   /* Xcode Syntax Highlighting */
   --syntax-keyword: #ff7b72;
@@ -249,6 +291,15 @@ body {
 
   .dark .elevation-2 {
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.40), 0 2px 8px rgba(0, 0, 0, 0.20);
+  }
+
+  /* Fileiras de chips que rolam na horizontal no celular: rola, mas sem a barra
+     cinza por baixo, que o design não tem e que parecia um sublinhado quebrado. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   .text-balance {

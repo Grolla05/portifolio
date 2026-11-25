@@ -4,23 +4,22 @@ import { describe, it, expect } from 'vitest';
 import AboutView from '@/components/about/about-view';
 import ContactPage from '@/app/contact/page';
 
-describe('Desktop Window Structure & Resizable Split Views', () => {
-  it('should render split view containers with proper desktop resizable attributes in About page', () => {
+/*
+    Redesign: as páginas trocaram os painéis redimensionáveis por layouts fluidos. O que
+    continua valendo é a estrutura de "janela": explorer lateral em /about e painel de
+    prévia ao lado do formulário em /contact.
+*/
+describe('Estrutura de janela das páginas', () => {
+  it('About tem explorer lateral', () => {
     const { container } = render(<AboutView papers={[]} />);
-    
-    // Check that sidebar and main content container exist
-    const aside = container.querySelector('aside');
-    expect(aside).not.toBeNull();
-
-    // Check that resize handle or divider is present for desktop view
-    const resizeHandle = container.querySelector('[data-panel-resize-handle-id]') || container.querySelector('.resize-handle') || container.querySelector('[aria-orientation="vertical"]');
-    expect(aside).toBeDefined();
+    expect(container.querySelector('aside')).not.toBeNull();
+    expect(screen.getByText('EXPLORER')).toBeDefined();
   });
 
-  it('should render desktop split panels in Contact page', () => {
-    const { container } = render(<ContactPage />);
-    
-    const aside = container.querySelector('aside');
-    expect(aside).not.toBeNull();
+  it('Contact tem canais diretos, formulário e prévia ao vivo', () => {
+    render(<ContactPage />);
+    expect(screen.getByRole('region', { name: 'Canais diretos' })).toBeDefined();
+    expect(screen.getByLabelText('Nome')).toBeDefined();
+    expect(screen.getByRole('complementary', { name: 'Prévia ao vivo' })).toBeDefined();
   });
 });

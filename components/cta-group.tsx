@@ -39,15 +39,21 @@ interface CtaGroupProps {
   animateOnMount?: boolean;
 }
 
+/*
+    Redesign: botões do design — 48px de altura (alvo de toque confortável), raio de 10px,
+    rótulo 14px peso 500. O primário saiu de `bg-primary text-primary-foreground` (branco
+    sobre #0a84ff, 3.65:1, reprova AA) para --cta-bg/--cta-fg. O secundário trocou o
+    vidro por contorno simples, que é o que o design pede e lê melhor sobre os cards.
+*/
 const baseClasses =
-  "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold tracking-tight " +
+  "inline-flex items-center justify-center gap-2 min-h-12 rounded-[10px] px-6 text-sm font-medium " +
   "transition-colors focus-visible:outline-none focus-visible:ring-2 " +
   "focus-visible:ring-[var(--ide-accent)] focus-visible:ring-offset-2 " +
   "focus-visible:ring-offset-[var(--bg-primary)]";
 
 const variantClasses: Record<CtaVariant, string> = {
-  primary: "bg-primary text-primary-foreground shadow-sm hover:opacity-95 px-6",
-  glass: "glass-pill hover:bg-black/5 dark:hover:bg-white/10",
+  primary: "bg-[var(--cta-bg)] text-[var(--cta-fg)] hover:opacity-90",
+  glass: "border border-[var(--border-default)] hover:bg-black/5 dark:hover:bg-white/5",
 };
 
 export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroupProps) {
@@ -67,7 +73,7 @@ export function CtaGroup({ actions, className, animateOnMount = true }: CtaGroup
               <Icon
                 className={cn(
                   "w-4 h-4",
-                  variant === "primary" ? "" : "text-primary",
+                  variant === "primary" ? "" : "text-[var(--text-secondary)]",
                 )}
                 aria-hidden="true"
               />

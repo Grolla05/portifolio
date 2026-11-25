@@ -39,18 +39,22 @@ export function StatusBar() {
   };
 
   const itemClass =
-    'flex items-center gap-1.5 px-2 h-full transition-colors hover:bg-black/5 ' +
-    'dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-1 ' +
-    'focus-visible:ring-[var(--ide-accent)]';
+    'flex items-center gap-1.5 px-2 h-full transition-colors hover:bg-white/15 ' +
+    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset ' +
+    'focus-visible:ring-white';
 
   return (
     <footer
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-center border-t text-[11px] font-mono select-none"
+      /*
+          Redesign: barra azul sólida do design (padrão VS Code), no lugar da cinza.
+          Texto em --statusbar-fg sobre --statusbar-bg dá 6.4:1 — por isso todos os itens
+          herdam a mesma cor, sem tons de cinza que perderiam contraste sobre o azul.
+      */
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-center text-[11px] font-mono select-none"
       style={{
         height: 'var(--status-bar-height)',
-        backgroundColor: 'var(--bg-secondary)',
-        borderColor: 'var(--border-default)',
-        color: 'var(--text-muted)',
+        backgroundColor: 'var(--statusbar-bg)',
+        color: 'var(--statusbar-fg)',
       }}
     >
       <span className="flex items-center gap-1.5 px-2 h-full">
@@ -58,7 +62,7 @@ export function StatusBar() {
         main
       </span>
 
-      <span className="px-2 h-full flex items-center" style={{ color: 'var(--text-secondary)' }}>
+      <span className="px-2 h-full flex items-center">
         {`~/${route}`}
       </span>
 
@@ -78,17 +82,16 @@ export function StatusBar() {
         {resolvedTheme === 'light' ? 'claro' : 'escuro'}
       </span>
 
-      <span
-        className="flex items-center gap-1.5 px-3 h-full"
-        style={{ color: 'var(--text-secondary)' }}
-      >
+      <span className="flex items-center gap-1.5 px-3 h-full">
         <Circle
           className="w-2 h-2"
-          style={{ color: 'var(--ide-accent-green)' }}
+          style={{ color: 'var(--statusbar-dot)' }}
           fill="currentColor"
           aria-hidden="true"
         />
-        Disponível para oportunidades
+        {/* A 375px o rótulo longo quebrava em duas linhas e vazava dos 24px da barra. */}
+        <span className="hidden sm:inline whitespace-nowrap">Disponível para oportunidades</span>
+        <span className="sm:hidden whitespace-nowrap">disponível</span>
       </span>
     </footer>
   );

@@ -66,6 +66,17 @@ const str = { color: 'var(--syntax-string)' } as const;
 const ty = { color: 'var(--syntax-type)' } as const;
 const mu = { color: 'var(--text-muted)' } as const;
 
+/*
+    Trajetória do design ("git log --oneline"). Só marcos com ano verificável no próprio
+    site (components/about/education.tsx e lib/papers.ts) — nada de "[ANO]" inventado.
+*/
+const TIMELINE = [
+  { when: '2025–', what: 'Engenharia de Controle e Automação, PUC-Campinas' },
+  { when: '2025', what: 'Artigo publicado no COBENGE 2025' },
+  { when: '2024', what: 'Engenharia de Computação, PUC-Campinas' },
+  { when: '2021–23', what: 'Ensino Médio, Colégio Objetivo' },
+];
+
 const STACK = [
   { dir: 'embarcados/', items: 'C, C++, Arduino, ESP32, KiCad' },
   { dir: 'backend/', items: 'Python, Flask, Node.js, SQL' },
@@ -187,7 +198,7 @@ export default function ProfilePage() {
             <ContextMenu>
               <ContextMenuTrigger asChild>
                 <motion.div
-                  className="glass-panel rounded-2xl overflow-hidden elevation-1 border border-white/30 dark:border-white/10 cursor-context-menu w-full max-w-xl lg:ml-auto"
+                  className="glass-panel rounded-xl overflow-hidden elevation-1 border border-white/30 dark:border-white/10 cursor-context-menu w-full max-w-xl lg:ml-auto"
                   variants={prefersReduced ? {} : fadeIn}
                   initial="hidden"
                   animate="visible"
@@ -261,7 +272,7 @@ export default function ProfilePage() {
           {/* FAIXA DE PROVA: números ao vivo da conta do GitHub */}
           <motion.section
             aria-label="Números do portfólio"
-            className="grid grid-cols-2 lg:grid-cols-4 rounded-2xl border overflow-hidden"
+            className="grid grid-cols-2 lg:grid-cols-4 rounded-xl border overflow-hidden"
             style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
             variants={prefersReduced ? {} : staggerContainer}
             initial="hidden"
@@ -314,7 +325,7 @@ export default function ProfilePage() {
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-72 rounded-2xl border animate-pulse"
+                    className="h-72 rounded-xl border animate-pulse"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-default)',
@@ -362,13 +373,13 @@ export default function ProfilePage() {
             )}
           </section>
 
-          {/* STACK */}
-          <section className="pt-20 lg:pt-28" aria-labelledby="stack-title">
+          {/* STACK + TRAJETÓRIA — lado a lado no desktop, empilhados no celular */}
+          <section className="pt-20 lg:pt-28 grid lg:grid-cols-2 gap-6" aria-label="Stack e trajetória">
             <div
-              className="rounded-2xl border p-6 md:p-8 space-y-5"
+              className="rounded-xl border p-6 md:p-8 space-y-5"
               style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
             >
-              <h2 id="stack-title" className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
+              <h2 className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
                 {'// stack/'}
               </h2>
               <dl className="space-y-3 font-mono text-sm">
@@ -382,12 +393,33 @@ export default function ProfilePage() {
                 ))}
               </dl>
             </div>
+            <div
+              className="rounded-xl border p-6 md:p-8 space-y-5"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
+            >
+              <h2 className="font-mono text-sm" style={{ color: 'var(--syntax-comment)' }}>
+                {'// git log --oneline --trajetória'}
+              </h2>
+              <ol className="space-y-3 text-sm">
+                {TIMELINE.map(({ when, what }) => (
+                  <li key={what} className="flex gap-4">
+                    <span
+                      className="w-16 flex-shrink-0 font-mono"
+                      style={{ color: 'var(--text-muted)' }}
+                    >
+                      {when}
+                    </span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{what}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </section>
 
           {/* CTA FINAL */}
           <section className="py-20 lg:py-28">
             <div
-              className="rounded-2xl border p-8 md:p-12 flex flex-wrap items-center justify-between gap-8"
+              className="rounded-xl border p-8 md:p-12 flex flex-wrap items-center justify-between gap-8"
               style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
             >
               <div className="space-y-2 max-w-md">

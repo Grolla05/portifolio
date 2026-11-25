@@ -4,9 +4,9 @@ import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { ExternalLink, Globe, Eye, FileText } from "lucide-react";
-import { LanguageIcon } from "@/components/projects/language-icon";
+import { ProjectCover } from "@/components/projects/project-cover";
 import { appleSpring, fadeUp } from "@/lib/animations/variants";
-import { getCaseStudy } from "@/lib/case-studies";
+import { getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
 import { type RepoProject, describeProject, displayTopics } from "@/lib/projects";
 
 /*
@@ -40,22 +40,23 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
       variants={prefersReduced ? {} : fadeUp}
       whileHover={prefersReduced ? {} : { y: -4 }}
       transition={appleSpring}
-      className="flex flex-col rounded-2xl border overflow-hidden h-full"
+      className="group flex flex-col rounded-xl border overflow-hidden h-full"
       style={{
         backgroundColor: "var(--bg-secondary)",
         borderColor: "var(--border-default)",
       }}
     >
-      <div
-        className="h-28 flex items-center justify-center gap-3 border-b"
-        style={{
-          backgroundColor: "var(--bg-tertiary)",
-          borderColor: "var(--border-subtle)",
-        }}
-      >
-        {project.languages.slice(0, 3).map((language) => (
-          <LanguageIcon key={language} language={language} size={36} />
-        ))}
+      {/*
+          Redesign: capa no topo do card (screenshot quando existe, capa gerada em CSS
+          quando não) no lugar da faixa com três logos de linguagem — o design pede
+          imagem do projeto, e a capa é a mesma que a grade de /projects já usa.
+      */}
+      <div className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
+        <ProjectCover
+          repo={project.name}
+          title={project.title}
+          primaryLanguage={project.primaryLanguage}
+        />
       </div>
 
       <div className="flex flex-col gap-4 p-6 flex-1">
@@ -70,7 +71,7 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
           className="text-sm leading-relaxed flex-1"
           style={{ color: "var(--text-secondary)" }}
         >
-          {describeProject(project)}
+          {getCuratedSummary(project.name) ?? describeProject(project)}
         </p>
 
         {topics.length > 0 && (
@@ -78,9 +79,9 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
             {topics.map((topic) => (
               <li
                 key={topic}
-                className="rounded-full px-2.5 py-0.5 text-[11px] font-mono"
+                className="rounded-full px-2.5 py-0.5 text-[12px] font-mono"
                 style={{
-                  backgroundColor: "var(--bg-tertiary)",
+                  backgroundColor: "var(--chip-bg)",
                   color: "var(--text-secondary)",
                 }}
               >

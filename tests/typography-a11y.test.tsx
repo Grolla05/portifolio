@@ -14,15 +14,18 @@ vi.mock('next-themes', () => ({
 }));
 
 describe('UI Typography & Consistency Tests', () => {
-  it('should render Header with SF Pro (proportional) text classes and not font-mono in logo or nav links', () => {
-    const { container } = render(<Header />);
+  /*
+      Redesign: o NOME continua em fonte proporcional (é identidade, não código), e as
+      abas de navegação passam a ser nomes de arquivo em monoespaçada, como num editor.
+      O nome humano da rota acompanha o link como texto para leitores de tela.
+  */
+  it('mantém o nome em fonte proporcional e as abas como arquivos em monoespaçada', () => {
+    render(<Header />);
     const logo = screen.getByText('Felipe Grolla');
-    expect(logo).toBeInTheDocument();
     expect(logo.className).not.toContain('font-mono');
 
-    // Nav links should not use font-mono
-    const homeLink = screen.getByText('Home');
-    expect(homeLink).toBeInTheDocument();
-    expect(homeLink.parentElement?.className).not.toContain('font-mono');
+    const home = screen.getByRole('link', { name: /hello\.tsx/ });
+    expect(home.closest('.font-mono')).not.toBeNull();
+    expect(home.textContent).toContain('Início');
   });
 });

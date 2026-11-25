@@ -4,10 +4,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  ChevronDown,
-  ChevronRight,
-  X,
-  Calendar,
   ExternalLink,
   Copy,
   Eye,
@@ -19,12 +15,7 @@ import {
   Mail,
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import {
-  slideInLeft,
-  fadeUp,
-  staggerContainer,
-  appleSpring,
-} from "@/lib/animations/variants";
+import { fadeUp, staggerContainer, appleSpring } from "@/lib/animations/variants";
 import { toast } from "sonner";
 import {
   ContextMenu,
@@ -34,26 +25,12 @@ import {
   ContextMenuShortcut,
   ContextMenuSeparator,
 } from "@/components/ui/context-menu";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
 import { ProjectModal } from "@/components/projects/project-modal";
 import { RepoModal } from "@/components/projects/repo-modal";
-import { LanguageIcon } from "@/components/projects/language-icon";
 import { ProjectCover } from "@/components/projects/project-cover";
 import { CtaGroup } from "@/components/cta-group";
-import { getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
+import { type CaseStudy, getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
 import { FeaturedCard } from "@/components/projects/featured-card";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useProjects } from "@/hooks/use-projects";
 import {
   type RepoProject,
@@ -62,53 +39,187 @@ import {
   displayTopics,
   pickFeatured,
   formatRelativeDate,
+  getLanguageColor,
   getLanguageIcon,
   prefersReadmeView,
 } from "@/lib/projects";
 import { SOCIAL } from "@/lib/site";
 
 /*
-    A lista de projetos vinha de um array fixo de 12 objetos escritos à mão neste arquivo.
-    Nenhum deles existia: os 12 repositórios linkados retornavam 404 na API do GitHub,
-    então todo "Abrir no GitHub" levava a uma página de erro.
+    Redesign de /projects (canvas "Avaliação e Redesign do Portfólio", artboards 3 e 3b).
 
-    Agora a página consome /api/projects, que espelha a conta real. Efeitos colaterais:
-      - as tags do filtro passam a ser as linguagens reais de cada repositório
-      - o filtro lateral é derivado dos dados, não uma lista fixa de 10 tecnologias
-      - cada card mostra estrelas e data do último commit, que só existem se o repo existe
+    Antes: split view com barra lateral de checkboxes de linguagem e ordenação, e uma
+    grade de cards de mesmo peso. O filtro escondido na lateral era o primeiro controle
+    que a pessoa via, e a lateral roubava ~20% da largura de uma página que é de leitura.
+
+    Agora: cabeçalho → um estudo de caso em destaque, grande, com problema/solução/decisão
+    → demais destaques → "Todos os repositórios" com filtro em chips e grade compacta.
+    No celular os chips rolam na horizontal e a grade vira coluna única.
+
+    Preservado: dados ao vivo de /api/projects, Quick Look (clique, Espaço, Enter),
+    menu de contexto, modais README/árvore, estudos de caso, estados de carga e erro.
 */
+
+/** Quantos repositórios a grade mostra antes de "Carregar mais". */
+const PAGE_SIZE = 9;
+
+/** Linguagens exibidas como chip; as demais continuam pesquisáveis pelo ⌘K. */
+const MAX_LANGUAGE_CHIPS = 6;
+
+type SortOrder = "newest" | "oldest";
+
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className="flex-shrink-0 inline-flex items-center gap-2 min-h-9 px-3.5 rounded-full border text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ide-accent)]"
+      style={{
+        backgroundColor: active ? "var(--cta-bg)" : "transparent",
+        borderColor: active ? "var(--cta-bg)" : "var(--border-default)",
+        color: active ? "var(--cta-fg)" : "var(--text-secondary)",
+        fontWeight: active ? 500 : 400,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+/** Estudo de caso em destaque: o "card grande" do topo do design. */
+function CaseStudyHero({
+  project,
+  caseStudy,
+}: {
+  project: RepoProject;
+  caseStudy: CaseStudy;
+}) {
+  const prefersReduced = useReducedMotion();
+  const rows = [
+    { label: "PROBLEMA", text: caseStudy.problem },
+    { label: "SOLUÇÃO", text: caseStudy.solution },
+    caseStudy.decisions[0] && { label: "DECISÃO", text: caseStudy.decisions[0].title },
+  ].filter(Boolean) as { label: string; text: string }[];
+
+  return (
+    <motion.article
+      className="flex flex-col lg:flex-row rounded-xl border overflow-hidden"
+      style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
+      variants={prefersReduced ? {} : fadeUp}
+      initial="hidden"
+      animate="visible"
+      aria-labelledby="hero-case-title"
+    >
+      <div
+        className="lg:w-1/2 border-b lg:border-b-0 lg:border-r"
+        style={{ borderColor: "var(--border-subtle)" }}
+      >
+        <ProjectCover
+          repo={project.name}
+          title={project.title}
+          primaryLanguage={project.primaryLanguage}
+          className="h-full lg:aspect-auto lg:min-h-[360px]"
+        />
+      </div>
+
+      <div className="lg:w-1/2 p-5 sm:p-8 lg:p-10 flex flex-col justify-center gap-5">
+        <span
+          className="self-start rounded-full px-2.5 py-0.5 text-xs"
+          style={{ backgroundColor: "var(--chip-bg)", color: "var(--syntax-type)" }}
+        >
+          Estudo de caso
+        </span>
+        <h2
+          id="hero-case-title"
+          className="text-2xl md:text-3xl font-medium tracking-tight"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {caseStudy.title}
+        </h2>
+
+        <dl className="flex flex-col gap-3.5 text-[15px] leading-relaxed">
+          {rows.map(({ label, text }) => (
+            <div key={label} className="flex flex-col sm:flex-row gap-1 sm:gap-4">
+              <dt
+                className="sm:w-24 flex-shrink-0 font-mono text-xs sm:pt-1"
+                style={{ color: "var(--text-muted)" }}
+              >
+                {label}
+              </dt>
+              <dd className="line-clamp-3" style={{ color: "var(--text-secondary)" }}>
+                {text}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <ul className="flex flex-wrap gap-1.5" aria-label="Tecnologias">
+          {caseStudy.stack.slice(0, 5).map((tech) => (
+            <li
+              key={tech}
+              className="rounded-full px-2.5 py-0.5 font-mono text-xs"
+              style={{ backgroundColor: "var(--chip-bg)", color: "var(--text-secondary)" }}
+            >
+              {tech}
+            </li>
+          ))}
+        </ul>
+
+        <CtaGroup
+          animateOnMount={false}
+          className="pt-1 [&>div]:w-full sm:[&>div]:w-auto [&_a]:w-full sm:[&_a]:w-auto"
+          actions={[
+            {
+              href: `/projects/${caseStudy.slug}`,
+              label: "Ler estudo completo",
+              icon: FileText,
+              variant: "primary",
+            },
+            { href: project.link, label: "Código no GitHub", icon: ExternalLink, external: true },
+          ]}
+        />
+      </div>
+    </motion.article>
+  );
+}
 
 export default function ProjectsPage() {
   const { projects, status, error, retry } = useProjects();
 
-  const [deselectedLanguages, setDeselectedLanguages] = useState<string[]>([]);
-  const [isProjectsOpen, setIsProjectsOpen] = useState(true);
-  const [isSortingOpen, setIsSortingOpen] = useState(true);
-  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [language, setLanguage] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
+  const [visible, setVisible] = useState(PAGE_SIZE);
   const [selectedProject, setSelectedProject] = useState<RepoProject | null>(null);
   const prefersReduced = useReducedMotion();
-  const isMobile = useIsMobile();
-  const sidebarPanelRef = useSidebarToggle();
 
   const languages = useMemo(() => collectLanguages(projects), [projects]);
   const featured = useMemo(() => pickFeatured(projects), [projects]);
 
-  /*
-      O filtro guarda o que foi DESmarcado, não o que foi marcado.
-      Antes o estado era a lista de selecionados, inicializada com as 10 tecnologias fixas;
-      com dados assíncronos isso obrigaria a re-sincronizar o estado toda vez que a lista
-      chegasse — e qualquer linguagem nova nasceria desmarcada. Guardando as exclusões,
-      "tudo marcado" é o estado vazio e linguagens novas aparecem ligadas por padrão.
-  */
-  const selectedLanguages = useMemo(
-    () => languages.filter((language) => !deselectedLanguages.includes(language)),
-    [languages, deselectedLanguages],
+  /* O primeiro destaque COM estudo de caso vira o card grande; os outros, cards normais. */
+  const hero = useMemo(() => {
+    for (const project of featured) {
+      const caseStudy = getCaseStudy(project.name);
+      if (caseStudy) return { project, caseStudy };
+    }
+    return null;
+  }, [featured]);
+  const otherFeatured = useMemo(
+    () => featured.filter((p) => p.id !== hero?.project.id),
+    [featured, hero],
   );
 
   /*
       Os modais casam tag com ícone por nome. Só entram aqui as linguagens que têm logo
-      em public/language_icons — as demais renderizariam <Image> com caminho inexistente
-      dentro dos modais, que não conhecem o fallback de LanguageIcon.
+      em public/language_icons — as demais renderizariam <Image> com caminho inexistente.
   */
   const technologiesForModals = useMemo(
     () =>
@@ -118,17 +229,12 @@ export default function ProjectsPage() {
     [languages],
   );
 
-  /*
-      Os modais exigem `description: string`, mas o GitHub devolve null na maioria dos
-      repositórios. Resolve o fallback aqui, num ponto só, em vez de espalhar `?? ""`
-      pelos componentes de modal.
-  */
+  /* Os modais exigem `description: string`; o fallback é resolvido num ponto só. */
   const modalProject = useMemo(
     () =>
       selectedProject
         ? {
             ...selectedProject,
-            // Resumo curado (pt-BR) tem prioridade sobre a descrição crua do GitHub.
             description:
               getCuratedSummary(selectedProject.name) ?? describeProject(selectedProject),
           }
@@ -139,266 +245,73 @@ export default function ProjectsPage() {
   // Escape fecha o Quick Look aberto
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && selectedProject) {
-        setSelectedProject(null);
-      }
+      if (e.key === "Escape" && selectedProject) setSelectedProject(null);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedProject]);
 
-  const toggleLanguage = (language: string) => {
-    setDeselectedLanguages((prev) =>
-      prev.includes(language)
-        ? prev.filter((l) => l !== language)
-        : [...prev, language],
-    );
+  const chooseLanguage = (next: string | null) => {
+    setLanguage(next);
+    setVisible(PAGE_SIZE);
   };
 
   const filteredProjects = useMemo(
     () =>
       projects
-        .filter(
-          (p) =>
-            selectedLanguages.length === 0 ||
-            p.languages.some((l) => selectedLanguages.includes(l)) ||
-            // Repositório sem linguagem detectada (só markdown, por exemplo) some se
-            // filtrado por linguagem; só aparece quando nenhum filtro está ativo.
-            (p.languages.length === 0 &&
-              selectedLanguages.length === languages.length),
-        )
+        .filter((p) => language === null || p.languages.includes(language))
         .sort((a, b) => {
-          /*
-              Projetos com estudo de caso ficam fixados no topo, qualquer que seja a
-              ordenação por data: são os que valem a leitura e antes se perdiam no meio
-              de ~28 cards de peso visual idêntico.
-          */
-          const featured = Number(!!getCaseStudy(b.name)) - Number(!!getCaseStudy(a.name));
-          if (featured !== 0) return featured;
-
+          /* Projetos com estudo de caso ficam no topo, qualquer que seja a ordenação. */
+          const pinned = Number(!!getCaseStudy(b.name)) - Number(!!getCaseStudy(a.name));
+          if (pinned !== 0) return pinned;
           const diff = new Date(a.date).getTime() - new Date(b.date).getTime();
           return sortOrder === "newest" ? -diff : diff;
         }),
-    [projects, selectedLanguages, languages.length, sortOrder],
+    [projects, language, sortOrder],
   );
 
-  const renderSidebar = () => (
-    <motion.aside
-      className="w-full h-full flex flex-col transition-colors duration-300 flex-shrink-0 select-none overflow-hidden"
-      style={{
-        backgroundColor: "var(--bg-secondary)",
-        borderColor: "var(--border-default)",
-      }}
-      variants={prefersReduced ? {} : slideInLeft}
-      initial="hidden"
-      animate="visible"
-    >
-      <div
-        className="h-10 flex items-center px-4 border-b transition-colors duration-300 select-none flex-shrink-0"
-        style={{ borderColor: "var(--border-default)" }}
-      >
-        <ChevronDown className="w-4 h-4 mr-2" style={{ color: "var(--text-muted)" }} />
-        <span
-          className="text-xs font-semibold tracking-tight uppercase"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          projects
-        </span>
-        {status === "ready" && (
-          <span
-            className="ml-auto text-[10px] font-mono"
-            style={{ color: "var(--text-muted)" }}
+  const shownProjects = filteredProjects.slice(0, visible);
+
+  const renderCard = (project: RepoProject, index: number) => {
+    const caseStudy = getCaseStudy(project.name);
+    const topics = displayTopics(project, 3);
+    const lang = project.primaryLanguage;
+
+    return (
+      <ContextMenu key={project.id}>
+        <ContextMenuTrigger asChild>
+          <motion.article
+            layout={!prefersReduced}
+            initial={prefersReduced ? {} : { opacity: 0, y: 12 }}
+            animate={prefersReduced ? {} : { opacity: 1, y: 0 }}
+            exit={prefersReduced ? {} : { opacity: 0 }}
+            transition={{
+              duration: 0.3,
+              ease: [0.4, 0, 0.2, 1],
+              delay: prefersReduced ? 0 : Math.min(index, 8) * 0.04,
+            }}
+            whileHover={prefersReduced ? {} : { y: -2 }}
+            className="group relative flex flex-col gap-3 p-5 sm:p-6 rounded-xl border transition-colors focus-within:ring-2 focus-within:ring-[var(--ide-accent)]"
+            style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
           >
-            {projects.length}
-          </span>
-        )}
-      </div>
-
-      <div className="flex-1 overflow-y-auto py-2">
-        {/* Filtro de linguagens */}
-        <div>
-          <motion.button
-            onClick={() => setIsProjectsOpen(!isProjectsOpen)}
-            whileTap={prefersReduced ? {} : { scale: 0.98 }}
-            className="w-full flex items-center px-4 py-1.5 transition-colors hover:bg-black/5 dark:hover:bg-white/5 rounded-md"
-            aria-expanded={isProjectsOpen}
-          >
-            <motion.span
-              animate={{ rotate: isProjectsOpen ? 90 : 0 }}
-              transition={{ duration: 0.15 }}
-              className="inline-flex"
-            >
-              <ChevronRight className="w-3 h-3 mr-2" style={{ color: "var(--text-muted)" }} />
-            </motion.span>
-            <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
-              Linguagens
-            </span>
-          </motion.button>
-
-          <AnimatePresence>
-            {isProjectsOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                style={{ overflow: "hidden" }}
-                className="ml-4 pl-0 mt-2 space-y-1"
-              >
-                {status === "loading" && (
-                  <div className="px-4 py-1.5 space-y-2">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="h-3.5 rounded animate-pulse"
-                        style={{
-                          backgroundColor: "var(--surface-subtle)",
-                          width: `${70 - i * 8}%`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {languages.map((language) => {
-                  const checked = selectedLanguages.includes(language);
-                  return (
-                    <motion.button
-                      key={language}
-                      whileTap={prefersReduced ? {} : { scale: 0.98 }}
-                      className="w-full flex items-center px-4 py-1.5 cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5 rounded-md text-left"
-                      onClick={() => toggleLanguage(language)}
-                      role="checkbox"
-                      aria-checked={checked}
-                    >
-                      <span
-                        className="w-3.5 h-3.5 mr-2.5 border rounded flex items-center justify-center transition-colors flex-shrink-0"
-                        style={{
-                          backgroundColor: checked ? "var(--ide-accent)" : "transparent",
-                          borderColor: checked ? "var(--ide-accent)" : "var(--border-default)",
-                        }}
-                      >
-                        {checked && <span className="text-white text-[10px]">✓</span>}
-                      </span>
-                      <span
-                        className="flex items-center min-w-0"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
-                        <LanguageIcon language={language} size={16} className="mr-2" decorative />
-                        <span className="text-xs font-medium truncate">{language}</span>
-                      </span>
-                    </motion.button>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Ordenação */}
-        <div className="mt-4 pt-4 border-t" style={{ borderColor: "var(--border-default)" }}>
-          <motion.button
-            onClick={() => setIsSortingOpen(!isSortingOpen)}
-            whileTap={prefersReduced ? {} : { scale: 0.98 }}
-            className="w-full flex items-center px-4 py-1.5 transition-colors hover:bg-black/5 dark:hover:bg-white/5 rounded-md"
-            aria-expanded={isSortingOpen}
-          >
-            <motion.span
-              animate={{ rotate: isSortingOpen ? 90 : 0 }}
-              transition={{ duration: 0.15 }}
-              className="inline-flex"
-            >
-              <ChevronRight className="w-3 h-3 mr-2" style={{ color: "var(--text-muted)" }} />
-            </motion.span>
-            <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
-              Ordenar por data
-            </span>
-          </motion.button>
-
-          <AnimatePresence>
-            {isSortingOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                style={{ overflow: "hidden" }}
-                className="ml-4 pl-0 mt-2 space-y-1"
-              >
-                {(["newest", "oldest"] as const).map((order) => (
-                  <motion.button
-                    key={order}
-                    whileTap={prefersReduced ? {} : { scale: 0.98 }}
-                    className="w-full flex items-center px-4 py-1.5 cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5 rounded-md text-left"
-                    onClick={() => setSortOrder(order)}
-                    role="radio"
-                    aria-checked={sortOrder === order}
-                  >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                {lang && (
+                  <>
                     <span
-                      className="w-3.5 h-3.5 mr-2.5 border rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                      style={{
-                        borderColor:
-                          sortOrder === order ? "var(--ide-accent)" : "var(--border-default)",
-                      }}
-                    >
-                      {sortOrder === order && (
-                        <span
-                          className="w-1.5 h-1.5 rounded-full"
-                          style={{ backgroundColor: "var(--ide-accent)" }}
-                        />
-                      )}
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: getLanguageColor(lang) }}
+                      aria-hidden="true"
+                    />
+                    <span className="font-mono text-xs truncate" style={{ color: "var(--text-secondary)" }}>
+                      {lang}
                     </span>
-                    <span className="flex items-center" style={{ color: "var(--text-secondary)" }}>
-                      <Calendar className="w-3.5 h-3.5 mr-2" />
-                      <span className="text-xs font-medium">
-                        {order === "newest" ? "Mais recentes" : "Mais antigos"}
-                      </span>
-                    </span>
-                  </motion.button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-    </motion.aside>
-  );
-
-  const renderCard = (project: RepoProject, index: number) => (
-    <ContextMenu key={project.id}>
-      <ContextMenuTrigger asChild>
-        <motion.div
-          layout
-          initial={prefersReduced ? {} : { opacity: 0, scale: 0.92, y: 16 }}
-          animate={prefersReduced ? {} : { opacity: 1, scale: 1, y: 0 }}
-          exit={prefersReduced ? {} : { opacity: 0, scale: 0.92, y: 8 }}
-          transition={{
-            duration: 0.3,
-            ease: [0.4, 0, 0.2, 1],
-            delay: prefersReduced ? 0 : Math.min(index, 8) * 0.04,
-          }}
-          whileHover={prefersReduced ? {} : { y: -4 }}
-          whileTap={prefersReduced ? {} : { scale: 0.98 }}
-          // flex-col: o botão do card ocupa o espaço restante (`flex-1`) e o link do estudo
-          // de caso fica DENTRO da célula do grid. Com `h-full` no botão, o link transbordava.
-          className="group flex flex-col focus-within:ring-2 focus-within:ring-[var(--ide-accent)] rounded-2xl outline-none"
-        >
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              {/*
-                  Antes o cabeçalho dizia "Project 1" com um slug inventado ao lado.
-                  Agora traz o nome real do repositório — que é também o que a pessoa
-                  vai encontrar no GitHub ao clicar.
-              */}
-              <span
-                className="text-xs font-semibold tracking-tight truncate"
-                style={{ color: "var(--ide-accent-text)" }}
-              >
-                {project.title}
-              </span>
+                  </>
+                )}
+              </div>
               {project.stars > 0 && (
                 <span
-                  className="flex items-center gap-0.5 text-[10px] font-mono flex-shrink-0"
+                  className="flex items-center gap-1 text-xs font-mono flex-shrink-0"
                   style={{ color: "var(--text-muted)" }}
                 >
                   <Star className="w-3 h-3" aria-hidden="true" />
@@ -407,229 +320,166 @@ export default function ProjectsPage() {
                 </span>
               )}
             </div>
-            <span className="text-[10px] font-mono opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/5 transition-opacity flex-shrink-0">
-              Espaço: Quick Look
-            </span>
-          </div>
 
-          <button
-            onClick={() => setSelectedProject(project)}
-            onKeyDown={(e) => {
-              if (e.code === "Space" || e.key === " ") {
-                e.preventDefault();
-                setSelectedProject(project);
-              } else if (e.key === "Enter") {
-                setSelectedProject(project);
-              }
-            }}
-            className="block w-full text-left focus:outline-none flex-1"
-            aria-label={`Abrir detalhes de ${project.title}`}
-          >
-            <div
-              className="rounded-2xl overflow-hidden shadow-sm flex flex-col cursor-pointer h-full border transition-all duration-300 hover:shadow-md"
-              style={{
-                backgroundColor: "var(--bg-secondary)",
-                borderColor: "var(--border-default)",
-              }}
-            >
+            <h3 className="text-[17px] font-medium tracking-tight" style={{ color: "var(--text-primary)" }}>
               {/*
-                  Capa real no lugar do quadrado cinza com o logo da linguagem, que era
-                  idêntico nos ~28 cards. O ícone volta sozinho se a imagem falhar.
+                  O botão do título estica sobre o card inteiro (after:inset-0): o card todo
+                  abre o Quick Look, mas os links internos continuam clicáveis por cima.
               */}
-              <div className="relative">
-                <ProjectCover
-                  repo={project.name}
-                  title={project.title}
-                  primaryLanguage={project.primaryLanguage}
-                />
+              <button
+                type="button"
+                onClick={() => setSelectedProject(project)}
+                onKeyDown={(e) => {
+                  if (e.code === "Space" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedProject(project);
+                  }
+                }}
+                className="text-left focus:outline-none after:absolute after:inset-0 after:content-['']"
+                aria-label={`Abrir detalhes de ${project.title}`}
+              >
+                {project.title}
+              </button>
+            </h3>
 
-                {project.languages.length > 0 && (
-                  <div
-                    className="absolute top-3 right-3 backdrop-blur-md p-1.5 rounded-lg shadow-sm flex items-center gap-1.5"
-                    style={{ backgroundColor: "var(--bg-glass)" }}
+            <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--text-secondary)" }}>
+              {getCuratedSummary(project.name) ?? describeProject(project)}
+            </p>
+
+            {topics.length > 0 && (
+              <ul className="flex flex-wrap gap-1.5" aria-label="Tópicos do projeto">
+                {topics.map((topic) => (
+                  <li
+                    key={topic}
+                    className="rounded-full px-2 py-0.5 text-[11px] font-mono"
+                    style={{ backgroundColor: "var(--chip-bg)", color: "var(--text-secondary)" }}
                   >
-                    {project.languages.slice(0, 4).map((language) => (
-                      <LanguageIcon key={language} language={language} size={18} />
-                    ))}
-                  </div>
+                    {topic}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <div
+              className="flex items-center justify-between gap-3 text-xs pt-3 border-t"
+              style={{ color: "var(--text-muted)", borderColor: "var(--border-subtle)" }}
+            >
+              <span>atualizado {formatRelativeDate(project.date)}</span>
+              <div className="flex items-center gap-3">
+                {project.homepage && (
+                  <span className="flex items-center gap-1">
+                    <Globe className="w-3 h-3" aria-hidden="true" />
+                    demo
+                  </span>
                 )}
-              </div>
-
-              <div className="p-6 flex flex-col gap-4 flex-1">
-                <p
-                  className="text-sm leading-relaxed font-normal flex-1"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  {getCuratedSummary(project.name) ?? describeProject(project)}
-                </p>
-
-                {/* Topics do GitHub: dizem do que o projeto trata sem abrir o modal */}
-                {displayTopics(project, 3).length > 0 && (
-                  <ul className="flex flex-wrap gap-1.5" aria-label="Tópicos do projeto">
-                    {displayTopics(project, 3).map((topic) => (
-                      <li
-                        key={topic}
-                        className="rounded-full px-2 py-0.5 text-[10px] font-mono"
-                        style={{
-                          backgroundColor: "var(--bg-tertiary)",
-                          color: "var(--text-secondary)",
-                        }}
-                      >
-                        {topic}
-                      </li>
-                    ))}
-                  </ul>
+                {caseStudy && (
+                  <Link
+                    href={`/projects/${caseStudy.slug}`}
+                    className="relative z-10 inline-flex items-center gap-1 font-medium hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ide-accent)] rounded"
+                    style={{ color: "var(--ide-accent-text)" }}
+                    aria-label={`Ler o estudo de caso de ${project.title}`}
+                  >
+                    Estudo de caso
+                    <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                  </Link>
                 )}
-
-                {/*
-                    Rodapé com sinal de atividade. Data do último push é o que separa
-                    um portfólio vivo de um abandonado — e só pode ser exibida porque
-                    o dado vem do repositório de verdade.
-                */}
-                <div
-                  className="flex items-center justify-between text-[11px] font-mono pt-3 border-t"
-                  style={{
-                    color: "var(--text-muted)",
-                    borderColor: "var(--border-subtle)",
-                  }}
-                >
-                  <span>{formatRelativeDate(project.date)}</span>
-                  {project.homepage && (
-                    <span className="flex items-center gap-1">
-                      <Globe className="w-3 h-3" aria-hidden="true" />
-                      demo
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
-          </button>
-
-          {/*
-              Link FORA do <button>: <a> dentro de <button> é HTML inválido e o clique no
-              link também abriria o modal. Só projetos com estudo de caso têm a rota.
-          */}
-          {getCaseStudy(project.name) && (
-            <Link
-              href={`/projects/${getCaseStudy(project.name)!.slug}`}
-              className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium rounded-md py-1 hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ide-accent)]"
-              style={{ color: "var(--ide-accent-text)" }}
-              aria-label={`Ler o estudo de caso de ${project.title}`}
-            >
-              Ler estudo de caso
-              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </Link>
-          )}
-        </motion.div>
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuItem onClick={() => setSelectedProject(project)}>
-          <Eye className="w-3.5 h-3.5 mr-2 text-primary" />
-          Quick Look / Detalhes
-          <ContextMenuShortcut>Espaço</ContextMenuShortcut>
-        </ContextMenuItem>
-        {getCaseStudy(project.name) && (
-          /*
-              `asChild` + Link em vez de useRouter().push: navegação por <a> real mantém
-              prefetch e abrir em nova aba, e a página não depende do App Router montado.
-          */
-          <ContextMenuItem asChild>
-            <Link href={`/projects/${getCaseStudy(project.name)!.slug}`}>
-              <FileText className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
-              Ler estudo de caso
-            </Link>
+          </motion.article>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem onClick={() => setSelectedProject(project)}>
+            <Eye className="w-3.5 h-3.5 mr-2 text-primary" />
+            Quick Look / Detalhes
+            <ContextMenuShortcut>Espaço</ContextMenuShortcut>
           </ContextMenuItem>
-        )}
-        <ContextMenuItem onClick={() => window.open(project.link, "_blank")}>
-          <ExternalLink className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
-          Abrir no GitHub
-          <ContextMenuShortcut>⌘↵</ContextMenuShortcut>
-        </ContextMenuItem>
-        {project.homepage && (
-          <ContextMenuItem onClick={() => window.open(project.homepage!, "_blank")}>
-            <Globe className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent-green)]" />
-            Abrir demo
-          </ContextMenuItem>
-        )}
-        <ContextMenuSeparator />
-        <ContextMenuItem
-          onClick={() => {
-            navigator.clipboard.writeText(project.link);
-            toast.success("Link do repositório copiado!");
-          }}
-        >
-          <Copy className="w-3.5 h-3.5 mr-2 text-[var(--text-muted)]" />
-          Copiar Link do Repositório
-          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
-  );
-
-  const renderMainContent = () => (
-    <main className="flex-1 h-full flex flex-col overflow-hidden">
-      <div
-        className="h-10 flex border-b transition-colors duration-300 flex-shrink-0"
-        style={{ borderColor: "var(--border-default)" }}
-      >
-        <div
-          className="px-4 flex items-center border-r space-x-2 text-xs font-medium"
-          style={{
-            borderColor: "var(--border-default)",
-            color: "var(--text-secondary)",
-          }}
-        >
-          {deselectedLanguages.length > 0 ? (
-            <span className="truncate max-w-xs">{selectedLanguages.join("; ")}</span>
-          ) : (
-            <span className="italic">todas as linguagens</span>
+          {caseStudy && (
+            <ContextMenuItem asChild>
+              <Link href={`/projects/${caseStudy.slug}`}>
+                <FileText className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
+                Ler estudo de caso
+              </Link>
+            </ContextMenuItem>
           )}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => setDeselectedLanguages([])}
-                className="p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                aria-label="Limpar filtros"
-              >
-                <X className="w-3.5 h-3.5 cursor-pointer flex-shrink-0 hover:opacity-70" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>Limpar todos os filtros</TooltipContent>
-          </Tooltip>
-        </div>
-      </div>
+          <ContextMenuItem onClick={() => window.open(project.link, "_blank")}>
+            <ExternalLink className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
+            Abrir no GitHub
+            <ContextMenuShortcut>⌘↵</ContextMenuShortcut>
+          </ContextMenuItem>
+          {project.homepage && (
+            <ContextMenuItem onClick={() => window.open(project.homepage!, "_blank")}>
+              <Globe className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent-green)]" />
+              Abrir demo
+            </ContextMenuItem>
+          )}
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onClick={() => {
+              navigator.clipboard.writeText(project.link);
+              toast.success("Link do repositório copiado!");
+            }}
+          >
+            <Copy className="w-3.5 h-3.5 mr-2 text-[var(--text-muted)]" />
+            Copiar Link do Repositório
+            <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+  };
 
-      <div className="flex-1 overflow-y-auto p-8 md:p-12">
-        {/* Carregando — esqueletos com a mesma caixa dos cards, sem salto de layout */}
+  return (
+    <div
+      className="min-h-[calc(100vh-var(--chrome-height))] w-full transition-colors duration-300"
+      style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}
+    >
+      <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 pt-8 sm:pt-16 pb-28 flex flex-col gap-10 sm:gap-14">
+        <motion.header
+          className="flex flex-col gap-3"
+          variants={prefersReduced ? {} : staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.p
+            variants={prefersReduced ? {} : fadeUp}
+            className="font-mono text-sm"
+            style={{ color: "var(--syntax-comment)" }}
+          >
+            {"// projects/"}
+          </motion.p>
+          <motion.h1
+            variants={prefersReduced ? {} : fadeUp}
+            className="text-4xl md:text-5xl font-medium tracking-tight"
+          >
+            Projetos
+          </motion.h1>
+          <motion.p
+            variants={prefersReduced ? {} : fadeUp}
+            className="text-[15px] md:text-[17px] leading-relaxed max-w-2xl"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Estudos de caso curados no topo; o restante do GitHub logo abaixo, sempre
+            atualizado.
+          </motion.p>
+        </motion.header>
+
+        {/* Carregando — esqueletos com a mesma caixa do conteúdo final */}
         {status === "loading" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="animate-pulse">
+          <div className="flex flex-col gap-10" aria-busy="true" aria-live="polite">
+            <span className="sr-only">Carregando projetos do GitHub…</span>
+            <div
+              className="h-[360px] rounded-xl border animate-pulse"
+              style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
                 <div
-                  className="h-3.5 w-32 rounded mb-3"
-                  style={{ backgroundColor: "var(--surface-subtle)" }}
+                  key={i}
+                  className="h-44 rounded-xl border animate-pulse"
+                  style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
                 />
-                <div
-                  className="rounded-2xl border overflow-hidden"
-                  style={{
-                    borderColor: "var(--border-default)",
-                    backgroundColor: "var(--bg-secondary)",
-                  }}
-                >
-                  <div className="h-32" style={{ backgroundColor: "var(--bg-tertiary)" }} />
-                  <div className="p-6 space-y-3">
-                    <div
-                      className="h-3 rounded w-full"
-                      style={{ backgroundColor: "var(--surface-subtle)" }}
-                    />
-                    <div
-                      className="h-3 rounded w-4/5"
-                      style={{ backgroundColor: "var(--surface-subtle)" }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
@@ -644,104 +494,168 @@ export default function ProjectsPage() {
             <p className="text-sm max-w-md" style={{ color: "var(--text-secondary)" }}>
               {error}
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <motion.button
                 onClick={retry}
-                whileHover={prefersReduced ? {} : { scale: 1.02 }}
                 whileTap={prefersReduced ? {} : { scale: 0.97 }}
                 transition={appleSpring}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold glass-pill"
-                style={{ color: "var(--text-primary)" }}
+                className="inline-flex items-center gap-2 min-h-11 px-5 rounded-[10px] border text-sm"
+                style={{ color: "var(--text-primary)", borderColor: "var(--border-default)" }}
               >
-                <RefreshCw className="w-4 h-4 text-primary" />
+                <RefreshCw className="w-4 h-4" aria-hidden="true" />
                 Tentar novamente
               </motion.button>
               <a
                 href={SOCIAL.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold glass-pill"
-                style={{ color: "var(--text-primary)" }}
+                className="inline-flex items-center gap-2 min-h-11 px-5 rounded-[10px] border text-sm"
+                style={{ color: "var(--text-primary)", borderColor: "var(--border-default)" }}
               >
-                <ExternalLink className="w-4 h-4 text-primary" />
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
                 Ver no GitHub
               </a>
             </div>
           </motion.div>
         )}
 
-        {status === "ready" && filteredProjects.length === 0 && (
-          <div className="flex flex-col items-center justify-center text-center py-24 gap-3">
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              Nenhum projeto bate com os filtros ativos.
-            </p>
-            <button
-              onClick={() => setDeselectedLanguages([])}
-              className="text-xs font-medium underline underline-offset-4"
-              style={{ color: "var(--ide-accent-text)" }}
-            >
-              Limpar filtros
-            </button>
-          </div>
-        )}
-
-        {status === "ready" && filteredProjects.length > 0 && (
+        {status === "ready" && (
           <>
-            {/*
-                Destaques curados no topo. Somem quando há filtro ativo: quem filtrou por
-                linguagem quer ver o resultado do filtro, não uma seção fixa por cima.
-            */}
-            {deselectedLanguages.length === 0 && featured.length > 0 && (
-              <section className="mb-14" aria-labelledby="featured-projects-title">
+            {hero && <CaseStudyHero project={hero.project} caseStudy={hero.caseStudy} />}
+
+            {otherFeatured.length > 0 && (
+              <section aria-labelledby="more-featured-title" className="flex flex-col gap-5">
                 <h2
-                  id="featured-projects-title"
-                  className="text-xs font-mono mb-5"
+                  id="more-featured-title"
+                  className="font-mono text-sm"
                   style={{ color: "var(--syntax-comment)" }}
                 >
-                  {"// em destaque"}
+                  {"// também em destaque"}
                 </h2>
                 <motion.div
-                  className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-5"
                   variants={prefersReduced ? {} : staggerContainer}
                   initial="hidden"
                   animate="visible"
                 >
-                  {featured.map((project) => (
-                    <FeaturedCard
-                      key={project.id}
-                      project={project}
-                      onOpen={setSelectedProject}
-                    />
+                  {otherFeatured.map((project) => (
+                    <FeaturedCard key={project.id} project={project} onOpen={setSelectedProject} />
                   ))}
                 </motion.div>
-                <h2
-                  className="text-xs font-mono mt-12"
-                  style={{ color: "var(--syntax-comment)" }}
-                >
-                  {"// todos os repositórios"}
-                </h2>
               </section>
             )}
 
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              layout
-              variants={prefersReduced ? {} : staggerContainer}
-              initial="hidden"
-              animate="visible"
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredProjects.map(renderCard)}
-              </AnimatePresence>
-            </motion.div>
+            <section aria-labelledby="all-repos-title" className="flex flex-col gap-5">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <h2
+                  id="all-repos-title"
+                  className="text-xl sm:text-2xl font-medium tracking-tight"
+                >
+                  Todos os repositórios
+                  <span className="sr-only"> ({filteredProjects.length})</span>
+                  <span className="ml-2 font-mono text-sm" style={{ color: "var(--text-muted)" }} aria-hidden="true">
+                    {filteredProjects.length}
+                  </span>
+                </h2>
 
-            {/*
-                Fecho da página. Quem rola até o fim da grade de projetos já demonstrou
-                interesse e antes não tinha nenhum próximo passo — a página simplesmente
-                acabava.
-            */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 min-w-0">
+                  {/*
+                      Chips de linguagem. No celular a fileira rola na horizontal
+                      (-mx/px devolvem a sangria até a borda da tela) em vez de quebrar
+                      em três linhas e empurrar a grade para baixo.
+                  */}
+                  <div
+                    role="group"
+                    aria-label="Filtrar por linguagem"
+                    className="flex gap-2 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap pb-1 sm:pb-0 no-scrollbar"
+                  >
+                    <Chip active={language === null} onClick={() => chooseLanguage(null)}>
+                      Todos
+                    </Chip>
+                    {languages.slice(0, MAX_LANGUAGE_CHIPS).map((lang) => (
+                      <Chip
+                        key={lang}
+                        active={language === lang}
+                        onClick={() => chooseLanguage(language === lang ? null : lang)}
+                      >
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: getLanguageColor(lang) }}
+                          aria-hidden="true"
+                        />
+                        {lang}
+                      </Chip>
+                    ))}
+                  </div>
+
+                  <div
+                    role="group"
+                    aria-label="Ordenar por data"
+                    className="flex gap-0.5 p-1 rounded-full border self-start flex-shrink-0"
+                    style={{ borderColor: "var(--border-default)" }}
+                  >
+                    {(["newest", "oldest"] as const).map((order) => (
+                      <button
+                        key={order}
+                        type="button"
+                        onClick={() => setSortOrder(order)}
+                        aria-pressed={sortOrder === order}
+                        className="relative min-h-8 px-3 rounded-full text-xs font-medium"
+                        style={{
+                          color: sortOrder === order ? "var(--text-primary)" : "var(--text-secondary)",
+                        }}
+                      >
+                        {sortOrder === order && (
+                          <motion.span
+                            layoutId="projectsSortPill"
+                            className="absolute inset-0 rounded-full"
+                            style={{ backgroundColor: "var(--surface-subtle)", border: "1px solid var(--border-default)" }}
+                            transition={prefersReduced ? { duration: 0 } : appleSpring}
+                          />
+                        )}
+                        <span className="relative">
+                          {order === "newest" ? "Recentes" : "Antigos"}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {filteredProjects.length === 0 ? (
+                <div className="flex flex-col items-center text-center py-16 gap-3">
+                  <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                    Nenhum projeto em {language}.
+                  </p>
+                  <button
+                    onClick={() => chooseLanguage(null)}
+                    className="text-sm font-medium underline underline-offset-4"
+                    style={{ color: "var(--ide-accent-text)" }}
+                  >
+                    Ver todos
+                  </button>
+                </div>
+              ) : (
+                <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" layout={!prefersReduced}>
+                  <AnimatePresence mode="popLayout">{shownProjects.map(renderCard)}</AnimatePresence>
+                </motion.div>
+              )}
+
+              {visible < filteredProjects.length && (
+                <button
+                  type="button"
+                  onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                  className="self-center w-full sm:w-auto min-h-12 px-6 rounded-[10px] border text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                  style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}
+                >
+                  Carregar mais ({filteredProjects.length - visible} restantes)
+                </button>
+              )}
+            </section>
+
+            {/* Fecho da página: quem rolou até aqui já demonstrou interesse. */}
             <motion.div
-              className="mt-16 pt-10 border-t flex flex-col items-center gap-4 text-center"
+              className="pt-10 border-t flex flex-col items-center gap-4 text-center"
               style={{ borderColor: "var(--border-subtle)" }}
               variants={prefersReduced ? {} : fadeUp}
               initial="hidden"
@@ -754,84 +668,28 @@ export default function ProjectsPage() {
               </p>
               <CtaGroup
                 animateOnMount={false}
+                className="justify-center"
                 actions={[
                   { href: "/contact", label: "Falar comigo", icon: Mail, variant: "primary" },
-                  {
-                    href: SOCIAL.github,
-                    label: "Ver perfil no GitHub",
-                    icon: ExternalLink,
-                    external: true,
-                  },
+                  { href: SOCIAL.github, label: "Ver perfil no GitHub", icon: ExternalLink, external: true },
                 ]}
               />
             </motion.div>
           </>
         )}
-      </div>
-    </main>
-  );
+      </main>
 
-  return (
-    <TooltipProvider>
-      <div
-        /*
-            Desktop usa ALTURA DEFINIDA (`h-`), não `min-h-`: `h-full` dos filhos resolve
-            contra `height` do pai; só com `min-height` a porcentagem vira `auto` e o split
-            view colapsa na altura do conteúdo, cortando a interface no meio.
-            No mobile a pilha precisa crescer, então lá continua `min-h-`.
-        */
-        className={`w-full flex flex-col transition-colors duration-300 ${
-          isMobile ? "min-h-[calc(100vh-var(--chrome-height))]" : "h-[calc(100vh-var(--chrome-height))]"
-        }`}
-        style={{ backgroundColor: "var(--bg-primary)" }}
-      >
-        {isMobile ? (
-          /* Mobile: pilha vertical (sidebar acima, conteúdo abaixo) */
-          <div className="flex flex-1 min-h-0 flex-col w-full">
-            {renderSidebar()}
-            {renderMainContent()}
-          </div>
-        ) : (
-          /* Desktop: split view redimensionável — `min-h-0` deixa o filho encolher no flex */
-          <div className="flex flex-1 min-h-0 w-full">
-            {/*
-                `autoSaveId` persiste a largura escolhida no localStorage: quem ajustou o
-                painel encontra o mesmo layout na próxima visita, como num editor de verdade.
-            */}
-            <ResizablePanelGroup
-              direction="horizontal"
-              className="w-full h-full"
-              autoSaveId="projects-layout"
-            >
-              <ResizablePanel
-                ref={sidebarPanelRef}
-                defaultSize={20}
-                minSize={14}
-                maxSize={32}
-                collapsible
-                collapsedSize={0}
-                className="min-w-0"
-              >
-                {renderSidebar()}
-              </ResizablePanel>
-              <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={80}>{renderMainContent()}</ResizablePanel>
-            </ResizablePanelGroup>
-          </div>
-        )}
-
-        {/* Projetos em C/C++ abrem o README; os demais abrem o navegador de arquivos */}
-        <ProjectModal
-          project={modalProject && prefersReadmeView(modalProject) ? modalProject : null}
-          onClose={() => setSelectedProject(null)}
-          technologies={technologiesForModals}
-        />
-        <RepoModal
-          project={modalProject && !prefersReadmeView(modalProject) ? modalProject : null}
-          onClose={() => setSelectedProject(null)}
-          technologies={technologiesForModals}
-        />
-      </div>
-    </TooltipProvider>
+      {/* Projetos em C/C++ abrem o README; os demais abrem o navegador de arquivos */}
+      <ProjectModal
+        project={modalProject && prefersReadmeView(modalProject) ? modalProject : null}
+        onClose={() => setSelectedProject(null)}
+        technologies={technologiesForModals}
+      />
+      <RepoModal
+        project={modalProject && !prefersReadmeView(modalProject) ? modalProject : null}
+        onClose={() => setSelectedProject(null)}
+        technologies={technologiesForModals}
+      />
+    </div>
   );
 }
