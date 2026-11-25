@@ -6,7 +6,7 @@ import { FolderGit2, FileDown, Mail } from 'lucide-react';
 import { CtaGroup } from '@/components/cta-group';
 import { Typewriter, typingDuration } from '@/components/motion/typewriter';
 import { MaskWord } from '@/components/motion/split-words';
-import { SignalTrace } from '@/components/motion/signal-trace';
+import { ContributionGraph } from '@/components/home/contribution-graph';
 import { ProfileCard } from '@/components/home/profile-card';
 import { AVAILABILITY } from '@/lib/site';
 
@@ -26,7 +26,7 @@ import { AVAILABILITY } from '@/lib/site';
      ~800ms  "hardware" ganha a cor de assinatura num wipe
      700ms   parágrafo · 850ms CTAs · 1000ms link de destaque
      400ms   painel profile.ts entra e se "digita" token a token
-    1000ms   traço de osciloscópio se desenha por baixo (só desktop)
+    1000ms   gráfico de contribuições do GitHub entra em onda, dia a dia
 
     A cena toca uma vez por sessão (ver SCENE_KEY); depois a home entra pronta.
 */
@@ -165,12 +165,11 @@ export function Hero() {
 
       <ProfileCard delay={400} />
 
-      {/* Traço de osciloscópio: liga o "hardware" do título ao código, por baixo da cena. */}
-      <SignalTrace
-        variant="hero"
-        delay={1.0}
-        className="hidden lg:block absolute left-0 right-0 bottom-2 h-16 w-full"
-      />
+      {/* Gráfico de contribuições do GitHub (dado real) no lugar do pulso simulado. */}
+      {/* min-w-0: sem ele a grade do gráfico (largura mínima ~800px) alargaria a coluna no celular. */}
+      <div className="lg:col-span-2 min-w-0">
+        <ContributionGraph delay={1000} />
+      </div>
     </section>
   );
 }

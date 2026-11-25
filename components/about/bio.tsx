@@ -253,7 +253,9 @@ export default function Bio() {
                 <ViewToggle mode={mode} onChange={setMode} />
             </div>
 
-            <div className="p-5 sm:p-7 max-h-[560px] overflow-y-auto">
+            {/* Mais alto (era 560px): o README de perfil tem GIF, cards e tabelas, e com 560px
+                quase tudo ficava escondido atrás da rolagem interna. */}
+            <div className="p-5 sm:p-7 max-h-[min(85vh,960px)] overflow-y-auto">
                 {status === 'error' ? (
                     <ErrorState message={error ?? 'Erro desconhecido.'} onRetry={retry} />
                 ) : status !== 'ready' || content === null ? (

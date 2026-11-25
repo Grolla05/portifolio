@@ -28,6 +28,7 @@ import {
 import { ProjectModal } from "@/components/projects/project-modal";
 import { RepoModal } from "@/components/projects/repo-modal";
 import { ProjectCover } from "@/components/projects/project-cover";
+import { LanguageIcon } from "@/components/projects/language-icon";
 import { CtaGroup } from "@/components/cta-group";
 import { type CaseStudy, getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
 import { FeaturedCard } from "@/components/projects/featured-card";
@@ -307,11 +308,9 @@ export default function ProjectsPage() {
               <div className="flex items-center gap-2 min-w-0">
                 {lang && (
                   <>
-                    <span
-                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: getLanguageColor(lang) }}
-                      aria-hidden="true"
-                    />
+                    {/* Logo da linguagem no lugar da bolinha de cor (abreviação colorida quando
+                        não há logo em public/language_icons — ver LanguageIcon). */}
+                    <LanguageIcon language={lang} size={18} decorative />
                     <span className="font-mono text-xs truncate" style={{ color: "var(--text-secondary)" }}>
                       {lang}
                     </span>
@@ -587,11 +586,7 @@ export default function ProjectsPage() {
                         active={language === lang}
                         onClick={() => chooseLanguage(language === lang ? null : lang)}
                       >
-                        <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: getLanguageColor(lang) }}
-                          aria-hidden="true"
-                        />
+                        <LanguageIcon language={lang} size={14} decorative />
                         {lang}
                       </Chip>
                     ))}

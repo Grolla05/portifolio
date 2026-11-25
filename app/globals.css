@@ -86,6 +86,17 @@
      marcadores da timeline. Segundo acento de marca (o azul fica para ação). */
   --brand-signal: #953800;
 
+  /* Gráfico de contribuições (components/home/contribution-graph.tsx): escala de
+     verdes do próprio GitHub, para o gráfico ser reconhecido de relance. */
+  --contrib-0: #ebedf0;
+  --contrib-1: #9be9a8;
+  --contrib-2: #40c463;
+  --contrib-3: #30a14e;
+  --contrib-4: #216e39;
+  /* Tamanho MÍNIMO da célula (abaixo disso a grade rola) e espaço entre células. */
+  --cell: 11px;
+  --gap: 4px;
+
   /* Syntax Highlighting */
   /* #d1242f dava 4.50:1 sobre --bg-tertiary — em cima da linha, sem margem.
      #cf222e (danger.fg do GitHub Primer) sobe para 4.59:1 e é visualmente idêntico. */
@@ -229,6 +240,12 @@
   --accent-purple-text: #bc8cff;
 
   --brand-signal: #ffa657;
+
+  --contrib-0: #2a2c31;
+  --contrib-1: #0e4429;
+  --contrib-2: #006d32;
+  --contrib-3: #26a641;
+  --contrib-4: #39d353;
 
   /* Xcode Syntax Highlighting */
   --syntax-keyword: #ff7b72;
@@ -552,6 +569,50 @@ html.theme-vt::view-transition-new(root) {
   object-fit: cover;
   object-position: top;
 }
+
+/*
+    Células do gráfico de contribuições: entrada em onda diagonal (atraso por célula via
+    --reveal-delay), hover que amplia e o dia de hoje pulsando. Só transform/opacity.
+*/
+@keyframes contrib-in {
+  0%   { opacity: 0; transform: scale(0.2); }
+  60%  { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes contrib-ping {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.contrib-cell {
+  position: relative;
+  animation: contrib-in 500ms var(--ease-out-expo) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+  transition: transform var(--dur-sm) var(--ease-out-expo);
+}
+
+.contrib-cell:hover {
+  transform: scale(1.6);
+  z-index: 1;
+  outline: 1px solid var(--text-primary);
+  outline-offset: 1px;
+}
+
+.contrib-today::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--contrib-4);
+  animation: contrib-ping 1.8s var(--ease-out-expo) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contrib-cell, .contrib-today::after { animation: none; }
+}
+.a11y-reduce-motion .contrib-cell,
+.a11y-reduce-motion .contrib-today::after { animation: none !important; }
 
 /* Faixa de 2px na cor da linguagem no topo do card (cor via --lang, inline). */
 .lang-tint {

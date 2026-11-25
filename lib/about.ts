@@ -109,5 +109,5 @@ export const QUICK_FACTS = [
   { key: 'idade', value: '20' },
   { key: 'curso', value: 'Eng. Controle e Automação' },
   { key: 'stack', value: 'C · Python · NextJS' },
-  { key: 'estudando', value: 'CS50x · MIT 6.002.1x' },
+  { key: 'Certificados', value: 'CS50x · MIT 6.002.1x' },
 ];
