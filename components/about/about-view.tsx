@@ -52,7 +52,7 @@ import { SOCIAL } from "@/lib/site";
 */
 const PdfCover = dynamic(() => import("./pdf-cover").then((m) => m.PdfCover), {
   ssr: false,
-  loading: () => <div className="w-[180px] aspect-[1/1.414]" />,
+  loading: () => <div className="absolute inset-0" />,
 });
 
 const PdfViewer = dynamic(() => import("./pdf-viewer").then((m) => m.PdfViewer), {
@@ -175,7 +175,6 @@ export default function AboutView({ papers }: AboutViewProps) {
     history.replaceState(null, "", `#${id}`);
   };
 
-  const activeSection = sections.find((s) => s.id === active) ?? sections[0];
   const motionProps = (variants: typeof fadeUp) =>
     prefersReduced
       ? {}
@@ -287,34 +286,15 @@ export default function AboutView({ papers }: AboutViewProps) {
             É a mesma navegação do explorer: no celular é a ÚNICA, por isso a versão
             em chips tem alvos de 36px e rola na horizontal.
         */}
+        {/*
+            Desktop: sem barra de abas nem breadcrumb — o explorer à esquerda já é o sumário
+            da página, e a faixa duplicava a mesma navegação. Fica só no celular, onde os
+            chips são a ÚNICA navegação entre seções.
+        */}
         <div
-          className="sticky top-16 z-30 border-b"
+          className="md:hidden sticky top-16 z-30 border-b"
           style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-subtle)" }}
         >
-          <nav aria-label="Arquivos abertos" className="hidden md:flex font-mono text-[13px] overflow-x-auto">
-            {sections.map((section) => {
-              const isActive = section.id === active;
-              return (
-                <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  onClick={goTo(section.id)}
-                  aria-current={isActive ? "location" : undefined}
-                  className="relative flex items-center px-4 h-11 border-r whitespace-nowrap max-w-[260px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]"
-                  style={{
-                    borderColor: "var(--border-subtle)",
-                    color: isActive ? "var(--text-primary)" : "var(--text-muted)",
-                    backgroundColor: isActive ? "var(--bg-primary)" : "transparent",
-                  }}
-                >
-                  {/* Sem a barra azul no topo da aba ativa: a aba já se destaca pelo fundo
-                      (--bg-primary) e pelo texto, e a barra duplicava o sublinhado do header. */}
-                  <span className="truncate">{section.file}</span>
-                </a>
-              );
-            })}
-          </nav>
-
           <nav
             aria-label="Seções da página"
             className="md:hidden flex gap-2 px-4 py-3 overflow-x-auto font-mono text-xs no-scrollbar"
@@ -342,12 +322,6 @@ export default function AboutView({ papers }: AboutViewProps) {
             })}
           </nav>
 
-          <div
-            className="hidden md:block px-8 py-2 border-t font-mono text-xs"
-            style={{ borderColor: "var(--border-subtle)", color: "var(--text-muted)" }}
-          >
-            about › {activeSection.folder} › {activeSection.file}
-          </div>
         </div>
 
         {/* Largura total da área do editor (antes max-w-[1040px] deixava ~1/3 da tela vazio). */}
@@ -517,12 +491,14 @@ export default function AboutView({ papers }: AboutViewProps) {
                     <button
                       type="button"
                       onClick={() => setOpenPaper(paper)}
-                      className="group relative hidden md:flex w-[220px] flex-shrink-0 items-center justify-center p-5 border-r overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]"
+                      className="group relative hidden md:block w-[240px] flex-shrink-0 border-r overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]"
                       style={{ backgroundColor: "var(--bg-tertiary)", borderColor: "var(--border-subtle)" }}
                       aria-label={`Abrir o artigo ${paper.title}`}
                     >
-                      <span className="block transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.02]">
-                        <PdfCover url={paperUrl(paper)} width={180} />
+                      {/* A página preenche a coluna inteira (object-fit: cover, ancorada no topo,
+                          onde ficam título e cabeçalho do congresso); aproxima de leve no hover. */}
+                      <span className="ken-burns absolute inset-0 block">
+                        <PdfCover url={paperUrl(paper)} width={480} />
                       </span>
                     </button>
                     <div className="flex-1 p-5 sm:p-8 flex flex-col gap-4">

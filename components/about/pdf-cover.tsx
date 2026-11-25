@@ -31,6 +31,10 @@ export function CoverFallback() {
   );
 }
 
+/**
+ * `width` é a resolução de renderização (px); o tamanho na tela vem do container —
+ * o canvas é esticado para cobrir a área via `.pdf-cover canvas` em app/globals.css.
+ */
 export function PdfCover({ url, width }: { url: string; width: number }) {
   const [failed, setFailed] = useState(false);
   if (failed) return <CoverFallback />;
@@ -41,7 +45,7 @@ export function PdfCover({ url, width }: { url: string; width: number }) {
       loading={<CoverFallback />}
       error={<CoverFallback />}
       onLoadError={() => setFailed(true)}
-      className="flex justify-center"
+      className="pdf-cover absolute inset-0"
     >
       <Page
         pageNumber={1}
@@ -49,7 +53,7 @@ export function PdfCover({ url, width }: { url: string; width: number }) {
         renderTextLayer={false}
         renderAnnotationLayer={false}
         loading={<CoverFallback />}
-        className="shadow-lg"
+        className="absolute inset-0"
       />
     </Document>
   );

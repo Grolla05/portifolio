@@ -536,6 +536,23 @@ html.theme-vt::view-transition-new(root) {
   transform: scale(1.04);
 }
 
+/*
+    Capa de artigo (components/about/pdf-cover.tsx): o react-pdf fixa width/height do
+    canvas em px pelo atributo `width`. Aqui ele passa a COBRIR o container inteiro,
+    cortando o excesso embaixo — o topo da página (título, congresso) fica sempre visível.
+*/
+.pdf-cover .react-pdf__Page {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.pdf-cover canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  object-position: top;
+}
+
 /* Faixa de 2px na cor da linguagem no topo do card (cor via --lang, inline). */
 .lang-tint {
   box-shadow: inset 0 2px 0 0 var(--lang, transparent);

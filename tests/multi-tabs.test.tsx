@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import AboutView from '@/components/about/about-view';
 
 /*
-    Redesign de /about: página única em rolagem. O explorer e a barra de abas deixaram de
+    Redesign de /about: página única em rolagem. O explorer (e, antes, a barra de abas) deixou de
     abrir/fechar arquivos e viraram o SUMÁRIO da página — cada arquivo é uma âncora para
     a sua seção, e a aba ativa acompanha a rolagem.
 */
@@ -18,26 +18,36 @@ describe('About — explorer e abas como sumário da página única', () => {
     expect(screen.getByText('Engenharia de Controle e Automação')).toBeDefined();
   });
 
-  it('cada aba é um link para a seção correspondente', () => {
-    render(<AboutView papers={[]} />);
+  /*
+      A barra de abas do desktop saiu (duplicava o explorer). O explorer é o sumário:
+      cada arquivo é âncora da sua seção e marca a seção atual.
+  */
+  const explorer = () =>
+    screen.getAllByRole('navigation', { name: 'Seções da página' }).find((nav) => !nav.className.includes('md:hidden'))!;
 
-    const tabs = screen.getByRole('navigation', { name: 'Arquivos abertos' });
-    expect(within(tabs).getByRole('link', { name: 'my-bio.md' }).getAttribute('href')).toBe('#bio');
-    expect(within(tabs).getByRole('link', { name: 'Education.tsx' }).getAttribute('href')).toBe('#formacao');
-    expect(within(tabs).getByRole('link', { name: 'hobbies.ts' }).getAttribute('href')).toBe('#hobbies');
+  it('não renderiza mais a barra de abas no desktop', () => {
+    render(<AboutView papers={[]} />);
+    expect(screen.queryByRole('navigation', { name: 'Arquivos abertos' })).toBeNull();
   });
 
-  it('clicar numa aba marca a seção como atual', () => {
+  it('cada arquivo do explorer é um link para a seção correspondente', () => {
     render(<AboutView papers={[]} />);
 
-    const tabs = screen.getByRole('navigation', { name: 'Arquivos abertos' });
-    const hobbies = within(tabs).getByRole('link', { name: 'hobbies.ts' });
+    expect(within(explorer()).getByRole('link', { name: 'my-bio.md' }).getAttribute('href')).toBe('#bio');
+    expect(within(explorer()).getByRole('link', { name: 'Education.tsx' }).getAttribute('href')).toBe('#formacao');
+    expect(within(explorer()).getByRole('link', { name: 'hobbies.ts' }).getAttribute('href')).toBe('#hobbies');
+  });
+
+  it('clicar num arquivo do explorer marca a seção como atual', () => {
+    render(<AboutView papers={[]} />);
+
+    const hobbies = within(explorer()).getByRole('link', { name: 'hobbies.ts' });
     expect(hobbies.getAttribute('aria-current')).toBeNull();
 
     fireEvent.click(hobbies);
 
     expect(hobbies.getAttribute('aria-current')).toBe('location');
-    expect(within(tabs).getByRole('link', { name: 'my-bio.md' }).getAttribute('aria-current')).toBeNull();
+    expect(within(explorer()).getByRole('link', { name: 'my-bio.md' }).getAttribute('aria-current')).toBeNull();
   });
 
   it('oferece navegação em chips para o celular, com as mesmas seções', () => {
