@@ -386,3 +386,13 @@ export function getAdjacentCaseStudies(slug: string): { prev: CaseStudy; next: C
     next: CASE_STUDIES[(index + 1) % total],
   };
 }
+
+/**
+ * Segmento de /projects/[slug] para QUALQUER repositório: o slug curado quando há estudo
+ * de caso (ex.: `jarvis`), senão o próprio nome do repositório. Toda a conta tem página —
+ * os projetos sem estudo escrito mostram a ficha montada do GitHub (descrição, tópicos,
+ * linguagens e README), sem texto editorial inventado.
+ */
+export function getProjectSlug(repoName: string): string {
+  return getCaseStudy(repoName)?.slug ?? repoName;
+}

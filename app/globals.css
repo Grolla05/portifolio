@@ -41,6 +41,14 @@
   --ide-accent-yellow: #ffcc00;
   --ide-accent-red: #ff3b30;
 
+  /* Cores de marca dos canais (ícones de contato, cartões Spotify/Steam). Só em ícone
+     e detalhe gráfico — nunca em texto corrido. */
+  --brand-gmail: #d93025;
+  --brand-linkedin: #0a66c2;
+  --brand-github: #1f2328;
+  --brand-spotify: #1db954;
+  --brand-steam: #1b6fa8;
+
   /* Estados derivados do acento — usados por controles selecionados
      (toggles, segmented controls). Existem para que componentes não
      precisem hardcodar rgba() do acento. */
@@ -222,6 +230,12 @@
   --ide-accent-yellow: #ffd60a;
   --ide-accent-red: #ff453a;
 
+  --brand-gmail: #ff6b60;
+  --brand-linkedin: #4a9eea;
+  --brand-github: #f0f6fc;
+  --brand-spotify: #1ed760;
+  --brand-steam: #66c0f4;
+
   --accent-soft: rgba(10, 132, 255, 0.18);
   --accent-ring: rgba(10, 132, 255, 0.38);
 
@@ -279,6 +293,18 @@ body {
   font-family: var(--font-ui);
   background-color: var(--bg-primary);
   color: var(--text-primary);
+}
+
+/* Barra de rolagem escondida em todo o site (interface mais limpa). A página e os
+   painéis continuam rolando normalmente com roda, toque, teclado e arraste. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 @layer base {

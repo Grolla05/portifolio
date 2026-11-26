@@ -17,6 +17,41 @@ vi.mock('next/navigation', () => ({
   },
 }));
 
+/*
+    Sem rede nos testes: getRepoInfo (GitHub) é simulado e o ReadmeCard (client, busca o
+    README em /api/readme) vira um marcador. Só "estudo-fake-repo" existe como repositório
+    sem estudo curado; qualquer outro slug devolve null → 404.
+*/
+vi.mock('@/lib/repo-info', () => ({
+  getRepoInfo: async (repo: string) => {
+    if (repo === 'Estudo-Fake-Repo') {
+      return {
+        name: 'Estudo-Fake-Repo',
+        description: 'Descrição vinda do GitHub',
+        homepage: null,
+        htmlUrl: 'https://github.com/Grolla05/Estudo-Fake-Repo',
+        topics: ['arduino', 'iot'],
+        languages: ['C++', 'Python'],
+        listed: true,
+      };
+    }
+    if (repo === 'Repo-Arquivado') {
+      return { name: repo, description: null, homepage: null, htmlUrl: '', topics: [], languages: [], listed: false };
+    }
+    // Repositórios dos estudos curados: tópicos reais do GitHub substituem a stack escrita à mão.
+    if (repo === 'Project_SolarPoints') {
+      return { name: repo, description: null, homepage: null, htmlUrl: '', topics: ['esp32', 'iot'], languages: ['C++'], listed: true };
+    }
+    return null;
+  },
+}));
+
+vi.mock('@/components/about/bio', () => ({
+  ReadmeCard: ({ target }: { target: { owner: string; repo: string } }) => (
+    <div data-testid="readme-card">{`${target.owner}/${target.repo}`}</div>
+  ),
+}));
+
 const params = (slug: string) => Promise.resolve({ slug });
 
 describe('/projects/[slug]', () => {
@@ -67,5 +102,36 @@ describe('/projects/[slug]', () => {
     expect(metadata.alternates?.canonical).toBe(`/projects/${study.slug}`);
 
     expect(await generateMetadata({ params: params('nao-existe') })).toEqual({});
+  });
+
+  it('mostra o README principal e usa os tópicos do GitHub como Stack', async () => {
+    const study = CASE_STUDIES.find((s) => s.repo === 'Project_SolarPoints')!;
+    render(await CaseStudyPage({ params: params(study.slug) }));
+
+    expect(screen.getByTestId('readme-card').textContent).toBe('Grolla05/Project_SolarPoints');
+    const stack = screen.getByRole('heading', { level: 2, name: 'Stack' }).parentElement!;
+    expect(stack.textContent).toContain('esp32');
+    expect(stack.textContent).toContain('iot');
+    // A stack escrita à mão não aparece quando o repositório tem tópicos.
+    expect(stack.textContent).not.toContain(study.stack[0]);
+  });
+
+  it('repositório sem estudo curado ganha uma ficha automática', async () => {
+    render(await CaseStudyPage({ params: params('Estudo-Fake-Repo') }));
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Estudo Fake Repo' })).toBeTruthy();
+    expect(screen.getByText('Descrição vinda do GitHub')).toBeTruthy();
+    expect(screen.getByTestId('readme-card').textContent).toBe('Grolla05/Estudo-Fake-Repo');
+
+    const stack = screen.getByRole('heading', { level: 2, name: 'Stack' }).parentElement!;
+    expect(stack.textContent).toContain('arduino');
+    expect(screen.getByRole('heading', { level: 2, name: 'Linguagens' }).parentElement!.textContent).toContain('C++');
+    // Nada editorial inventado numa ficha automática.
+    expect(screen.queryByRole('heading', { level: 2, name: 'Problema' })).toBeNull();
+    expect(screen.queryByRole('heading', { level: 2, name: 'Decisões técnicas' })).toBeNull();
+  });
+
+  it('repositório arquivado/fork não ganha página', async () => {
+    await expect(CaseStudyPage({ params: params('Repo-Arquivado') })).rejects.toThrow('NEXT_NOT_FOUND');
   });
 });

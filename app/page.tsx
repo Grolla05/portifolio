@@ -237,7 +237,9 @@ export default function ProfilePage() {
                   Fale comigo por mensagem, e-mail ou LinkedIn.
                 </p>
               </div>
-              <div className="flex flex-col items-start gap-5 min-w-0">
+              {/* Ajuste fino: no desktop a coluna alinha à direita, então o botão encosta na
+                  margem do card (e na ponta do e-mail) em vez de ficar colado à esquerda. */}
+              <div className="flex flex-col items-start md:items-end gap-5 min-w-0">
                 <CtaGroup
                   animateOnMount={false}
                   actions={[

@@ -74,17 +74,20 @@ export function humanizeRepoName(name: string): string {
 /*
     Ícones de linguagem.
 
-    O diretório public/language_icons cobre só parte das linguagens que aparecem na conta
-    (não há arquivo de TypeScript, por exemplo — e o código antigo apontava para
-    "Typescript.png", que nunca existiu, deixando o ícone quebrado em silêncio).
-    Por isso: quem tem logo usa logo, quem não tem cai no ponto colorido do GitHub.
+    Quem tem logo em public/language_icons usa logo; quem não tem cai na abreviação
+    colorida do GitHub (ver LanguageIcon). TypeScript, CSS, Jupyter Notebook e Prolog
+    ganharam logo — apareciam como "TS"/"CSS"/"JN"/"PR" genéricos nos cards de projeto.
 */
 const LANGUAGE_ICONS: Record<string, string> = {
   'C': '/language_icons/C.svg',
   'C++': '/language_icons/C++.svg',
   'Python': '/language_icons/Python.svg',
   'JavaScript': '/language_icons/JavaScript.svg',
+  'TypeScript': '/language_icons/TypeScript.svg',
   'HTML': '/language_icons/HTML5.svg',
+  'CSS': '/language_icons/CSS3.svg',
+  'Jupyter Notebook': '/language_icons/Jupyter.svg',
+  'Prolog': '/language_icons/Prolog.svg',
 };
 
 /** Cores oficiais do linguist do GitHub — familiares para quem lê código. */

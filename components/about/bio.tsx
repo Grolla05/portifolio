@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { MarkdownView } from '@/components/markdown/markdown-view';
 import { useGitHubReadme } from '@/hooks/use-github-readme';
-import { PROFILE_README, repoUrl } from '@/lib/github-url';
+import { PROFILE_README, repoUrl, type RepoTarget } from '@/lib/github-url';
 import { highlightMarkdown, TOKEN_COLORS } from '@/lib/markdown-highlight';
 import { appleSpring } from '@/lib/animations/variants';
 
@@ -28,8 +28,6 @@ import { appleSpring } from '@/lib/animations/variants';
 */
 
 type ViewMode = 'preview' | 'code';
-
-const GITHUB_URL = repoUrl(PROFILE_README);
 
 /**
  * Alternador código ⇄ prévia.
@@ -161,11 +159,11 @@ function CodeView({ source }: { source: string }) {
     );
 }
 
-function LoadingSkeleton() {
+function LoadingSkeleton({ filename }: { filename: string }) {
     return (
         <div className="space-y-3 py-2" aria-live="polite" aria-busy="true">
             <p className="text-xs font-mono mb-6" style={{ color: 'var(--text-muted)' }}>
-                {'// carregando README.md do GitHub...'}
+                {`// carregando ${filename} do GitHub...`}
             </p>
             {[75, 55, 85, 45, 65, 80, 40, 70].map((w, i) => (
                 <div
@@ -182,13 +180,23 @@ function LoadingSkeleton() {
     );
 }
 
-function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+function ErrorState({
+    message,
+    onRetry,
+    githubUrl,
+    filename,
+}: {
+    message: string;
+    onRetry: () => void;
+    githubUrl: string;
+    filename: string;
+}) {
     return (
         <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
             <AlertCircle className="w-8 h-8" style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
             <div>
                 <p className="text-sm font-mono mb-2" style={{ color: 'var(--syntax-keyword)' }}>
-                    {'// falha ao carregar README.md'}
+                    {`// falha ao carregar ${filename}`}
                 </p>
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                     {message}
@@ -213,7 +221,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
                     estourado, a bio ainda leva a pessoa ao conteúdo real.
                 */}
                 <a
-                    href={GITHUB_URL}
+                    href={githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs font-medium underline underline-offset-4"
@@ -227,28 +235,39 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 }
 
 /*
-    Redesign: a bio deixou de ser uma aba de tela cheia e virou um card dentro da página
-    única de /about (canvas, artboard 5). O cabeçalho do card é a "aba" do arquivo
-    my-bio.md com o alternador Código/Prévia; o corpo tem altura máxima e rola sozinho,
-    porque o README de perfil pode ser longo e não deve empurrar formação e pesquisa
-    para longe. Os CTAs saíram daqui: a página inteira fecha com o próprio chamado.
+    Card de README genérico: cabeçalho com o nome do arquivo e o alternador Código/Prévia,
+    corpo com altura máxima que rola sozinho e rodapé que leva ao arquivo no GitHub.
+
+    Nasceu como a bio do /about (README do repositório de perfil) e foi generalizado para
+    aceitar qualquer repositório do dono do site: a página de estudo de caso
+    (/projects/[slug]) mostra o README principal do projeto com exatamente a mesma
+    aparência — um vocabulário só de markdown no site. A busca continua passando por
+    /api/readme (cache de 1h, resolução de branch e de caixa do arquivo, e só repositórios
+    do próprio dono).
 */
-export default function Bio() {
+export function ReadmeCard({
+    target,
+    filename = 'README.md',
+}: {
+    target: RepoTarget;
+    filename?: string;
+}) {
     const [mode, setMode] = useState<ViewMode>('preview');
-    const { content, status, error, retry } = useGitHubReadme(PROFILE_README);
+    const { content, status, error, retry } = useGitHubReadme(target);
+    const githubUrl = repoUrl(target);
 
     return (
         <article
             className="flex flex-col min-w-0 rounded-xl border overflow-hidden"
             style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
-            aria-label="my-bio.md"
+            aria-label={filename}
         >
             <div
                 className="min-h-11 flex items-center justify-between gap-3 pl-4 pr-1.5 py-1 border-b flex-shrink-0"
                 style={{ borderColor: 'var(--border-subtle)' }}
             >
                 <span className="font-mono text-[13px] truncate" style={{ color: 'var(--text-primary)' }}>
-                    my-bio.md
+                    {filename}
                 </span>
                 <ViewToggle mode={mode} onChange={setMode} />
             </div>
@@ -257,9 +276,14 @@ export default function Bio() {
                 quase tudo ficava escondido atrás da rolagem interna. */}
             <div className="p-5 sm:p-7 max-h-[min(85vh,960px)] overflow-y-auto">
                 {status === 'error' ? (
-                    <ErrorState message={error ?? 'Erro desconhecido.'} onRetry={retry} />
+                    <ErrorState
+                        message={error ?? 'Erro desconhecido.'}
+                        onRetry={retry}
+                        githubUrl={githubUrl}
+                        filename={filename}
+                    />
                 ) : status !== 'ready' || content === null ? (
-                    <LoadingSkeleton />
+                    <LoadingSkeleton filename={filename} />
                 ) : mode === 'code' ? (
                     <CodeView source={content} />
                 ) : (
@@ -268,16 +292,22 @@ export default function Bio() {
             </div>
 
             <a
-                href={GITHUB_URL}
+                href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 sm:px-7 py-3 border-t font-mono text-xs transition-colors hover:underline"
                 style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
-                title="Abrir o repositório de perfil no GitHub"
+                title="Abrir o repositório no GitHub"
             >
-                ↳ sincronizado de {PROFILE_README.owner}/{PROFILE_README.repo}/README.md
+                ↳ sincronizado de {target.owner}/{target.repo}/README.md
                 <span className="sr-only"> (abre em nova aba)</span>
             </a>
         </article>
     );
+}
+
+/* Bio do /about: o README do repositório de perfil (my-bio.md). Os CTAs saíram daqui —
+   a página inteira fecha com o próprio chamado. */
+export default function Bio() {
+    return <ReadmeCard target={PROFILE_README} filename="my-bio.md" />;
 }

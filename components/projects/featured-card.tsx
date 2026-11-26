@@ -7,7 +7,7 @@ import { ExternalLink, Globe, Eye, FileText } from "lucide-react";
 import { ProjectCover } from "@/components/projects/project-cover";
 import { appleSpring, fadeUp } from "@/lib/animations/variants";
 import { useTilt } from "@/lib/animations/use-tilt";
-import { getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
+import { getCuratedSummary, getProjectSlug } from "@/lib/case-studies";
 import { type RepoProject, describeProject, displayTopics, getLanguageColor } from "@/lib/projects";
 
 /*
@@ -33,7 +33,6 @@ const linkClasses =
 
 export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
   const topics = displayTopics(project);
-  const caseStudy = getCaseStudy(project.name);
   // Inclinação 3D seguindo o cursor (±4°): o card "responde" à mão, como objeto físico.
   const tilt = useTilt(4);
 
@@ -121,12 +120,10 @@ export function FeaturedCard({ project, onOpen }: FeaturedCardProps) {
               Detalhes
             </button>
           )}
-          {caseStudy && (
-            <Link href={`/projects/${caseStudy.slug}`} className={linkClasses}>
-              <FileText className="w-3.5 h-3.5" aria-hidden="true" />
-              Estudo de caso
-            </Link>
-          )}
+          <Link href={`/projects/${getProjectSlug(project.name)}`} className={linkClasses}>
+            <FileText className="w-3.5 h-3.5" aria-hidden="true" />
+            Estudo de caso
+          </Link>
           <a
             href={project.link}
             target="_blank"
