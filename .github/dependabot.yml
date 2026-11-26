@@ -1,0 +1,40 @@
+version: 2
+
+updates:
+  # Dependências do projeto (package.json / package-lock.json).
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+    labels:
+      - dependencies
+    # Agrupa atualizações para reduzir a quantidade de PRs.
+    # Majors ficam fora dos grupos: cada uma abre seu próprio PR para revisão.
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+        patterns: ["*"]
+
+  # Versões das actions usadas em .github/workflows.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/Sao_Paulo
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - dependencies
+      - ci
+    groups:
+      actions:
+        patterns: ["*"]
