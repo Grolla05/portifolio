@@ -279,7 +279,8 @@ export default function ContactPage() {
             style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
           >
             <div className="flex items-center justify-between">
-              <Mail className="w-5 h-5 md:w-[22px] md:h-[22px]" style={{ color: "var(--ide-accent)" }} aria-hidden="true" />
+              {/* Ícone na cor da marca (Gmail/LinkedIn/GitHub) — tokens --brand-* em globals.css. */}
+              <Mail className="w-5 h-5 md:w-[22px] md:h-[22px]" style={{ color: "var(--brand-gmail)" }} aria-hidden="true" />
               <span className="hidden md:inline font-mono text-xs" style={{ color: "var(--text-muted)" }}>
                 mais rápido
               </span>
@@ -338,9 +339,9 @@ export default function ContactPage() {
           </motion.div>
 
           {[
-            { href: SOCIAL.linkedin, label: "LinkedIn", handle: "/in/felipegrolla", cta: "Ver perfil", icon: Linkedin },
-            { href: SOCIAL.github, label: "GitHub", handle: "@Grolla05", cta: "Ver repositórios", icon: Github },
-          ].map(({ href, label, handle, cta, icon: Icon }, i) => (
+            { href: SOCIAL.linkedin, label: "LinkedIn", handle: "/in/felipegrolla", cta: "Ver perfil", icon: Linkedin, brand: "var(--brand-linkedin)" },
+            { href: SOCIAL.github, label: "GitHub", handle: "@Grolla05", cta: "Ver repositórios", icon: Github, brand: "var(--brand-github)" },
+          ].map(({ href, label, handle, cta, icon: Icon, brand }, i) => (
             <motion.a
               key={label}
               href={href}
@@ -351,7 +352,7 @@ export default function ContactPage() {
               className={`group flex md:flex-col items-center md:items-stretch gap-3 md:gap-3.5 min-h-16 px-4 md:p-6 md:rounded-xl md:border ${i === 0 ? "border-b md:border-b" : ""} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ide-accent)]`}
               style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
             >
-              <Icon className="w-5 h-5 md:w-[22px] md:h-[22px]" style={{ color: "var(--ide-accent)" }} aria-hidden="true" />
+              <Icon className="w-5 h-5 md:w-[22px] md:h-[22px]" style={{ color: brand }} aria-hidden="true" />
               <div className="flex-1 flex flex-col gap-0.5 md:gap-1">
                 <span className="text-xs md:text-[13px]" style={{ color: "var(--text-secondary)" }}>{label}</span>
                 <span className="text-sm md:text-[17px] font-medium">{handle}</span>
