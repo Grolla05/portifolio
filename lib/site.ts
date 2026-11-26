@@ -51,3 +51,27 @@ export const SOCIAL = {
  * Assim o currículo publicado acompanha automaticamente as edições do documento.
  */
 export const CV_DOC_ID = "1lE3vys3oCWSytIz2LLhqu9BrRyn6E-o57RZZ5qsNPSk";
+
+/*
+    Integrações da seção "Fora do editor" (/about). Só entra link que for verdade hoje:
+    enquanto estiverem `null`, os cartões de Música e Games aparecem sem o botão
+    correspondente — nada de perfil inventado.
+
+    SPOTIFY.embed: trecho da URL de compartilhamento depois de open.spotify.com/, ex.:
+      "playlist/37i9dQZF1DXcBWIGoYBM5M"  ou  "artist/..."  ou  "album/..."
+    Com ele preenchido, o cartão ganha um player real (carregado só ao clicar em "Ouvir").
+*/
+export const SPOTIFY: { profileUrl: string | null; embed: string | null } = {
+  profileUrl: "https://open.spotify.com/user/feextreme_gamer",
+  embed: null, // embed de usuário não existe (404); usar playlist/álbum/artista, ex.: "playlist/<id>"
+};
+
+/*
+    STEAM.steamId64: ID público do perfil (aparece na página do perfil). Com ele e a variável
+    de ambiente STEAM_API_KEY (servidor, nunca no repositório) a rota /api/steam lista os
+    jogos com mais horas da conta inteira. Sem a chave, usa só os jogos que o perfil exibe.
+*/
+export const STEAM: { profileUrl: string | null; steamId64: string | null } = {
+  profileUrl: "https://steamcommunity.com/id/Grolla/",
+  steamId64: "76561198269348966",
+};

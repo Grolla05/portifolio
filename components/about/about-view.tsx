@@ -9,17 +9,14 @@ import {
   FileDown,
   FileText,
   FolderGit2,
-  Gamepad2,
-  Github,
-  Linkedin,
   Mail,
-  Music,
-  Trophy,
 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { appleSpring, fadeUp, slideInLeft, staggerContainer } from "@/lib/animations/variants";
 import { useTilt } from "@/lib/animations/use-tilt";
 import Bio from "@/components/about/bio";
+import { ContactsNav } from "@/components/about/contacts-nav";
+import { Hobbies } from "@/components/about/hobbies";
 import { CtaGroup } from "@/components/cta-group";
 import {
   Dialog,
@@ -27,9 +24,8 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { COURSES, EDUCATION, HOBBIES, QUICK_FACTS, type Hobby } from "@/lib/about";
+import { COURSES, EDUCATION, QUICK_FACTS } from "@/lib/about";
 import { type Paper, paperCitation, paperUrl, sortPapers } from "@/lib/papers";
-import { SOCIAL } from "@/lib/site";
 
 /*
     Redesign de /about (canvas "Avaliação e Redesign do Portfólio", artboards 5 e 5b).
@@ -74,12 +70,6 @@ interface Section {
   /** Token de cor da pasta — o mesmo do explorer antigo, para manter a identidade. */
   color: string;
 }
-
-const HOBBY_ICONS: Record<Hobby["id"], React.ElementType> = {
-  games: Gamepad2,
-  music: Music,
-  sports: Trophy,
-};
 
 interface AboutViewProps {
   /*
@@ -304,28 +294,8 @@ export default function AboutView({ papers }: AboutViewProps) {
 
         <div className="h-px mx-2" style={{ backgroundColor: "var(--border-subtle)" }} />
 
-        <div className="flex flex-col gap-0.5 text-[13px]">
-          <span className="px-2 pb-1.5 text-[11px] font-medium tracking-[0.08em]" style={{ color: "var(--text-muted)" }}>
-            CONTATOS
-          </span>
-          {[
-            { href: `mailto:${SOCIAL.email}`, label: SOCIAL.email, icon: Mail, external: false },
-            { href: SOCIAL.github, label: "github.com/Grolla05", icon: Github, external: true },
-            { href: SOCIAL.linkedin, label: "LinkedIn", icon: Linkedin, external: true },
-          ].map(({ href, label, icon: Icon, external }) => (
-            <a
-              key={href}
-              href={href}
-              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="flex items-center gap-2.5 min-h-9 px-2 rounded-md truncate transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-              <span className="truncate">{label}</span>
-              {external && <span className="sr-only"> (abre em nova aba)</span>}
-            </a>
-          ))}
-        </div>
+        {/* Hover com marcador deslizante na cor da marca — components/about/contacts-nav.tsx. */}
+        <ContactsNav />
       </motion.aside>
 
       <div className="flex-1 min-w-0 flex flex-col">
@@ -617,39 +587,8 @@ export default function AboutView({ papers }: AboutViewProps) {
           {/* HOBBIES */}
           <motion.section id="hobbies" aria-labelledby="hobbies-title" className="scroll-mt-40 flex flex-col gap-7" {...motionProps(fadeUp)}>
             <SectionTitle path="about/hobbies" title="Fora do editor" id="hobbies-title" />
-            <motion.ul
-              className="grid sm:grid-cols-3 gap-3 sm:gap-4"
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-            >
-              {HOBBIES.map((hobby) => {
-                const Icon = HOBBY_ICONS[hobby.id];
-                return (
-                  <motion.li
-                    key={hobby.id}
-                    variants={fadeUp}
-                    whileHover={{ y: -2 }}
-                    className="flex sm:flex-col gap-4 sm:gap-3 p-4 sm:p-6 rounded-xl border"
-                    style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-default)" }}
-                  >
-                    <Icon className="w-[22px] h-[22px] flex-shrink-0" style={{ color: "var(--ide-accent-green)" }} aria-hidden="true" />
-                    <div className="flex flex-col gap-2 sm:gap-3 flex-1">
-                      <h3 className="text-base sm:text-[17px] font-medium">{hobby.name}</h3>
-                      <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                        {hobby.description}
-                      </p>
-                      <ul className="flex flex-wrap gap-1.5 sm:mt-auto" aria-label={`Exemplos de ${hobby.name}`}>
-                        {hobby.tags.map((tag) => (
-                          <Pill key={tag}>{tag}</Pill>
-                        ))}
-                      </ul>
-                    </div>
-                  </motion.li>
-                );
-              })}
-            </motion.ul>
+            {/* Palcos por hobby (Steam / Spotify / times) em components/about/hobbies.tsx. */}
+            <Hobbies />
           </motion.section>
 
           {/* CTA */}
