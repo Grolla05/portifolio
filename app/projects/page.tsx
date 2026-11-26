@@ -30,7 +30,7 @@ import { RepoModal } from "@/components/projects/repo-modal";
 import { ProjectCover } from "@/components/projects/project-cover";
 import { LanguageIcon } from "@/components/projects/language-icon";
 import { CtaGroup } from "@/components/cta-group";
-import { type CaseStudy, getCaseStudy, getCuratedSummary } from "@/lib/case-studies";
+import { type CaseStudy, getCaseStudy, getCuratedSummary, getProjectSlug } from "@/lib/case-studies";
 import { FeaturedCard } from "@/components/projects/featured-card";
 import { useProjects } from "@/hooks/use-projects";
 import {
@@ -277,7 +277,6 @@ export default function ProjectsPage() {
   const shownProjects = filteredProjects.slice(0, visible);
 
   const renderCard = (project: RepoProject, index: number) => {
-    const caseStudy = getCaseStudy(project.name);
     const topics = displayTopics(project, 3);
     const lang = project.primaryLanguage;
 
@@ -380,17 +379,17 @@ export default function ProjectsPage() {
                     demo
                   </span>
                 )}
-                {caseStudy && (
-                  <Link
-                    href={`/projects/${caseStudy.slug}`}
-                    className="relative z-10 inline-flex items-center gap-1 font-medium hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ide-accent)] rounded"
-                    style={{ color: "var(--ide-accent-text)" }}
-                    aria-label={`Ler o estudo de caso de ${project.title}`}
-                  >
-                    Estudo de caso
-                    <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                  </Link>
-                )}
+                {/* Todo projeto tem página: estudo curado quando existe, senão a ficha
+                    montada do GitHub (tópicos, linguagens e README). */}
+                <Link
+                  href={`/projects/${getProjectSlug(project.name)}`}
+                  className="relative z-10 inline-flex items-center gap-1 font-medium hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ide-accent)] rounded"
+                  style={{ color: "var(--ide-accent-text)" }}
+                  aria-label={`Ler o estudo de caso de ${project.title}`}
+                >
+                  Estudo de caso
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                </Link>
               </div>
             </div>
           </motion.article>
@@ -401,14 +400,12 @@ export default function ProjectsPage() {
             Quick Look / Detalhes
             <ContextMenuShortcut>Espaço</ContextMenuShortcut>
           </ContextMenuItem>
-          {caseStudy && (
-            <ContextMenuItem asChild>
-              <Link href={`/projects/${caseStudy.slug}`}>
-                <FileText className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
-                Ler estudo de caso
-              </Link>
-            </ContextMenuItem>
-          )}
+          <ContextMenuItem asChild>
+            <Link href={`/projects/${getProjectSlug(project.name)}`}>
+              <FileText className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
+              Ler estudo de caso
+            </Link>
+          </ContextMenuItem>
           <ContextMenuItem onClick={() => window.open(project.link, "_blank")}>
             <ExternalLink className="w-3.5 h-3.5 mr-2 text-[var(--ide-accent)]" />
             Abrir no GitHub

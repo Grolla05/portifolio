@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
-import { CASE_STUDIES, getCaseStudyBySlug } from '@/lib/case-studies';
+import { CASE_STUDIES, PROJECT_SUMMARIES, getCaseStudyBySlug } from '@/lib/case-studies';
+import { humanizeRepoName } from '@/lib/projects';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
 
 /*
@@ -33,8 +34,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { slug } = await params;
   const study = getCaseStudyBySlug(slug);
 
-  const title = study?.title ?? 'Estudo de caso';
-  const tagline = study?.tagline ?? '';
+  // Projetos sem estudo curado: título do nome do repositório e o resumo traduzido (se houver).
+  const title = study?.title ?? (slug ? humanizeRepoName(slug) : 'Estudo de caso');
+  const tagline = study?.tagline ?? PROJECT_SUMMARIES[slug] ?? '';
   const stack = (study?.stack ?? []).slice(0, 5);
 
   return new ImageResponse(
