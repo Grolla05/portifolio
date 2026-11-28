@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseContributions, toWeeks } from '@/lib/contributions';
+import { fillToToday, parseContributions, toWeeks } from '@/lib/contributions';
 
 /*
     Parser do calendário de contribuições (lib/contributions.ts) contra um trecho no
@@ -25,6 +25,24 @@ describe('parseContributions', () => {
 
   it('devolve calendário vazio para HTML sem dias', () => {
     expect(parseContributions('<html></html>')).toEqual({ total: 0, days: [] });
+  });
+});
+
+describe('fillToToday', () => {
+  const base = [
+    { date: '2026-11-25', count: 3, level: 1 as const },
+    { date: '2026-11-26', count: 13, level: 2 as const },
+  ];
+
+  it('completa com dias zerados até hoje e mantém o tamanho da janela', () => {
+    const out = fillToToday(base, '2026-11-28');
+    expect(out.map((d) => d.date)).toEqual(['2026-11-27', '2026-11-28']);
+    expect(out[1]).toEqual({ date: '2026-11-28', count: 0, level: 0 });
+    expect(out).toHaveLength(base.length);
+  });
+
+  it('não mexe quando o calendário já chega em hoje', () => {
+    expect(fillToToday(base, '2026-11-26')).toBe(base);
   });
 });
 

@@ -50,6 +50,30 @@ export function parseContributions(html: string): ContributionCalendar {
 }
 
 /**
+ * Estende o calendário com dias zerados até `today` (AAAA-MM-DD).
+ *
+ * Por que: o JSON vem de cache (servidor/CDN) e pode estar com dias de atraso — o gráfico
+ * parava no último dia buscado em vez de ir até hoje. Os dias que faltam entram com 0
+ * contribuições (nível 0) e a janela desliza: o mesmo número de dias é mantido, cortando
+ * o início, para continuar sendo "o último ano".
+ */
+export function fillToToday(days: ContributionDay[], today: string): ContributionDay[] {
+  if (days.length === 0) return days;
+  const last = days[days.length - 1].date;
+  if (last >= today) return days;
+
+  const filled = [...days];
+  const cursor = new Date(`${last}T00:00:00Z`);
+  for (;;) {
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+    const date = cursor.toISOString().slice(0, 10);
+    if (date > today) break;
+    filled.push({ date, count: 0, level: 0 });
+  }
+  return filled.slice(filled.length - days.length);
+}
+
+/**
  * Agrupa os dias em semanas (colunas de domingo a sábado), como o GitHub desenha.
  * A primeira semana é completada com `null` antes do primeiro dia.
  */
