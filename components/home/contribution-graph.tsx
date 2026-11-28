@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Github } from 'lucide-react';
 import { CountUp } from '@/components/motion/count-up';
-import { toWeeks, type ContributionCalendar, type ContributionDay } from '@/lib/contributions';
+import { fillToToday, toWeeks, type ContributionCalendar, type ContributionDay } from '@/lib/contributions';
 import { SOCIAL } from '@/lib/site';
 
 /*
@@ -29,6 +29,12 @@ const WEEKDAYS = ['', 'seg', '', 'qua', '', 'sex', ''];
 function formatDate(date: string) {
   const [y, m, d] = date.split('-').map(Number);
   return `${d} de ${MONTHS[m - 1]}. de ${y}`;
+}
+
+/** Data de hoje no fuso do visitante, AAAA-MM-DD. */
+function localISODate() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
 }
 
 function describe(day: ContributionDay) {
@@ -59,8 +65,11 @@ export function ContributionGraph({ delay = 0 }: { delay?: number }) {
     return () => controller.abort();
   }, []);
 
-  const weeks = useMemo(() => (data ? toWeeks(data.days) : []), [data]);
-  const today = data?.days[data.days.length - 1]?.date;
+  // O JSON pode vir de cache com dias de atraso: completa com dias zerados até hoje
+  // (data local do visitante) para o gráfico sempre terminar no dia atual.
+  const days = useMemo(() => (data ? fillToToday(data.days, localISODate()) : []), [data]);
+  const weeks = useMemo(() => toWeeks(days), [days]);
+  const today = days[days.length - 1]?.date;
   const columns = weeks.length || 53;
 
   // Rótulos de mês: na primeira semana em que o mês muda (sem colar dois rótulos).
@@ -99,7 +108,7 @@ export function ContributionGraph({ delay = 0 }: { delay?: number }) {
     const cell = (e.target as HTMLElement).closest<HTMLElement>('[data-ix]');
     const box = boxRef.current;
     if (!cell || !box || !data) return setHover(null);
-    const day = data.days[Number(cell.dataset.ix)];
+    const day = days[Number(cell.dataset.ix)];
     const c = cell.getBoundingClientRect();
     const b = box.getBoundingClientRect();
     setHover({ day, x: c.left - b.left + c.width / 2, y: c.top - b.top });
@@ -194,7 +203,7 @@ export function ContributionGraph({ delay = 0 }: { delay?: number }) {
                   day ? (
                     <span
                       key={day.date}
-                      data-ix={data!.days.indexOf(day)}
+                      data-ix={days.indexOf(day)}
                       className={`contrib-cell aspect-square rounded-[3px]${day.date === today ? ' contrib-today' : ''}`}
                       style={{
                         gridColumn: w + 2,

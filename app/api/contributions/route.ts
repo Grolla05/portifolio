@@ -6,17 +6,21 @@ import { parseContributions } from '@/lib/contributions';
     Calendário de contribuições do GitHub (último ano), para o gráfico do hero.
 
     Lê a página pública do calendário — a mesma que o perfil do GitHub carrega — e devolve
-    JSON enxuto. Cache de 1h no servidor (revalidate) e no CDN (s-maxage): o calendário
-    muda no máximo algumas vezes por dia, e assim o GitHub recebe ~24 requisições por dia
-    no total, não uma por visitante.
+    JSON enxuto. O cache fica só no CDN (s-maxage), para o GitHub não receber uma
+    requisição por visitante.
+
+    Bug corrigido: a rota era estática (pré-renderizada no build) e ainda tinha
+    `revalidate` na fetch + stale-while-revalidate de 24h — em site de pouco tráfego o
+    visitante recebia o calendário do dia do deploy (o gráfico parava dois dias atrás).
+    Agora: rota dinâmica, fetch sem cache de dados e janela "stale" curta.
 */
-const REVALIDATE_SECONDS = 3600;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     const res = await fetch(`https://github.com/users/${GITHUB_USER}/contributions`, {
       headers: { Accept: 'text/html', 'User-Agent': 'portfolio-contributions' },
-      next: { revalidate: REVALIDATE_SECONDS },
+      cache: 'no-store',
     });
     if (!res.ok) {
       return NextResponse.json({ error: `GitHub respondeu ${res.status}` }, { status: 502 });
@@ -28,7 +32,7 @@ export async function GET() {
     }
 
     return NextResponse.json(calendar, {
-      headers: { 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' },
+      headers: { 'Cache-Control': 'public, max-age=0, s-maxage=900, stale-while-revalidate=60' },
     });
   } catch {
     return NextResponse.json({ error: 'Não foi possível falar com o GitHub.' }, { status: 502 });
